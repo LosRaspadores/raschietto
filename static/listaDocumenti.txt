@@ -1,0 +1,22 @@
+[
+{
+"title": "Efficient Blocking Method for a Large Scale Citation Matching",
+"url": "http://www.dlib.org/dlib/november14/beel/11beel.html"
+},
+{
+"title": "The Architecture and Datasets of Docear's Research Paper Recommender System",
+"url": "http://www.dlib.org/dlib/november14/beel/11beel.html"
+},
+{
+"title": "SQL Tutorial",
+"url": "http://www.w3schools.com/sql/default.asp"
+},
+{
+"title": "PHP Tutorial",
+"url": "http://www.w3schools.com/php/default.asp"
+},
+{
+"title": "XML Tutorial",
+"url": "http://www.w3schools.com/xml/default.asp"
+}
+]

@@ -5,7 +5,7 @@
 
 """
 pip install rdflib
-pip install SPARQLwrapper
+pip install SPARQLWrapper
 
 spazio web: http://ltw1537.web.cs.unibo.it/
 grafo RDF: http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537
@@ -29,32 +29,98 @@ FOAF = Namespace("http://xmlns.com/foaf/0.1/")
 MY = Namespace("http://www.essepuntato.it/")
 DATA = Namespace("http://www.essepuntato.it/2013/citalo/test/data/")
 OA = Namespace("http://www.openannotation.org/spec/core/")
+SIOC = Namespace("http://rdfs.org/sioc/ns#")
 
 
-logging.basicConfig()
+def new_foaf_agent():
+    # Load the latest stored RDF (data-updated.owl) file and create a new foaf:Agent that:
+    # - has URI "http://www.essepuntato.it/2013/citalo/test/data/pluto"
+    # - has name (foaf:name) "Pluto"
+    # - knows (foaf:knows) all the other agents in the graph
+    # Then store the graph into the same file (data-updated.owl) with format "pretty-xml"
+    rdf_graph = rdflib.Graph()
+    rdf_graph.load("data-updated.owl")
 
-# funzione per caricare dati da un file .owl su nuovo grafo RDF
-def load_graph(file_name):
+    agent = DATA.pluto
+    # with DATA.pluto you create a resource having URI "http://www.essepuntato.it/2013/citalo/test/data/pluto"
+    rdf_graph.add((agent, RDF.type, FOAF.Agent))
+    rdf_graph.add((agent, FOAF.name, Literal("Pluto")))
+
+    for s, p, o in rdf_graph.triples((None, RDF.type, FOAF.Agent)):
+        if s != agent:
+            rdf_graph.add((agent, FOAF.knows, s))
+
+    rdf_graph.serialize("data-updated.owl", format="pretty-xml")
+
+
+def example_query():
+    # query 1
     rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
-    rdf_graph.load(file_name)  # dati caricati da un file /TechWeb/data/data.owl
-    return rdf_graph
+    rdf_graph.load("data\data.owl")  # dati caricati da un file .owl
+
+    results = rdf_graph.query("""SELECT * WHERE {?s ?p ?o}""")
+
+    for row in results:
+        print row
+
+    # query 2
+    rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
+    rdf_graph.load("data\data-updated.owl")  # dati caricati da un file .owl
+    results2 = rdf_graph.query("""
+        SELECT DISTINCT ?p1 ?p2
+        WHERE {
+            ?p1 rdf:type foaf:Person .
+            ?p2 rdf:type foaf:Person .
+            { ?p1 foaf:knows ?p2 }
+            UNION
+            { ?p2 foaf:knows ?p1 }
+        }""", initNs={"foaf": FOAF, "rdf": RDF})
+
+    for row in results2:
+        print row[0] + " knows " + row[1]
 
 
-def createNewData():
-    rdf = load_graph("..\data\data.owl")
+    # query 3
+    # Select all the people who annotated something as users,
+    # and select also the name of the related user (if any).
+    # Order the results by user name.
+    # Print all the results as usual.
+    rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
+    rdf_graph.load("data\data-updated.owl")  # dati caricati da un file .owl
+    results = rdf_graph.query("""
+        SELECT DISTINCT ?person ?username
+        WHERE {
+            ?person rdf:type foaf:Person .
+            ?user
+                rdf:type sioc:UserAccount ;
+                sioc:account_of ?person .
+            OPTIONAL { ?user sioc:name ?username }
+            ?annotation
+                rdf:type oa:Annotation ;
+                oa:annotatedBy ?user
+        } ORDER BY ?username
+    """, initNs={"foaf": FOAF, "rdf": RDF, "sioc": SIOC, "oa": OA})
+
+    for row in results:
+        print "%s participated to some annotation and holds the account %s" % row
+
+
+def create_new_data():
+    rdf_graph = rdflib.Graph()
+    rdf_graph.load("data.owl")
 
     person5 = DATA.person5
     # with DATA.person5 you create a resource having URI "http://www.essepuntato.it/2013/citalo/test/data/person5"
-    rdf.add((person5, RDF.type, FOAF.Person))
+    rdf_graph.add((person5, RDF.type, FOAF.Person))
 
     # Add names and ages (foaf:name and foaf:age) to the new person
-    rdf.add((person5, FOAF.name, Literal("Pippo")))
-    rdf.add((person5, FOAF.age, Literal(30)))  # it uses Python types
+    rdf_graph.add((person5, FOAF.name, Literal("Pippo")))
+    rdf_graph.add((person5, FOAF.age, Literal(30)))  # it uses Python types
     # use rdf.remove to remove triples
     # use rdf.set to change existing triples
 
     people = []  # create an empty list
-    for s, p, o in rdf.triples((None, RDF.type, FOAF.Person)):
+    for s, p, o in rdf_graph.triples((None, RDF.type, FOAF.Person)):
         people += [s]  # add the element "s" (which is a person) to the list
 
     pairs = itertools.combinations(people, 2)  # all the combination between people
@@ -62,12 +128,13 @@ def createNewData():
     for pair in pairs:
         person1 = pair[0]
         person2 = pair[1]
-        rdf.add((person1, FOAF.knows, person2))
+        rdf_graph.add((person1, FOAF.knows, person2))
 
-    rdf.serialize("..\data\data-updated.owl", format="pretty-xml")
+    rdf_graph.serialize("data\data-updated.owl", format="pretty-xml")
 
-    rdf_graph = load_graph("..\data\data-updated.owl")
-    print_triples(rdf_graph)
+    new_rdf_graph = rdflib.Graph()
+    new_rdf_graph.load("data\data-updated.owl")
+    print_triples(new_rdf_graph)
 
 
 # funzione per visualizzare le triple presenti in un grafo RDF
@@ -136,15 +203,16 @@ def contact_sparql_endpoint():
 
     # visualizzazione dei risultati
     for result in results["results"]["bindings"]:
-        print(result["label"]["value"])
+        print(result["label"])
 
 
 def main():
-    rdf_graph = load_graph("..\data\data.owl")  # da \Server (dir corrente) si torna indietro (coi ..)e si entra in \data
+
+    rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
+    rdf_graph.load("data\data.owl")  # dati caricati da un file .owl
+    # dalla dir corrente si torna indietro (coi ..)e si entra in \data
     # print_triples(rdf_graph)
 
-    # contact_sparql_endpoint()
-
-    createNewData()
+    contact_sparql_endpoint()
 
 main()

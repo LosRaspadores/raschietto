@@ -1,0 +1,73 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding-top: 49px;
+    overflow: auto;
+    font-family: Arial, Helvetica, 'Exo' sans-serif;
+}
+
+.navbar{
+    background-color: #0C3C26;
+    color: #44b78b;
+}
+
+.navbar .navbar-brand {
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.navbar .navbar-brand:hover, .navbar .navbar-brand:focus {
+     color: white;
+}
+
+.barra{
+    padding 5px;
+    margin-bottom: 15px;
+    background-color: #44b78b;
+    color: white;
+}
+
+.filtri{
+    font-weight: bold;
+    padding: 10px;
+    border: 2px solid #003366;
+    margin-bottom: 15px;
+    border-radius: 25px;
+}
+
+#labelURL{
+    color: FireBrick;
+}
+
+#labelTitolo{
+    color: DarkOrange;
+}
+
+#labelAutore{
+    color: gold;
+}
+
+#labelAnnoDiPubblicazione{
+    color: RosyBrown;
+}
+
+#labelDOI{
+    color: MediumSpringGreen;
+}
+
+#labelRetorica{
+    color: Turquoise;
+}
+
+#labelCommento{
+    color: SlateBlue;
+}
+
+#labelCitazione{
+    color: Salmon;
+}
+
