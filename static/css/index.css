@@ -1,0 +1,136 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    padding-top: 49px;
+    overflow: auto;
+    font-family: Arial, Helvetica, 'Exo' sans-serif;
+}
+
+
+/* prima navbar */
+.navbar{
+    background-color: #0C3C26;
+    color: #44b78b;
+}
+
+
+/* logo applicazione */
+.navbar .navbar-brand {
+    color: white;
+    font-weight: bold;
+    font-size: 40px;
+    font-family: 'Roboto', sans-serif;
+}
+.navbar .navbar-brand:hover, .navbar .navbar-brand:focus {
+     color: white;
+}
+
+
+/* seconda navbar */
+.barra{
+    padding 5px;
+    margin-bottom: 15px;
+    background-color: #44b78b;
+    color: white;
+}
+
+/* toggle */
+.cmn-toggle {
+    position: absolute;
+    margin-left: -9999px;
+    visibility: hidden;
+}
+.cmn-toggle + label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+}
+input.cmn-toggle-yes-no + label {
+    padding: 2px;
+    width: 225px;
+    height: 50px;
+}
+input.cmn-toggle-yes-no + label:before,
+input.cmn-toggle-yes-no + label:after {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    text-align: center;
+    line-height: 50px;
+}
+input.cmn-toggle-yes-no + label:before {
+    background-color: #0C3C26;
+    content: attr(data-off);
+    transition: transform 0.5s;
+    backface-visibility: hidden;
+}
+input.cmn-toggle-yes-no + label:after {
+    background-color: white;
+    color: #0C3C26;
+    content: attr(data-on);
+    transition: transform 0.5s;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+}
+input.cmn-toggle-yes-no:checked + label:before {
+    transform: rotateY(180deg);
+}
+input.cmn-toggle-yes-no:checked + label:after {
+    transform: rotateY(0);
+}
+button.button-lg{
+    background-color: #44b78b;
+    color: white;
+    width: 100%;
+}
+
+
+/* filtri */
+.filtri{
+    font-weight: bold;
+    padding: 10px;
+    border: 2px solid #003366;
+    margin-bottom: 15px;
+    border-radius: 25px;
+}
+
+#labelURL{
+    color: FireBrick;
+}
+
+#labelTitolo{
+    color: DarkOrange;
+}
+
+#labelAutore{
+    color: gold;
+}
+
+#labelAnnoDiPubblicazione{
+    color: RosyBrown;
+}
+
+#labelDOI{
+    color: MediumSpringGreen;
+}
+
+#labelRetorica{
+    color: Turquoise;
+}
+
+#labelCommento{
+    color: SlateBlue;
+}
+
+#labelCitazione{
+    color: Salmon;
+}

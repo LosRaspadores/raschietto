@@ -3,15 +3,17 @@
 
 # python v 2.7
 
-"""
-pip install rdflib
-pip install SPARQLWrapper
+__author__ = 'Los Raspadores'
 
-spazio web: http://ltw1537.web.cs.unibo.it/
-grafo RDF: http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537
-SPARQL endopoint: http://tweb2015.cs.unibo.it:8080/data/get
-gruppi: http://vitali.web.cs.unibo.it/TechWeb15/GrafiGruppi
-per raggiungere i dati : /get
+"""
+    pip install rdflib
+    pip install SPARQLWrapper
+
+    spazio web: http://ltw1537.web.cs.unibo.it/
+    grafo RDF: http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537
+    SPARQL endopoint: http://tweb2015.cs.unibo.it:8080/data/get
+    gruppi: http://vitali.web.cs.unibo.it/TechWeb15/GrafiGruppi
+    per raggiungere i dati : /get
 
 """
 

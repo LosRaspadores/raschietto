@@ -3,32 +3,60 @@
 
 # python v 2.7
 
+__author__ = 'Los Raspadores'
+
+
 """
-pip install rdflib
-pip install SPARQLWrapper
+    pip install rdflib
+    pip install SPARQLWrapper
 
-spazio web: http://ltw1537.web.cs.unibo.it/
-grafo RDF: http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537
-SPARQL endopoint: http://tweb2015.cs.unibo.it:8080/data/get
-gruppi: http://vitali.web.cs.unibo.it/TechWeb15/GrafiGruppi
-per raggiungere i dati : /get
+    spazio web nostro gruppo url: http://ltw1537.web.cs.unibo.it/
+
+    *** SPARQL Service - endpoint ufficiale del progetto = triplestore che si occupa di memorizzare le annotazioni ***
+        SPARQL endpoint (server Apache Jena Fuseki) URL >>> http://tweb2015.cs.unibo.it:8080/
+        endpoint dataset name = "data"   >>> http://tweb2015.cs.unibo.it:8080/data/
+
+        L'endpoint ha al suo interno un grafo RDF per ogni gruppo per cui è necessaria l'autenticazione tramite pass
+        nome grafo RDF nostro gruppo: "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
+            --PASS: "FF79%bAW",
+            --IRI=USER=NOME GRAFO: "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537”
+
+    per accedere all'intero dataset: URL >>> http://tweb2015.cs.unibo.it:8080/data/get
+
+    *** SPARQL endpoint locale ***
+        SPARQL endpoint (server Apache Jena Fuseki) URL >>> http://localhost:3030/
+        endpoint dataset name = "data"  >>> http://localhost:3030/data/
+
+        nome grafo RDF: "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
+
+        http://localhost:3030/data/http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537
 
 
-http://*host*/dataset/query -- the SPARQL query endpoint. (readonly)
-http://localhost:3030/ltw1537/query?query=SELECT%20*%20%7B%3Fs%20%3Fp%20%3Fo%7D%20limit%205
-http://*host*/dataset/update -- the SPARQL Update language endpoint.
-http://*host*/dataset/data -- the SPARQL Graph Store Protocol endpoint. (readonly)
-http://*host*/dataset/upload -- the file upload endpoint.
+    >>> SERVIZI DEGLI SPARQL ENDPOINT APACHE JENA FUSEKI:
+
+    http://*host*/dataset/get  -- SPARQL Graph Store Protocol endpoint >>> per leggerle sul browser
+    http://*host*/dataset/data -- SPARQL Graph Store Protocol endpoint >>> per leggerle sul browser
+
+    http://*host*/dataset/query  -- SPARQL query endpoint, metodo GET >>> per le query
+    http://*host*/dataset/sparql -- SPARQL query endpoint, metodo GET >>> per le query
+
+    http://*host*/dataset/update -- SPARQL Update endpoint, metodo POST >>> per inserire o eliminare dati (grafi)
+
+    http://*host*/dataset/upload -- SPARQL endpoint per l'upload di >>> file
+    http://*host*/dataset/delete -- delete the endpoint? o grafo?
 
 """
 
 # moduli importati
-import logging
 import rdflib  # per leggere e manipolare grafi RDF
-from SPARQLWrapper import SPARQLWrapper  # per interrogare uno SPARQL end-point
-from rdflib.namespace import RDF  # namespace per RDF
-from rdflib import Namespace, Literal, BNode  # modulo Namespace per crearne di nuovi
-import itertools
+from SPARQLWrapper import SPARQLWrapper, JSON, N3 # per interrogare uno SPARQL end-point
+# from rdflib.namespace import RDF  # namespace per RDF
+from rdflib import Namespace  # modulo Namespace per crearne di nuovi
+
+
+# user e pass autenticazione grafo
+USER = "FF79%bAW"
+PASS = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
 
 # dichiarazione namespace
@@ -46,80 +74,77 @@ def print_triples(graph):
         # print s, p, o
 
     # secondo modo (migliore)
-    # si possono visualizzare triple RDF serializzate in XML, Turtle, N-triples et.
+    # si possono visualizzare triple RDF serializzate in XML, Turtle, N-triples etc.
     # nel nostro caso si preferisce il grafo serializzato nel formato N-Ttriple
     print graph.serialize(format="nt")  # serializzazione in N-triples
     # print graph.serialize(format="turtle")  # serializzazione in Turtle
 
 
 def contact_sparql_endpoint():
-    """
-        Si contatta lo SPARQL endpoint per accedere a un certo dataset (nome dataset = /data)
-        SPARQL service = SPARQL endpoint = triplestore che si occupa di memorizzare le annotazioni
-        si chiede di restituire i risultati in formato JSON
-
-        Lo SPARQL endpoint locale del progetto è raggiungibile al seguente URL: http://localhost:3030/data/query
-        sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query", returnFormat="json")
-
-        Lo SPARQL endpoint ufficiale del progetto è raggiungibile al seguente URL: http://tweb2015.cs.unibo.it:8080/data
-        ogni gruppo ha un grafo su questo stesso endpoint per cui è necessaria l'autenticazione tramite
-        PASS: "FF79%bAW",
-        IRI: "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537”
-        sparql_endpoint = SPARQLWrapper("http://tweb2015.cs.unibo.it:8080/data", returnFormat="json")
-
-        SPARQL endpoint di esempio
-        sparql_endpoint = SPARQLWrapper("http://dbpedia.org/sparql", returnFormat="json")
-    """
 
     rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
     rdf_graph.load("data\data.owl")  # dati caricati da un file .owl
 
-    iri_graph = "http://localhost:3030/ltw1537/"
+    nome_grafo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
-    query = """INSERT DATA {
-        GRAPH <%s> { %s }
-    }""" % (iri_graph, rdf_graph.serialize(format="nt"))
+    # 'INSERT' per inserire dati dal triplestore (servizio /update, metodo POST)
+    query_insert = """INSERT DATA {
+                        GRAPH <%s> { %s }
+                    }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
 
-    # NB: Usare 'DELETE' al posto di 'INSERT' per rimuovere
-    # i dati dal triplestore
-    # UPDATE …/update?user=%s&pass=%s” % (your_user, your_pass))
 
-    sparql_endpoint = SPARQLWrapper("http://localhost:3030/ltw1537/update", returnFormat="json")
+    # 'DELETE' per rimuovere  dati dal triplestore (servizio /update, metodo POST)
+    query_delete = """DELETE DATA {
+                        GRAPH <%s>  { %s }
+                    }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
+
+    # dataset SPARQL endpoint locale
+    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
 
     # set della query SPARQL
-    sparql_endpoint.setQuery(query)
+    sparql_endpoint.setQuery(query_insert)
     sparql_endpoint.setMethod('POST')
 
     # esecuzione della query
     sparql_endpoint.query()
 
 
-    # query di esempio
-    query = """
+    # query SPARQL che ritorna tutte le triple del grafo specificato (se nn specificao >>> quello di default)
+    query_all = """
         SELECT ?subject ?predicate ?object
+            FROM NAMED <%s>
             WHERE {
-              ?subject ?predicate ?object
+              GRAPH ?g {?subject ?predicate ?object}
             }
-    """
-    sparql_endpoint = SPARQLWrapper("http://localhost:3030/ltw1537/query", returnFormat="json")
+        """ % nome_grafo
+
+    # JSON serialization
+    print '\n\n*** JSON serialization'
+    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query", returnFormat="json")
+    # sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/sparql", returnFormat="json")  # servizio query = servizio sparql
 
     # set della query SPARQL
-    sparql_endpoint.setQuery(query)
+    sparql_endpoint.setQuery(query_all)
     sparql_endpoint.setMethod('GET')
 
     # esecuzione della query
     results = sparql_endpoint.query().convert()
 
-    for row in results:
-        print row
+    for result in results["results"]["bindings"]:
+        print(result)
 
-    print sparql_endpoint.query().convert()
+
+    # N3 serializaion (incompleto)
+    print '\n\n*** N3 Example'
+    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query", returnFormat="nt")
+    sparql_endpoint.setQuery(query_all)
+    sparql_endpoint.setMethod('GET')
+    results = sparql_endpoint.query().convert()
+    print results
+
 
 def main():
-
-    rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
-    rdf_graph.load("data\data.owl")  # dati caricati da un file .owl
-    #print_triples(rdf_graph)
-
     contact_sparql_endpoint()
+
+    
 main()
