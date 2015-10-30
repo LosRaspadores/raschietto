@@ -6,12 +6,11 @@
 __author__ = 'Los Raspadores'
 
 """
-
-    pip install bs4
+    pip install BeautifulSoup4
 
     Beautiful Soup automatically converts incoming documents to Unicode and outgoing documents to UTF-8
 
-    Documenti da annotare obbligatoramente:
+    >>> Documenti da annotare obbligatoramente:
         articoli del volume 20 issue 11/12
         -http://www.dlib.org/dlib/november14/11contents.html
 
@@ -21,9 +20,11 @@ __author__ = 'Los Raspadores'
         tutti gli articoli di una issue a scelta su dilib
         -http://www.dlib.org/dlib/september15/09contents.html
 
-        -tutti gli articoli della issue di
+        -tutti gli articoli di questa issue
+        http://almatourism.unibo.it/issue/view/512
 
-        -tutti gli articoli della issue di
+        -tutti gli articoli di questa issue
+        http://antropologiaeteatro.unibo.it/issue/view/513
 
 """
 
@@ -110,8 +111,70 @@ def scraping_documenti():
         data["title"] = res.text
         lista_docs.append(data)
 
-    print json.dumps(lista_docs)
-    return  json.dumps(lista_docs)
+
+    """
+        tutti gli articoli di una issue a scelta su dilib
+        -http://www.dlib.org/dlib/september15/09contents.html
+    """
+
+    url_base = "http://www.dlib.org/dlib/september15/09contents.html"
+    resp = br.open("http://www.dlib.org/dlib/september15/09contents.html")
+    raw_html = resp.read()  # raw html source code
+    soup = BeautifulSoup(raw_html)
+    results = soup.select("p.contents a")
+
+    for res in results:
+        url = res["href"]
+        url = urlparse.urljoin(url_base, url)
+        data = {}
+        data["url"] = url
+        data["title"] = res.text
+        lista_docs.append(data)
+
+
+    """
+        tutti gli articoli di questa issue
+        http://almatourism.unibo.it/issue/view/512
+    """
+
+    url_base = "http://almatourism.unibo.it/issue/view/512"
+    resp = br.open("http://almatourism.unibo.it/issue/view/512")
+    raw_html = resp.read()  # raw html source code
+    soup = BeautifulSoup(raw_html)
+    results = soup.select("div.tocTitle a")
+
+    for res in results:
+        url = res["href"]
+        url = urlparse.urljoin(url_base, url)
+        data = {}
+        data["url"] = url
+        data["title"] = res.text
+        lista_docs.append(data)
+
+
+    """
+        tutti gli articoli di questa issue
+        http://antropologiaeteatro.unibo.it/issue/view/513
+    """
+
+    url_base = "http://antropologiaeteatro.unibo.it/issue/view/513"
+    resp = br.open("http://antropologiaeteatro.unibo.it/issue/view/513")
+    raw_html = resp.read()  # raw html source code
+    soup = BeautifulSoup(raw_html)
+    results = soup.select("div.tocTitle a")
+
+    for res in results:
+        url = res["href"]
+        url = urlparse.urljoin(url_base, url)
+        data = {}
+        data["url"] = url
+        data["title"] = res.text
+        lista_docs.append(data)
+
+
+    # print json.dumps(lista_docs)
+
+    return json.dumps(lista_docs)
 
 
 if __name__ == "__main__":
