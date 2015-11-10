@@ -6,6 +6,22 @@ $( document ).ready(function() {
     });
 
     $('[data-toggle="tooltip"]').tooltip();
+    var stickyNavTop = $('#secondnav').offset().top;
+
+    var stickyNav = function(){
+        var scrollTop = $(window).scrollTop();
+        if (scrollTop > stickyNavTop) {
+            $('#secondnav').addClass('sticky');
+        } else {
+            $('#secondnav').removeClass('sticky');
+        }
+    };
+
+    stickyNav();
+
+    $(window).scroll(function() {
+        stickyNav();
+    });
 
     $.ajax({
         url: '/scrapingGruppi',
@@ -50,6 +66,25 @@ $( document ).ready(function() {
         }
        $('div#lista_doc.panel-body').html(out);
     }
+        document.getElementById("listaDocumenti").innerHTML = out;
+    };
+
+
+    /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
+    function addZero(i) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    };
+
+    var currentdate = new Date();
+    var datetime = currentdate.getFullYear() + "-"
+                    + (currentdate.getMonth())  + "-"
+                    + currentdate.getDay() + "T"
+                    + currentdate.getHours() + ":"
+                    + addZero(currentdate.getMinutes());
+
 });
 
 

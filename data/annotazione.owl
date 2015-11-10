@@ -1,0 +1,43 @@
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix frbr:  <http://purl.org/vocab/frbr/core#> .
+@prefix cito:  <http://purl.org/spar/cito/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix sro:   <http://salt.semanticauthoring.org/ontologies/sro#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix oa:    <http://www.w3.org/ns/oa#> .
+@prefix rsch:  <http://vitali.web.cs.unibo.it/raschietto/> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sem:   <http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#> .
+@prefix skos:  <http://www.w3.org/2009/08/skos-reference/skos.html> .
+@prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
+@prefix deo:   <http://purl.org/spar/deo/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/>
+
+[] a oa:Annotation ;
+    rdfs:label "DOI"^^xsd:string ;
+    rsch:type "hasDoi"^^xsd:string ;
+    oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
+    oa:annotatedBy <mailto:alice.graziosi@gmail.com>  ;
+    oa:hasBody _:doi ;
+    oa:hasTarget [ a oa:SpecificResource ;
+            oa:hasSelector [ a oa:FragmentSelector ;
+                    rdf:value "form1_table3_tr1_td1_table5_tr1_td1_table1_tr1_td2_h34"^^xsd:string ;
+                    oa:end "190"^^xsd:nonNegativeInteger ;
+                    oa:start "163"^^xsd:nonNegativeInteger ] ;
+            oa:hasSource <ITEM HTML> ] .
+
+<mailto:alice.graziosi@gmail.com> a foaf:mbox ; 
+        schema:email "alice.graziosi@gmail.com" ; 
+        foaf:name "LosRaspadores"^^xsd:string ; 
+        rdfs:label "LosRaspadores"^^xsd:string . 
+
+_:doi a rdf:Statement;
+	rdfs:label "il work ha come doi"^^xsd:string ;
+        rdf:object <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
+        rdf:predicate prism:doi;
+        rdf:subject "antani"^^xsd:string
+
+<http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression

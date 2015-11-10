@@ -1,17 +1,24 @@
+/* CSS style */
+
+/* tutti gli elementi */
 * {
-    box-sizing: border-box;
+   box-sizing: border-box;
 }
+
 body {
-    padding-top: 49px;
     overflow: auto;
     font-family: Arial, Helvetica, 'Exo' sans-serif;
 }
 
 
-/* prima navbar */
-.navbar{
+/* prima navbar con logo, descrizione e info */
+.navbar {
     background-color: #0C3C26;
     color: #44b78b;
+    padding: 5px;
+    margin: 0px;
+    border: none;
+    border-radius: 0;
 }
 
 
@@ -20,39 +27,75 @@ body {
     color: white;
     font-weight: bold;
     font-size: 40px;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Playball', sans-serif;
 }
 .navbar .navbar-brand:hover, .navbar .navbar-brand:focus {
-     color: white;
-}
-
-
-/* seconda navbar */
-.barra{
-    padding 5px;
-    margin-bottom: 15px;
-    background-color: #44b78b;
     color: white;
 }
 
-/* toggle */
+
+/* descrizione applicazione */
+.navbar .navbar-text{
+    color: #44b78b;
+}
+
+/* link info e help*/
+.navbar .navbar-nav>li>a{
+    color: white;
+}
+
+.navbar .navbar-nav>li>a:focus, .navbar .navbar-nav>li>a:hover{
+    color:  #44b78b;
+    text-decoration: underline;
+}
+
+
+/* seconda navbar con toggle button, caricamento url e info utente autenticato */
+#secondnav{
+    background-color: #44b78b;
+    color: white;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #0C3C26;
+}
+
+.navbar .navbar-form .input-group {
+    width: 600px;
+}
+
+#utenteAutenticato{
+    color: white;
+}
+
+.sticky {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 100;
+    //border-top: 0;
+}
+
+/* toggle checkbox autenticazione */
 .cmn-toggle {
     position: absolute;
     margin-left: -9999px;
-    visibility: hidden;
+    visibility: hidden; //nasconde la checkbox
 }
+
 .cmn-toggle + label {
     display: block;
     position: relative;
     cursor: pointer;
     outline: none;
     user-select: none;
+    margin:0px;
 }
 input.cmn-toggle-yes-no + label {
     padding: 2px;
     width: 225px;
     height: 50px;
 }
+
 input.cmn-toggle-yes-no + label:before,
 input.cmn-toggle-yes-no + label:after {
     display: block;
@@ -67,12 +110,14 @@ input.cmn-toggle-yes-no + label:after {
     text-align: center;
     line-height: 50px;
 }
+
 input.cmn-toggle-yes-no + label:before {
     background-color: #0C3C26;
     content: attr(data-off);
     transition: transform 0.5s;
     backface-visibility: hidden;
 }
+
 input.cmn-toggle-yes-no + label:after {
     background-color: white;
     color: #0C3C26;
@@ -81,16 +126,27 @@ input.cmn-toggle-yes-no + label:after {
     transform: rotateY(180deg);
     backface-visibility: hidden;
 }
+
 input.cmn-toggle-yes-no:checked + label:before {
     transform: rotateY(180deg);
 }
 input.cmn-toggle-yes-no:checked + label:after {
     transform: rotateY(0);
 }
-button.button-lg{
+
+
+/* bottone autenticazione */
+button.button-lg {
+    font-weight: bold;
     background-color: #44b78b;
-    color: white;
     width: 100%;
+    color: white;
+}
+button.button-lg:hover {
+    background-color: #0C3C26;
+}
+button.button-lg:active {
+    background-color: #44b78b;
 }
 
 
@@ -112,7 +168,7 @@ button.button-lg{
 }
 
 #labelAutore{
-    color: gold;
+    color: Gold;
 }
 
 #labelAnnoDiPubblicazione{

@@ -10,7 +10,8 @@ __author__ = 'Los Raspadores'
     pip install rdflib
     pip install SPARQLWrapper
 
-    spazio web nostro gruppo url: http://ltw1537.web.cs.unibo.it/
+    CONTENT TYPE dei risultati ritornati(select):JSON O XML;  CONTENT TYPE del grafo inserito(graph):TURTLE, N3
+
 
     *** SPARQL Service - endpoint ufficiale del progetto = triplestore che si occupa di memorizzare le annotazioni ***
         SPARQL endpoint (server Apache Jena Fuseki) URL >>> http://tweb2015.cs.unibo.it:8080/
@@ -49,14 +50,13 @@ __author__ = 'Los Raspadores'
 
 # moduli importati
 import rdflib  # per leggere e manipolare grafi RDF
-from SPARQLWrapper import SPARQLWrapper, JSON, N3 # per interrogare uno SPARQL end-point
-# from rdflib.namespace import RDF  # namespace per RDF
+from SPARQLWrapper import SPARQLWrapper, JSON, N3, TURTLE # per interrogare uno SPARQL end-point
+from rdflib.namespace import RDF  # namespace per RDF
 from rdflib import Namespace  # modulo Namespace per crearne di nuovi
 
-
 # user e pass autenticazione grafo
-USER = "FF79%bAW"
-PASS = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
+PASS = "FF79%bAW"
+USER = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
 
 # dichiarazione namespace
@@ -75,31 +75,36 @@ def print_triples(graph):
 
     # secondo modo (migliore)
     # si possono visualizzare triple RDF serializzate in XML, Turtle, N-triples etc.
-    # nel nostro caso si preferisce il grafo serializzato nel formato N-Ttriple
+    # nel nostro caso si preferisce il grafo serializzato nel formato N-Triple
     print graph.serialize(format="nt")  # serializzazione in N-triples
     # print graph.serialize(format="turtle")  # serializzazione in Turtle
 
 
 def contact_sparql_endpoint():
-
     rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
-    rdf_graph.load("data\data.owl")  # dati caricati da un file .owl
+    rdf_graph.load("data\\annotazione.owl")  # dati caricati da un file .owl
 
     nome_grafo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
+
+    nome_grafo1 = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
+    nome_grafo2 = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1538"
 
     # 'INSERT' per inserire dati dal triplestore (servizio /update, metodo POST)
     query_insert = """INSERT DATA {
                         GRAPH <%s> { %s }
                     }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
 
-
     # 'DELETE' per rimuovere  dati dal triplestore (servizio /update, metodo POST)
     query_delete = """DELETE DATA {
                         GRAPH <%s>  { %s }
-                    }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
+                    }""" % (nome_grafo2, rdf_graph.serialize(format="nt"))
+
+    # Remove all triples
+    query_remove_all_triples = """CLEAR GRAPH <%s>""" % nome_grafo2
+
 
     # dataset SPARQL endpoint locale
-    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
+    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/update?user=%s&pass=%s" % (USER, PASS), returnFormat=JSON)
 
     # set della query SPARQL
     sparql_endpoint.setQuery(query_insert)
@@ -109,20 +114,40 @@ def contact_sparql_endpoint():
     sparql_endpoint.query()
 
 
-    # query SPARQL che ritorna tutte le triple del grafo specificato (se nn specificao >>> quello di default)
-    query_all = """
+
+    """
+        >>> su localhost
+
+        grafo specificato
+
         SELECT ?subject ?predicate ?object
+        FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537>
+        WHERE {
+        GRAPH ?g {?subject ?predicate ?object}}
+
+        grafo di default
+
+        SELECT ?subject ?predicate ?object
+            WHERE {
+            GRAPH ?g {?subject ?predicate ?object}
+        }
+    }
+    """
+
+    # query SPARQL che ritorna tutte le triple del grafo specificato (se nn specificato >>> quello di default)
+    query_all = """
+                SELECT ?subject ?predicate ?object
             FROM NAMED <%s>
             WHERE {
               GRAPH ?g {?subject ?predicate ?object}
             }
-        """ % nome_grafo
+            LIMIT 17
+        """ % nome_grafo2
 
-    # JSON serialization
-    print '\n\n*** JSON serialization'
+    sparql_endpoint = SPARQLWrapper("http://tweb2015.cs.unibo.it:8080/data/query", returnFormat="json")
+
+    #sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query?user=%s&pass=%s" % (USER, PASS), returnFormat="json")  # servizio query = servizio sparql
     sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query", returnFormat="json")
-    # sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/sparql", returnFormat="json")  # servizio query = servizio sparql
-
     # set della query SPARQL
     sparql_endpoint.setQuery(query_all)
     sparql_endpoint.setMethod('GET')
@@ -131,16 +156,7 @@ def contact_sparql_endpoint():
     results = sparql_endpoint.query().convert()
 
     for result in results["results"]["bindings"]:
-        print(result)
-
-
-    # N3 serializaion (incompleto)
-    print '\n\n*** N3 Example'
-    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query", returnFormat="nt")
-    sparql_endpoint.setQuery(query_all)
-    sparql_endpoint.setMethod('GET')
-    results = sparql_endpoint.query().convert()
-    print results
+        print(result["subject"]["value"])+"  "+(result["predicate"]["value"])+"  "+(result["object"]["value"])
 
 
 def main():

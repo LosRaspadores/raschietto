@@ -7,6 +7,8 @@ __author__ = 'Los Raspadores'
 
 """
     pip install Flask
+
+    spazio web nostro gruppo url: http://ltw1537.web.cs.unibo.it/
 """
 
 from flask import Flask, render_template
