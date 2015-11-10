@@ -191,6 +191,7 @@ button.button-lg:active {
     color: Salmon;
 }
 
+/*Stile menu laterale*/
 .panel-group .panel{
     border-radius: 0px;
     margin-bottom: -5px; /*spazio tra i pannelli*/
@@ -199,7 +200,6 @@ button.button-lg:active {
 .panel-default > .panel-heading{
     background-color: #f5f5f5;
 }
-
 
 .row{
     margin-left:0px;
@@ -263,7 +263,7 @@ button.button-lg:active {
     -ms-transition: background .5s;
     transition: background .5s;
 }
-.sidebar_name {
+/*.sidebar_name {
     padding-top: 25px;
     color: #fff;
     opacity: .7;
@@ -278,7 +278,7 @@ button.button-lg:active {
   color: #999999;
   display: block;
   text-decoration: none;
-}
+}*/
 
 .panel-group  a:hover {
   color: #2DB78B;
@@ -289,7 +289,7 @@ button.button-lg:active {
  .panel-group  a:active, .panel-group  a:focus {
   text-decoration: none;
 }
-
+/*
 .sidebar-nav > .sidebar-brand {
   height: 65px;
   line-height: 60px;
@@ -303,7 +303,7 @@ button.button-lg:active {
 .sidebar-nav > .sidebar-brand a:hover {
   color: #fff;
   background: none;
-}
+}*/
 
 #main_icon
 {
