@@ -21,6 +21,9 @@
 
         <!-- riferimenti css -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/ui/1.11.3/jquery-ui.js"></script>
+
         <link rel="stylesheet" href="/static/css/index.css">
         <link href="https://fonts.googleapis.com/css?family=Exo:400,900" rel="stylesheet" type="text/css">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,900' rel='stylesheet' type='text/css'>
@@ -67,10 +70,7 @@
             <div class="row barra">
                 <!-- modalità reader e annotator -->
                 <div class="col-md-3">
-                    <div>
-                        <button type="button" class="btn" id="annotatorMode" data-toggle="modal" data-target="#modalAutenticazione" data-backdrop="true" >Passa ad annotator mode</button>
-                        <button type="button" class="btn" id="readerMode">Torna a reader mode</button>
-                    </div>
+
                     <div class="switch">
                         <input type="checkbox"id="cmn-toggle-7" class="cmn-toggle cmn-toggle-yes-no"  data-toggle="tooltip" title="Passa a modalità annotator">
                         <label for="cmn-toggle-7" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="modal" data-target="#modalAutenticazione"></label>
@@ -95,66 +95,67 @@
             </div>
         </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-4">
-                <!-- checkboxes per filtri tipo di annotazione-->
-                <div class="filtri">
-                    <h4>Filtri tipo di annotazione</h4><br>
-                    <input type="checkbox" id="filtroURL" value="URL" checked/>
-                    <label for="filtroURL" id="labelURL">URL</label>
-                    <br>
-                    <input type="checkbox" id="filtroTitolo" value="Titolo" checked/>
-                    <label for="filtroTitolo" id="labelTitolo">Titolo</label>
-                    <br>
-                    <input type="checkbox" id="filtroAutore" value="Autore" checked/>
-                    <label for="filtroAutore" id="labelAutore">Autore</label>
-                    <br>
-                    <input type="checkbox" id="filtroAnnoDiPubblicazione" value="AnnoDiPubblicazione" checked/>
-                    <label for="filtroAnnoDIPubblicazione" id="labelAnnoDiPubblicazione">Anno di pubblicazione</label>
-                    <br>
-                    <input type="checkbox" id="filtroDOI" value="DOI" checked/>
-                    <label for="filtroDOI" id="labelDOI">DOI</label>
-                    <br>
-                    <input type="checkbox" id="filtroRetorica" value="Retorica" checked/>
-                    <label for="filtroRetorica" id="labelRetorica">Retorica</label>
-                    <br>
-                    <input type="checkbox" id="filtroCommento" value="Commento" checked/>
-                    <label for="filtroCommento" id="labelCommento">Commento</label>
-                    <br>
-                    <input type="checkbox" id="filtroCitazione" value="Citazione" checked/>
-                    <label for="filtroCitazione" id="labelCitazione">Citazione</label>
-                    <br>
-                </div>
-                <!-- checkboxes per filtri gruppi-->
-                <div class="filtri">
-                    <h4>Filtri gruppi</h4><br>
-                    <div id="listaGruppi"></div>
-                </div>
-                </div>
-                <!-- main area -->
-                <div class="col-sm-8">
-                    <div>
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-                            <li><a data-toggle="tab" href="#doc1">doc1</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane fade in active" id="home">
-                                <div>
-                                    <h4>ANTANI</h4>
-                                    <h5>Lista documenti</h5>
-                                    <div id="listaDocumenti"></div>
-                                </div>
+        <div id="wrapper">
+            <!-- Sidebar -->
+              <div id="sidebar-wrapper">
+              <!--<ul>-->
+                   <!--<li class="sidebar-brand"><a id="menu-toggle" href="#">Menu<span id="main_icon" class="glyphicon glyphicon-align-justify"></span></a></li>-->
+              <!--</ul>-->
+                  <!--<ul class="sidebar-nav" id="sidebar">-->
+                      <div class="panel-group">
+                          <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                        <h4 class="sidebar-brand">
+                                          <a id="menu-toggle">Menu<span id="main_icon" class="glyphicon glyphicon-align-justify"></span></a>
+                                        </h4>
+                                  </div>
                             </div>
-                            <div class="tab-pane fade" id="doc1">
-                                <div>
-                                </div>
+                            <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                        <h4 class="sidebar-brand">
+                                          <a data-toggle="collapse" href="#doc">Documenti</a>
+                                        </h4>
+                                  </div>
+                                  <div id="doc" class="panel-collapse collapse">
+                                        <div class="panel-body" id="lista_doc"></div>
+                                  </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+
+                            <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                        <h4 class="sidebar-brand">
+                                          <a data-toggle="collapse" href="#gruppi">Gruppi</a>
+                                        </h4>
+                                  </div>
+                                  <div id="gruppi" class="panel-collapse collapse">
+                                        <div class="panel-body" id="lista_gruppi"></div>
+                                  </div>
+                            </div>
+                      </div>
+                  <!--</ul>-->
+                <!--<ul class="sidebar-nav" id="sidebar">-->
+                  <!--<li ><a data-toggle="collapse" href="#doc">Documenti<span class="sub_icon glyphicon glyphicon-link"></span></a></li>-->
+                    <!--<div id="doc" class="panel-collapse collapse"></div>-->
+                  <!--<li><a>Grafi<span class="sub_icon glyphicon glyphicon-link"></span></a></li>-->
+                    <!--<li><a data-toggle="collapse" href="#gruppi">Gruppi<span class="sub_icon glyphicon glyphicon-link"></span></a></li>-->
+                    <!--<div id="gruppi" class="panel-collapse collapse"></div>-->
+                <!--</ul>-->
+              </div>
+
+
+            <!-- Page content -->
+            <div id="page-content-wrapper">
+        <!-- Keep all page content within the page-content inset div! -->
+        <div class="page-content inset">
+          <div class="row">
+              <div class="col-md-12">
+              <p class="well lead">An Experiment using the sidebar template from startbootstrap.com which I integrated in my website (<a href="http://animeshmanglik.name">animeshmanglik.name</a>)</p>
+              <p class="well lead">Click on the Menu to Toggle Sidebar . Hope you enjoy it!</p>
             </div>
+          </div>
+        </div>
+      </div>
+
         </div>
 
         <!-- Modal-->

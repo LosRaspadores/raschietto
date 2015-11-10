@@ -7,6 +7,7 @@ __author__ = 'Los Raspadores'
 
 """
 
+    pip install bs4 BeautifulSoup4
     pip install bs4
 
     Beautiful Soup automatically converts incoming documents to Unicode and outgoing documents to UTF-8
