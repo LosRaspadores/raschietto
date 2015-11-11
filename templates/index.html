@@ -58,7 +58,7 @@
                         <!-- modalità reader e annotator -->
                         <div class="switch">
                             <input type="checkbox" id="modalitaToggle" class="cmn-toggle cmn-toggle-yes-no" >
-                            <label id="modalitaToggleLabel" for="modalitaToggle" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="tooltip" data-placement="bottom"></label>
+                            <label id="modalitaToggleLabel" for="modalitaToggle" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="tooltip" data-placement="bottom" title="Passa a modalità annotator"></label>
                         </div>
                     </li>
                     <li>
@@ -163,7 +163,9 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <div class="col-md-12"></div>
+                        <div class="col-md-12">
+                            <p id="messaggioErrore"></p>
+                        </div>
                     </div>
                  </div>
             </div>
@@ -172,8 +174,8 @@
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="/static/js/init.js" type="text/javascript"></script>
-        <script src="/static/js/autenticazione.js" type="text/javascript"></script>
+        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
     </body>
 </html>
 

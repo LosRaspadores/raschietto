@@ -55,6 +55,7 @@ $(document).ready(function() {
             $('#modalAutenticazione').modal('show');
             annotatorMode();
         }else{
+            $('#modalitaToggle').prop('checked', false);
             readerMode();
             sessionStorage.removeItem("nomecognome");
             sessionStorage.removeItem("email");
@@ -85,19 +86,19 @@ $(document).ready(function() {
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
         if(nomecognome==""){
-            alert("Il campo nome e cognome è obbligatorio.");
+            $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(email==""){
-            alert("Il campo email è obbligatorio.");
+            $('#messaggioErrore').text("Il campo email è obbligatorio.");
             $("#email").val("");
             $("#email").focus();
         } else if(!regexNomecognome.test(nomecognome)){
-            alert("Il campo nome e cognome può contenere solo caratteri alfabetici.");
+            $('#messaggioErrore').text("Il campo nome e cognome può contenere solo caratteri alfabetici.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
-            alert("Il campo email deve essere del tipo user@domin.io");
+            $('#messaggioErrore').text("Il campo email deve essere del tipo user@domin.io.");
             $("#email").val("");
             $("#email").focus();
         } else {
@@ -114,6 +115,9 @@ $(document).ready(function() {
 
     /* Gestione della chiusura del modal autenticazione: si ritorna alla modalità reader */
     $('.close').click(function (){
+        $("#nomecognome").val("");
+        $("#email").val("");
+        $('#messaggioErrore').text("");
         $('#modalitaToggle').prop('checked', false);
         readerMode();
     });

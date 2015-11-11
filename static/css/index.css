@@ -144,11 +144,16 @@ button.button-lg {
 }
 button.button-lg:hover {
     background-color: #0C3C26;
+    color: white;
 }
 button.button-lg:active {
     background-color: #44b78b;
+    color: white;
 }
 
+#messaggioErrore{
+    color: #44b78b;
+}
 
 /* filtri */
 .filtri{
