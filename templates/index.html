@@ -32,16 +32,18 @@
             <div class="container-fluid">
                 <!-- nome app e menu responsive -->
                 <div class="navbar-header">
-                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-uno">
                          <span class="sr-only">Toggle navigation</span>
                          <span class="icon-bar"></span>
                          <span class="icon-bar"></span>
                          <span class="icon-bar"></span>
                     </button>
                     <a class="navbar-brand" href="#">raschietto</a>
-                    <p class="navbar-text">Un'applicazione web per l'annotazione semantica di documenti</p>
                 </div>
-                <div class="navbar-collapse collapse" aria-expanded="false" id="navbar-collapse">
+                <div class="navbar-collapse collapse" id="navbar-collapse-uno">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><p class="navbar-text">Un'applicazione per l'annotazione semantica di documenti</p></li>
+                    </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso" title="Info sul progetto Raschietto"><span class="glyphicon glyphicon-info-sign"></span> Info progetto</a></li>
                         <li><a href="#home" title="Ti serve aiuto?"><span class="glyphicon glyphicon-screenshot"></span> Help</a></li>
@@ -53,14 +55,20 @@
         <!-- barra per autenticazione e caricamento documento -->
         <nav class="navbar navbar-default" id="secondnav">
             <div class="container-fluid">
-                <ul class="nav navbar-nav navbar-left">
-                    <li>
-                        <!-- modalità reader e annotator -->
-                        <div class="switch">
-                            <input type="checkbox" id="modalitaToggle" class="cmn-toggle cmn-toggle-yes-no" >
-                            <label id="modalitaToggleLabel" for="modalitaToggle" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="tooltip" data-placement="bottom" title="Passa a modalità annotator"></label>
-                        </div>
-                    </li>
+                <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-due">
+                     <span class="sr-only">Toggle navigation</span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                </button>
+                <!-- modalità reader e annotator -->
+                <input type="checkbox" id="modalitaToggle" class="cmn-toggle cmn-toggle-yes-no" >
+                <label id="modalitaToggleLabel" for="modalitaToggle" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="tooltip" data-placement="bottom" title="Passa a modalità annotator"></label>
+                </div>
+
+                <div class="navbar-collapse collapse" id="navbar-collapse-due">
+                    <ul class="nav navbar-nav navbar-left">
                     <li>
                         <!-- caricamento nuovo documento -->
                         <form class="navbar-form" role="search">
@@ -75,7 +83,8 @@
                     <li>
                         <p id="utenteAutenticato" class="navbar-text"></p>
                     </li>
-                </ul>
+                    </ul>
+                </div>
             </div>
         </nav>
         <div class="container-fluid">
