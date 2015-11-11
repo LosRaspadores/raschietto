@@ -1,6 +1,11 @@
 $( document ).ready(function() {
-    $('[data-toggle="tooltip"]').tooltip('enable');
 
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("active");
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
     var stickyNavTop = $('#secondnav').offset().top;
 
     var stickyNav = function(){
@@ -23,8 +28,8 @@ $( document ).ready(function() {
         type: 'GET',
         success: function(result) {
             //convert json string to json object
-            var jsonobject = JSON.parse(result);
-            listaGruppi(jsonobject);
+            lista_gruppi = JSON.parse(result);
+            listaGruppi(lista_gruppi);
         },
         error: function(error) {
             alert("Error: " + error);
@@ -35,9 +40,9 @@ $( document ).ready(function() {
         var out = "";
         var i;
         for(i = 0; i < arr.length; i++) {
-            out += '<input type="checkbox" checked/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
+            out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
         }
-        document.getElementById("listaGruppi").innerHTML = out;
+        $('div#lista_gruppi.panel-body').html(out);
     }
 
     $.ajax({
@@ -45,8 +50,8 @@ $( document ).ready(function() {
         type: 'GET',
         success: function(result) {
             //convert json string to json object
-            var jsonobject = JSON.parse(result);
-            listaDocumenti(jsonobject);
+            lista_doc = JSON.parse(result);
+            listaDocumenti(lista_doc);
         },
         error: function(error) {
             alert("Error: " + error);
@@ -59,6 +64,8 @@ $( document ).ready(function() {
         for(i = 0; i < arr.length; i++) {
             out += '<a href="' + arr[i].url + '">' +arr[i].title + '</a><br>';
         }
+       $('div#lista_doc.panel-body').html(out);
+    }
         document.getElementById("listaDocumenti").innerHTML = out;
     };
 
@@ -79,6 +86,7 @@ $( document ).ready(function() {
                     + addZero(currentdate.getMinutes());
 
 });
+
 
 
 
