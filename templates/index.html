@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- nome applicazione e icona -->
-        <title>Scrasp</title>
+        <title>Raschietto</title>
         <link rel="shortcut icon" href="/static/ico/favicon.ico">
 
         <!-- gruppo e autori -->
@@ -21,130 +21,135 @@
 
         <!-- riferimenti css -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/ui/1.11.3/jquery-ui.js"></script>
+
         <link rel="stylesheet" href="/static/css/index.css">
         <link href="https://fonts.googleapis.com/css?family=Exo:400,900" rel="stylesheet" type="text/css">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,900' rel='stylesheet' type='text/css'>
-
+        <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
     </head>
     <body>
-        <!-- barra fissata in alto con nome app e info -->
-        <nav class="navbar navbar-default navbar-fixed-top navbar-transparent">
+        <!-- prima navbar -->
+        <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <!-- nome app e menu responsive -->
                 <div class="navbar-header">
-                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                      <span class="sr-only">Toggle navigation</span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
-                      <span class="icon-bar"></span>
+                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-uno">
+                         <span class="sr-only">Toggle navigation</span>
+                         <span class="icon-bar"></span>
+                         <span class="icon-bar"></span>
+                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="javascript:void(0)">Scrasp</a>
-                    <p id="descrizione">Un servizio per l'annotazione semantica di documenti</p>
+                    <a class="navbar-brand" href="#">raschietto</a>
                 </div>
-
-                <div class="navbar-collapse collapse" aria-expanded="false" id="navbar-collapse">
+                <div class="navbar-collapse collapse" id="navbar-collapse-uno">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><p class="navbar-text">Un'applicazione per l'annotazione semantica di documenti</p></li>
+                    </ul>
                     <ul class="nav navbar-nav navbar-right">
-                    <!-- caricamento nuovo documento
-                    <li>
-                        <form class="navbar-form" role="search">
-                            Carica nuovo documento
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" data-placement="left" title="Carica un nuovo documento su cui aggiungere annotazioni">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                                </div>
-                            </div>
-                        </form>
-                    </li>-->
-                    <li><a href="http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso" title="Info sul progetto Raschietto"><span class="glyphicon glyphicon-info-sign"></span> Info progetto</a></li>
+                        <li><a href="http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso" title="Info sul progetto Raschietto"><span class="glyphicon glyphicon-info-sign"></span> Info progetto</a></li>
+                        <li><a href="#home" title="Ti serve aiuto?"><span class="glyphicon glyphicon-screenshot"></span> Help</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <!-- barra per autenticazione e caricamento documenti-->
-        <div class="container-fluid">
-            <div class="row barra">
+        <!-- barra per autenticazione e caricamento documento -->
+        <nav class="navbar navbar-default" id="secondnav">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-due">
+                     <span class="sr-only">Toggle navigation</span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                     <span class="icon-bar"></span>
+                </button>
                 <!-- modalità reader e annotator -->
-                <div class="col-md-3">
-                    <div>
-                        <button type="button" class="btn" id="annotatorMode" data-toggle="modal" data-target="#modalAutenticazione" data-backdrop="true" >Passa ad annotator mode</button>
-                        <button type="button" class="btn" id="readerMode">Torna a reader mode</button>
-                    </div>
-                    <div class="switch">
-                        <input type="checkbox"id="cmn-toggle-7" class="cmn-toggle cmn-toggle-yes-no"  data-toggle="tooltip" title="Passa a modalità annotator">
-                        <label for="cmn-toggle-7" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="modal" data-target="#modalAutenticazione"></label>
-                    </div>
-                </div>
-                <!-- caricamento nuovo documento -->
-                <div class="col-md-6">
-                    <form class="navbar-form" role="search">
-                        Carica nuovo documento
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" title="Carica un nuovo documento su cui aggiungere annotazioni">
-                            <div class="input-group-btn">
-                                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
-                            </div>
-                        </div>
-                    </form>
+                <input type="checkbox" id="modalitaToggle" class="cmn-toggle cmn-toggle-yes-no" >
+                <label id="modalitaToggleLabel" for="modalitaToggle" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="tooltip" data-placement="bottom" title="Passa a modalità annotator"></label>
                 </div>
 
-                <div class="col-md-3">
-                    <p id="utenteAutenticato">Nessun utente autenticato</p>
+                <div class="navbar-collapse collapse" id="navbar-collapse-due">
+                    <ul class="nav navbar-nav navbar-left">
+                    <li>
+                        <!-- caricamento nuovo documento -->
+                        <form class="navbar-form" role="search">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" data-placement="bottom" title="Carica un nuovo documento su cui aggiungere annotazioni">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                    <li>
+                        <p id="utenteAutenticato" class="navbar-text"></p>
+                    </li>
+                    </ul>
                 </div>
             </div>
-        </div>
+        </nav>
+        
+        <div id="wrapper">
+            <!-- Sidebar -->
+              <div id="sidebar-wrapper">
+                      <div class="panel-group">
+                          <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                        <h4 class="sidebar-brand">
+                                          <a id="menu-toggle">Menu<span id="main_icon" class="glyphicon glyphicon-align-justify"></span></a>
+                                        </h4>
+                                  </div>
+                            </div>
+                            <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                        <h4 class="sidebar-brand">
+                                          <a data-toggle="collapse" href="#doc">Documenti</a>
+                                        </h4>
+                                  </div>
+                                  <div id="doc" class="panel-collapse collapse">
+                                        <div class="panel-body" id="lista_doc"></div>
+                                  </div>
+                            </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-4">
-                <!-- checkboxes per filtri tipo di annotazione-->
-                <div class="filtri">
-                    <h4>Filtri tipo di annotazione</h4><br>
-                    <input type="checkbox" id="filtroURL" value="URL" checked/>
-                    <label for="filtroURL" id="labelURL">URL</label>
-                    <br>
-                    <input type="checkbox" id="filtroTitolo" value="Titolo" checked/>
-                    <label for="filtroTitolo" id="labelTitolo">Titolo</label>
-                    <br>
-                    <input type="checkbox" id="filtroAutore" value="Autore" checked/>
-                    <label for="filtroAutore" id="labelAutore">Autore</label>
-                    <br>
-                    <input type="checkbox" id="filtroAnnoDiPubblicazione" value="AnnoDiPubblicazione" checked/>
-                    <label for="filtroAnnoDIPubblicazione" id="labelAnnoDiPubblicazione">Anno di pubblicazione</label>
-                    <br>
-                    <input type="checkbox" id="filtroDOI" value="DOI" checked/>
-                    <label for="filtroDOI" id="labelDOI">DOI</label>
-                    <br>
-                    <input type="checkbox" id="filtroRetorica" value="Retorica" checked/>
-                    <label for="filtroRetorica" id="labelRetorica">Retorica</label>
-                    <br>
-                    <input type="checkbox" id="filtroCommento" value="Commento" checked/>
-                    <label for="filtroCommento" id="labelCommento">Commento</label>
-                    <br>
-                    <input type="checkbox" id="filtroCitazione" value="Citazione" checked/>
-                    <label for="filtroCitazione" id="labelCitazione">Citazione</label>
-                    <br>
-                </div>
-                <!-- checkboxes per filtri gruppi-->
-                <div class="filtri">
-                    <h4>Filtri gruppi</h4><br>
-                    <div id="listaGruppi"></div>
-                </div>
-                </div>
-                <!-- main area -->
-                <div class="col-sm-8">
-                    <div>
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-                            <li><a data-toggle="tab" href="#doc1">doc1</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane fade in active" id="home">
-                                <div>
-                                    <h4>ANTANI</h4>
-                                    <h5>Lista documenti</h5>
-                                    <div id="listaDocumenti"></div>
+                            <div class="panel panel-default">
+                                  <div class="panel-heading">
+                                        <h4 class="sidebar-brand">
+                                          <a data-toggle="collapse" href="#gruppi">Gruppi</a>
+                                        </h4>
+                                  </div>
+                                  <div id="gruppi" class="panel-collapse collapse">
+                                        <div class="panel-body" id="lista_gruppi"></div>
+                                  </div>
+                            </div>
+                        </div>
+              </div>
+
+
+            <!-- Page content -->
+            <div id="page-content-wrapper">
+                <!-- Keep all page content within the page-content inset div! -->
+                <div class="page-content inset">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div>
+                                <ul class="nav nav-tabs">
+                                    <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+                                    <li><a data-toggle="tab" href="#doc1">doc1</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade in active" id="home">
+                                        <div>
+                                            <h4>ANTANI</h4>
+                                            <h5>Lista documenti</h5>
+                                            <div id="listaDocumenti"></div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="doc1">
+                                        <div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="doc1">
@@ -159,7 +164,7 @@
         <!-- Modal-->
         <!-- Modal autenticazione-->
         <div class="modal fade" id="modalAutenticazione" role="dialog">
-            <div class="modal-dialog modal-sm">
+            <div class="modal-dialog modal-md">
                  <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -168,26 +173,30 @@
                     <div class="modal-body col-md-12">
                         <form class="form col-md-12 center-block">
                             <div class="form-group">
-                                <input type="text" class="form-control input-lg" id="nomecognome" placeholder="Nome e cognome" required>
+                                <input type="text" class="form-control input-md" id="nomecognome" placeholder="Nome e cognome" required>
                             </div>
                             <div class="form-group">
-                              <input type="email" class="form-control input-lg" id="email" placeholder="Email" required>
+                              <input type="email" class="form-control input-md" id="email" placeholder="Email" required>
                             </div>
                             <div class="form-group">
-                                <button type="button" class="btn btn-default button-lg" id="autenticati">Autenticati</button>
+                                <button type="button" class="btn button-lg" id="autenticati">Autenticati in modalità annotator</button>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <div class="col-md-12"></div>
+                        <div class="col-md-12">
+                            <p id="messaggioErrore"></p>
+                        </div>
                     </div>
                  </div>
             </div>
         </div>
+
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="/static/js/initscrasp.js" type="text/javascript"></script>
-        <script src="/static/js/autenticazione.js" type="text/javascript"></script>
+        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
     </body>
 </html>
+

@@ -10,7 +10,8 @@ __author__ = 'Los Raspadores'
     pip install rdflib
     pip install SPARQLWrapper
 
-    spazio web nostro gruppo url: http://ltw1537.web.cs.unibo.it/
+    CONTENT TYPE dei risultati ritornati(select):JSON O XML;  CONTENT TYPE del grafo inserito(graph):TURTLE, N3
+
 
     *** SPARQL Service - endpoint ufficiale del progetto = triplestore che si occupa di memorizzare le annotazioni ***
         SPARQL endpoint (server Apache Jena Fuseki) URL >>> http://tweb2015.cs.unibo.it:8080/
@@ -49,15 +50,22 @@ __author__ = 'Los Raspadores'
 
 # moduli importati
 import rdflib  # per leggere e manipolare grafi RDF
-from SPARQLWrapper import SPARQLWrapper, JSON, N3 # per interrogare uno SPARQL end-point
-# from rdflib.namespace import RDF  # namespace per RDF
+from SPARQLWrapper import SPARQLWrapper, JSON, N3, TURTLE # per interrogare uno SPARQL end-point
+from rdflib.namespace import RDF  # namespace per RDF
 from rdflib import Namespace  # modulo Namespace per crearne di nuovi
 
+# endpoint
+sparql_endpoint_remoto = "http://tweb2015.cs.unibo.it:8080/data/"
+sparql_endpoint_locale = "http://localhost:3030/data/"
 
 # user e pass autenticazione grafo
-USER = "FF79%bAW"
-PASS = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
+PASS = "FF79%bAW"
+USER = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
+# grafi
+nome_grafo_gruppo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
+nome_grafo_25_ = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1525"
+nome_grafo_38 = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1538"
 
 # dichiarazione namespace
 FOAF = Namespace("http://xmlns.com/foaf/0.1/")
@@ -65,6 +73,52 @@ MY = Namespace("http://www.essepuntato.it/")
 DATA = Namespace("http://www.essepuntato.it/2013/citalo/test/data/")
 OA = Namespace("http://www.openannotation.org/spec/core/")
 SIOC = Namespace("http://rdfs.org/sioc/ns#")
+
+
+prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+                PREFIX frbr:  <http://purl.org/vocab/frbr/core#>
+                PREFIX cito:  <http://purl.org/spar/cito/>
+                PREFIX fabio: <http://purl.org/spar/fabio/>
+                PREFIX sro:   <http://salt.semanticauthoring.org/ontologies/sro#>
+                PREFIX dcterms: <http://purl.org/dc/terms/>
+                PREFIX schema: <http://schema.org/>
+                PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX oa:    <http://www.w3.org/ns/oa#>
+                PREFIX rsch:  <http://vitali.web.cs.unibo.it/raschietto/>
+                PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+                PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                PREFIX sem:   <http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#>
+                PREFIX skos:  <http://www.w3.org/2009/08/skos-reference/skos.html>
+                PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>
+                PREFIX deo:   <http://purl.org/spar/deo/>
+                PREFIX foaf: <http://xmlns.com/foaf/0.1/> """
+
+annotazione_prova = """
+    [] a oa:Annotation ;
+        rdfs:label "DOI"^^xsd:string ;
+        rsch:type "hasDoi"^^xsd:string ;
+        oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
+        oa:annotatedBy <mailto:alice.graziosi@gmail.com>  ;
+        oa:hasBody _:doi ;
+        oa:hasTarget [ a oa:SpecificResource ;
+                oa:hasSelector [ a oa:FragmentSelector ;
+                        rdf:value "form1_table3_tr1_td1_table5_tr1_td1_table1_tr1_td2_h34"^^xsd:string ;
+                        oa:end "190"^^xsd:nonNegativeInteger ;
+                        oa:start "163"^^xsd:nonNegativeInteger ] ;
+                oa:hasSource <http://www.dlib.org/dlib/july15/downs/07downs.html> ] .
+
+    <mailto:alice.graziosi@gmail.com> a foaf:mbox ;
+            schema:email "alice.graziosi@gmail.com" ;
+            foaf:name "LosRaspadores"^^xsd:string ;
+            rdfs:label "LosRaspadores"^^xsd:string .
+
+    _:doi a rdf:Statement;
+        rdfs:label "il work ha come doi"^^xsd:string ;
+            rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
+            rdf:predicate prism:doi ;
+            rdf:object "antani"^^xsd:string .
+
+    <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression . """
 
 
 # funzione per visualizzare le triple presenti in un grafo RDF
@@ -75,76 +129,95 @@ def print_triples(graph):
 
     # secondo modo (migliore)
     # si possono visualizzare triple RDF serializzate in XML, Turtle, N-triples etc.
-    # nel nostro caso si preferisce il grafo serializzato nel formato N-Ttriple
+    # nel nostro caso si preferisce il grafo serializzato nel formato N-Triple
     print graph.serialize(format="nt")  # serializzazione in N-triples
     # print graph.serialize(format="turtle")  # serializzazione in Turtle
 
 
-def contact_sparql_endpoint():
-
+# 'INSERT' per inserire dati da un file in un grafo (servizio /update, metodo POST)
+def query_insert_file(nome_grafo, file):
     rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
-    rdf_graph.load("data\data.owl")  # dati caricati da un file .owl
-
-    nome_grafo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
-
-    # 'INSERT' per inserire dati dal triplestore (servizio /update, metodo POST)
-    query_insert = """INSERT DATA {
-                        GRAPH <%s> { %s }
-                    }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
+    rdf_graph.load("data\\"+file)  # dati caricati da un file .owl
+    query = """INSERT DATA {
+                   GRAPH <%s> { %s }
+               }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
+    return query
 
 
-    # 'DELETE' per rimuovere  dati dal triplestore (servizio /update, metodo POST)
-    query_delete = """DELETE DATA {
+# 'DELETE' per rimuovere  dati di un file da un grafo (servizio /update, metodo POST)
+def query_delete_file(nome_grafo, file):
+    rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
+    rdf_graph.load("data\\"+file)  # dati caricati da un file .owl
+    query = """DELETE DATA {
                         GRAPH <%s>  { %s }
                     }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
+    return query
 
-    # dataset SPARQL endpoint locale
-    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
 
-    # set della query SPARQL
-    sparql_endpoint.setQuery(query_insert)
+# 'CLEAR GRAPH' per rimuovere le triple da un grafo
+def query_clear_graph(nome_grafo):
+    query = """CLEAR GRAPH <%s>""" % nome_grafo
+    return query
+
+
+# 'SELECT' all dal grafo di default
+def query_select_all_default():
+    query = """
+        SELECT ?subject ?predicate ?object
+            WHERE {
+            GRAPH ?g {?subject ?predicate ?object}
+        }"""
+    return query
+
+# 'SELECT' all dal grafo specificato >>> LIMIT numero
+def query_select_all_grafo(nome_grafo):
+    query = """
+        SELECT ?subject ?predicate ?object
+        FROM NAMED <%s>
+        WHERE {
+            GRAPH ?g {?subject ?predicate ?object}
+        }""" % (nome_grafo)
+    return query
+
+
+# per query insert e delete
+def do_query_post(endpoint, query):
+    sparql_endpoint = SPARQLWrapper(endpoint+"update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
+    sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('POST')
-
-    # esecuzione della query
     sparql_endpoint.query()
 
 
-    # query SPARQL che ritorna tutte le triple del grafo specificato (se nn specificao >>> quello di default)
-    query_all = """
-        SELECT ?subject ?predicate ?object
-            FROM NAMED <%s>
-            WHERE {
-              GRAPH ?g {?subject ?predicate ?object}
-            }
-        """ % nome_grafo
-
-    # JSON serialization
-    print '\n\n*** JSON serialization'
-    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query", returnFormat="json")
-    # sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/sparql", returnFormat="json")  # servizio query = servizio sparql
-
-    # set della query SPARQL
-    sparql_endpoint.setQuery(query_all)
+# per query select
+def do_query_get(endpoint, query):
+    sparql_endpoint = SPARQLWrapper(endpoint+"query", returnFormat="json")
+    sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('GET')
-
-    # esecuzione della query
     results = sparql_endpoint.query().convert()
-
     for result in results["results"]["bindings"]:
-        print(result)
+        print(result["subject"]["value"])+"  "+(result["predicate"]["value"])+"  "+(result["object"]["value"])
 
 
-    # N3 serializaion (incompleto)
-    print '\n\n*** N3 Example'
-    sparql_endpoint = SPARQLWrapper("http://localhost:3030/data/query", returnFormat="nt")
-    sparql_endpoint.setQuery(query_all)
-    sparql_endpoint.setMethod('GET')
-    results = sparql_endpoint.query().convert()
-    print results
+def query_annotazione(nome_grafo, annotazione):
+    query = prefissi + """
+                INSERT DATA {
+                    GRAPH <%s> { %s }
+                }""" % (nome_grafo, annotazione)
+    return query
 
 
 def main():
-    contact_sparql_endpoint()
 
+    query = query_insert_file(nome_grafo_gruppo, "travel.owl")
+    do_query_post(sparql_endpoint_locale, query)
+
+    query = query_clear_graph(nome_grafo_gruppo)
+    do_query_post(sparql_endpoint_locale, query)
+
+    query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
+    do_query_post(sparql_endpoint_locale, query)
+
+    query = query_select_all_grafo(nome_grafo_gruppo)
+    do_query_get(sparql_endpoint_locale, query)
     
 main()
