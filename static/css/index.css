@@ -206,6 +206,16 @@ button.button-lg:active {
     color: Salmon;
 }
 
+.col-sm-4 {
+    padding-left: 5px;
+}
+
+.panel-default>.panel-heading .badge {
+    color: #FFFFFF;
+    background-color: #44B78B;
+    margin-left: 20px;
+    }
+
 /*Stile menu laterale*/
 .panel-group .panel{
     border-radius: 0px;
@@ -221,7 +231,19 @@ button.button-lg:active {
     margin-right:0px;
 }
 
-#wrapper {
+#lista_doc.panel-body:before{
+    margin:-8px;
+}
+
+#divDocumento{
+    border: 1px solid;
+    padding: 3px;
+    margin-top: -1px;
+    margin-left: -16px;
+    margin-right: -16px;
+}
+
+/*#wrapper {
     padding-left: 50px;
     transition: all .4s ease 0s;
     height: 100%
@@ -262,7 +284,7 @@ button.button-lg:active {
 #page-content-wrapper {
   width: 100%;
 }
-
+*/
 .panel-group  a {
     color:#0C3C26;
     text-decoration: none;
@@ -278,22 +300,6 @@ button.button-lg:active {
     -ms-transition: background .5s;
     transition: background .5s;
 }
-/*.sidebar_name {
-    padding-top: 25px;
-    color: #fff;
-    opacity: .7;
-}
-
-.sidebar-nav li {
-  line-height: 40px;
-  text-indent: 20px;
-}
-
-.sidebar-nav li a {
-  color: #999999;
-  display: block;
-  text-decoration: none;
-}*/
 
 .panel-group  a:hover {
   color: #2DB78B;
@@ -304,23 +310,8 @@ button.button-lg:active {
  .panel-group  a:active, .panel-group  a:focus {
   text-decoration: none;
 }
-/*
-.sidebar-nav > .sidebar-brand {
-  height: 65px;
-  line-height: 60px;
-  font-size: 18px;
-}
 
-.sidebar-nav > .sidebar-brand a {
-  color: #999999;
-}
-
-.sidebar-nav > .sidebar-brand a:hover {
-  color: #fff;
-  background: none;
-}*/
-
-#main_icon
+/*#main_icon
 {
    float:right;
    padding-right: 4px;
@@ -339,20 +330,22 @@ button.button-lg:active {
   display: inline-block;
 }
 
-@media (max-width:767px) {
+@media (max-width:768px) {
     #wrapper {
-    padding-left: 50px;
-    transition: all .4s ease 0s;
+    padding-left: 0px;
+    transition: none;
 }
 #sidebar-wrapper {
-    left: 70px;
+    left: 300px;
+    width:100%;
 }
 #wrapper.active {
-    padding-left: 300px;
+    padding-left: 0px;
+    width: 100%;
 }
 #wrapper.active #sidebar-wrapper {
-    left: 300px;
-    width: 300px;
-    transition: all .4s ease 0s;
+    left: 0px;
+    width: 100%;
+    transition: none;
 }
-}
+}*/

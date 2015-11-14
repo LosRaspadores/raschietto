@@ -90,50 +90,71 @@
                 </div>
             </div>
         </nav>
-        
-        <div id="wrapper">
+
+        <!--<div id="wrapper" class="container-fluid">-->
+        <div class="container-fluid">
+            <div class="row">
             <!-- Sidebar -->
-              <div id="sidebar-wrapper">
-                      <div class="panel-group">
-                          <div class="panel panel-default">
-                                  <div class="panel-heading">
-                                        <h4 class="sidebar-brand">
-                                          <a id="menu-toggle">Menu<span id="main_icon" class="glyphicon glyphicon-align-justify"></span></a>
-                                        </h4>
-                                  </div>
-                            </div>
-                            <div class="panel panel-default">
-                                  <div class="panel-heading">
-                                        <h4 class="sidebar-brand">
-                                          <a data-toggle="collapse" href="#doc">Documenti</a>
-                                        </h4>
-                                  </div>
-                                  <div id="doc" class="panel-collapse collapse">
-                                        <div class="panel-body" id="lista_doc"></div>
-                                  </div>
-                            </div>
-
-                            <div class="panel panel-default">
-                                  <div class="panel-heading">
-                                        <h4 class="sidebar-brand">
-                                          <a data-toggle="collapse" href="#gruppi">Gruppi</a>
-                                        </h4>
-                                  </div>
-                                  <div id="gruppi" class="panel-collapse collapse">
-                                        <div class="panel-body" id="lista_gruppi"></div>
-                                  </div>
-                            </div>
+                    <!--<div id="sidebar-wrapper">-->
+                <div class="col-sm-4">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                              <div class="panel-heading">
+                                    <h4 class="sidebar-brand">
+                                      <a data-toggle="collapse" href="#doc">Documenti<span class="badge" id="numDoc">0</span></a>
+                                    </h4>
+                              </div>
+                              <div id="doc" class="panel-collapse collapse">
+                                    <div class="panel-body" id="lista_doc">
+                                        <div id="divDocumento">
+                                            Titolo documento
+                                        </div>
+                                    </div>
+                              </div>
                         </div>
-              </div>
+
+                        <div class="panel panel-default">
+                              <div class="panel-heading">
+                                    <h4 class="sidebar-brand">
+                                      <a data-toggle="collapse" href="#gruppi">Gruppi<span class="badge" id="numGru">0</span></a>
+                                    </h4>
+                              </div>
+                              <div id="gruppi" class="panel-collapse collapse">
+                                    <div class="panel-body" id="lista_gruppi"></div>
+                              </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                              <div class="panel-heading">
+                                    <h4 class="sidebar-brand">
+                                      <a data-toggle="collapse" href="#annotazioni">Filtri</a>
+                                    </h4>
+                              </div>
+                              <div id="annotazioni" class="panel-collapse collapse">
+                                    <div class="panel-body" id="lista_annot">
+                                        <a>Autore</a><br>
+                                        <a>Anno pubblicazione</a><br>
+                                        <a>Citazioni</a><br>
+                                        <a>Commenti</a><br>
+                                        <a>DOI</a><br>
+                                        <a>Funzioni retoriche</a><br>
+                                        <a>Titolo</a><br>
+                                        <a>URL</a><br>
+                                    </div>
+                              </div>
+                        </div>
+                    </div>
+                </div>
 
 
-            <!-- Page content -->
-            <div id="page-content-wrapper">
-                <!-- Keep all page content within the page-content inset div! -->
-                <div class="page-content inset">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div>
+
+                    <!-- Page content -->
+                    <!--<div id="page-content-wrapper" class="col-sm-8">-->
+                    <!--&lt;!&ndash; Keep all page content within the page-content inset div! &ndash;&gt;-->
+                    <!--<div class="page-content inset">-->
+                    <!--<div class="row">-->
+                <div class="col-sm-8">
+
                                 <ul class="nav nav-tabs">
                                     <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
                                     <li><a data-toggle="tab" href="#doc1">doc1</a></li>
@@ -152,11 +173,11 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
+
+
 
         <!-- Modal-->
         <!-- Modal autenticazione-->
@@ -187,11 +208,14 @@
                     </div>
                  </div>
             </div>
+            </div>
+
         </div>
 
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
         <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
         <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
     </body>

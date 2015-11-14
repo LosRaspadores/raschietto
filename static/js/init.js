@@ -5,7 +5,9 @@ $( document ).ready(function() {
         $("#wrapper").toggleClass("active");
     });
 
+
     $('[data-toggle="tooltip"]').tooltip();
+
     var stickyNavTop = $('#secondnav').offset().top;
 
     var stickyNav = function(){
@@ -43,6 +45,7 @@ $( document ).ready(function() {
             out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
         }
         $('div#lista_gruppi.panel-body').html(out);
+        $('#numGru').html(arr.length);
     }
 
     $.ajax({
@@ -65,10 +68,8 @@ $( document ).ready(function() {
             out += '<a href="' + arr[i].url + '">' +arr[i].title + '</a><br>';
         }
        $('div#lista_doc.panel-body').html(out);
+       $('#numDoc').html(arr.length);
     }
-        document.getElementById("listaDocumenti").innerHTML = out;
-    };
-
 
     /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
     function addZero(i) {
@@ -86,6 +87,10 @@ $( document ).ready(function() {
                     + addZero(currentdate.getMinutes());
 
 });
+
+
+
+
 
 
 
