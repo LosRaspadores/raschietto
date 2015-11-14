@@ -1,13 +1,11 @@
 $( document ).ready(function() {
 
-    $("#menu-toggle").click(function(e) {
-        e.preventDefault();
-        $("#wrapper").toggleClass("active");
-    });
-
+//    $("#menu-toggle").click(function(e) {
+//        e.preventDefault();
+//        $("#wrapper").toggleClass("active");
+//    });
 
     $('[data-toggle="tooltip"]').tooltip();
-
     var stickyNavTop = $('#secondnav').offset().top;
 
     var stickyNav = function(){
@@ -65,11 +63,14 @@ $( document ).ready(function() {
         var out = "";
         var i;
         for(i = 0; i < arr.length; i++) {
-            out += '<a href="' + arr[i].url + '">' +arr[i].title + '</a><br>';
+            out += '<a class="classeDocumenti" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
         }
        $('div#lista_doc.panel-body').html(out);
        $('#numDoc').html(arr.length);
     }
+        
+    };
+
 
     /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
     function addZero(i) {
@@ -89,10 +90,23 @@ $( document ).ready(function() {
 });
 
 
+function mostraDocumento(element){
+    var urlDoc = $(element).attr('value')
+    $.ajax({
+        url: '/scrapingSingoloDocumento',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result) {
+            singoloDocumento(result);
+        },
+        error: function(error) {
+            alert("Error: " + error);
+        }
+    });
+}
 
-
-
-
-
+function singoloDocumento(str){
+    $("#singoloDocumento").html(str);
+}
 
 

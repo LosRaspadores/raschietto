@@ -11,11 +11,12 @@ __author__ = 'Los Raspadores'
     spazio web nostro gruppo url: http://ltw1537.web.cs.unibo.it/
 """
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 # script importati
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
+from scrapingSingoloDocumento import scraping_singolo_documento
 
 
 # initializzazione applicazione
@@ -50,9 +51,16 @@ def return_gruppi():
     return data
 
 
+@app.route('/scrapingSingoloDocumento')
+def return_singolo_documento():
+    url = request.args.get('url')
+    # print("***** "+url)
+    data = scraping_singolo_documento(url)
+    return data
+
+
 # launch app
 if __name__ == "__main__":
-
     # app.run(host='bla', port=8080)
 
     # in locale: run on default port localhost:5000
