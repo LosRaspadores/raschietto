@@ -356,3 +356,9 @@ button.button-lg:active {
     transition: all .4s ease 0s;
 }
 }
+
+/* Visualizzazione documento */
+#singoloDocumento{
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 14px;
+}

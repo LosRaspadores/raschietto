@@ -32,14 +32,15 @@ def scraping_singolo_documento(url):
     print("url " + url)
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    print ("domain: " + domain)
+    # print ("domain: " + domain)
     doc_html = br.open(url).read()
     soup = BeautifulSoup(doc_html, 'html.parser')
     html = domain_manager(url, domain, soup)
-    # response = br.response()
-    # headers = response.info().headers
-    # print(response)
-    # print(headers)
+
+    for a in soup.findAll('a', href=True):
+        del a['href']
+    for t in soup.findAll('a', target=True):
+        del t['target']
 
     return str(html)
 
@@ -58,17 +59,13 @@ def domain_manager(url, domain, soup):
             absolute = urljoin(url, relative)
             # print(absolute)  # http://www.dlib.org/dlib/november14/brook/
             i["src"] = absolute
-
-        print(html)
         return html
     elif domain == 'http://rivista-statistica.unibo.it/' \
             or 'http://almatourism.unibo.it/':
         html = soup.find("div", {"id": "content"})
-        print(html)
         return html
     elif domain == 'http://antropologiaeteatro.unibo.it/':  # non funziona
         html = soup.find("div", {"id": "content"})
-        print(html)
         return html
 
 
