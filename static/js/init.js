@@ -5,7 +5,6 @@ $( document ).ready(function() {
 //        $("#wrapper").toggleClass("active");
 //    });
 
-
     $('[data-toggle="tooltip"]').tooltip();
     var stickyNavTop = $('#secondnav').offset().top;
 
@@ -94,8 +93,19 @@ $( document ).ready(function() {
                     + currentdate.getHours() + ":"
                     + addZero(currentdate.getMinutes());
 
-});
 
+    $(function() { //replace(/(/)/g, '');
+      addTab = function(text, url){
+            var url = url.replace(/([/|_.|_:|_-])/g, '');
+            $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"'>Doc<button class='close closeTab' type='button' onclick='closeTab(this)'>x</button></a></li>");
+            $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
+            $("#"+url+"t").html(text);
+       }
+    });
+
+
+
+});
 
 function mostraDocumento(element){
     var urlDoc = $(element).attr('value');
@@ -106,7 +116,7 @@ function mostraDocumento(element){
         type: 'GET',
         data: {url: urlDoc},
         success: function(result) {
-            singoloDocumento(result);
+            singoloDocumento(result, urlDoc);
         },
         error: function(error) {
             alert("Error: " + error);
@@ -114,13 +124,18 @@ function mostraDocumento(element){
     });
 }
 
-function singoloDocumento(str){
-    $("#singoloDocumento").html(str);
-
+function singoloDocumento(str, url){
+    //$("#singoloDocumento").html(str);
+    addTab(str, url);
 }
 
 function mostraAnnotGruppo(element){
         $(element).addClass("active").siblings().removeClass("active");
     }
 
-
+function closeTab(element){
+    var tabContentId = $(element).parent().attr("href");
+    $(element).parent().parent().remove(); //remove li of tab
+    $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
+    $(tabContentId).remove(); //remove respective tab content
+}

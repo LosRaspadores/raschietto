@@ -349,3 +349,9 @@ button.button-lg:active {
   text-decoration: none;
   color: #2DB78B;
 }
+
+/* Visualizzazione documento */
+#singoloDocumento{
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 14px;
+}
