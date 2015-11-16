@@ -34,8 +34,7 @@ import mechanize
 import json
 import urlparse
 
-
-# Browser mechanize
+ # Browser mechanize
 br = mechanize.Browser()
 
 

@@ -14,7 +14,7 @@ __author__ = 'Los Raspadores'
 """
 
 
-# moduli importati
+ # moduli importati
 from pyquery import PyQuery
 from urlparse import urlparse
 import json

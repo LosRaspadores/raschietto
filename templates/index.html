@@ -84,8 +84,7 @@
                         </form>
                     </li>
                     <li>
-                        <p id="utenteAutenticato" class="navbar-text"></p>
-                    </li>
+                        <p id="utenteAutenticato" class="navbar-text">bla bla</p></li>
                     </ul>
                 </div>
             </div>
@@ -96,7 +95,7 @@
             <div class="row">
             <!-- Sidebar -->
                     <!--<div id="sidebar-wrapper">-->
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <div class="panel-group">
                         <div class="panel panel-default">
                               <div class="panel-heading">
@@ -105,10 +104,12 @@
                                     </h4>
                               </div>
                               <div id="doc" class="panel-collapse collapse">
-                                    <div class="panel-body" id="lista_doc">
-                                        <div id="divDocumento">
-                                            Titolo documento
-                                        </div>
+                                    <!--<div class="panel-body" id="lista_doc">-->
+                                        <!--<div id="divDocumento">-->
+                                            <!--Titolo documento-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                  <div class="list-group" id="lista_doc">
                                     </div>
                               </div>
                         </div>
@@ -120,7 +121,22 @@
                                     </h4>
                               </div>
                               <div id="gruppi" class="panel-collapse collapse">
-                                    <div class="panel-body" id="lista_gruppi"></div>
+                                    <div class="list-group" id="lista_gruppi">
+                                        <!--<div class="btn-group" data-toggle="buttons">-->
+                                            <!--<label class="btn btn-primary">-->
+                                                <!--<input type="checkbox" autocomplete="off">-->
+                                                <!--<span class="glyphicon glyphicon-ok"></span>-->
+                                            <!--</label><br>-->
+                                            <!--<label class="btn btn-primary">-->
+                                                <!--<input type="checkbox" autocomplete="off">-->
+                                                <!--<span class="glyphicon glyphicon-ok"></span>-->
+                                            <!--</label><br>-->
+                                            <!--<label class="btn btn-primary">-->
+                                                <!--<input type="checkbox" autocomplete="off">-->
+                                                <!--<span class="glyphicon glyphicon-ok"></span>-->
+                                            <!--</label><br>-->
+                                        <!--</div>-->
+                                    </div>
                               </div>
                         </div>
 
@@ -132,14 +148,22 @@
                               </div>
                               <div id="annotazioni" class="panel-collapse collapse">
                                     <div class="panel-body" id="lista_annot">
-                                        <a>Autore</a><br>
-                                        <a>Anno pubblicazione</a><br>
-                                        <a>Citazioni</a><br>
-                                        <a>Commenti</a><br>
-                                        <a>DOI</a><br>
-                                        <a>Funzioni retoriche</a><br>
-                                        <a>Titolo</a><br>
-                                        <a>URL</a><br>
+                                        <input type="checkbox" id="toggleAutore" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleAutoreLabel" for="toggleAutore" data-on="Autore" data-off="Autore"></label>
+                                        <input type="checkbox" id="toggleAnnoP" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleAnnoPLabel" for="toggleAnnoP" data-on="Anno Pubblicazione" data-off="Anno Pubblicazione"></label>
+                                        <input type="checkbox" id="toggleCit" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleCitLabel" for="toggleCit" data-on="Citazioni" data-off="Citazioni"></label>
+                                        <input type="checkbox" id="toggleComm" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleCommLabel" for="toggleComm" data-on="Commenti" data-off="Commenti"></label>
+                                        <input type="checkbox" id="toggleDOI" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleDOILabel" for="toggleDOI" data-on="DOI" data-off="DOI"></label>
+                                        <input type="checkbox" id="toggleFunzRet" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleFunzRetLabel" for="toggleFunzRet" data-on="Funzioni Retoriche" data-off="Funzioni Retoriche"></label>
+                                        <input type="checkbox" id="toggleTitolo" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleTitoloLabel" for="toggleTitolo" data-on="Titolo" data-off="Titolo"></label>
+                                        <input type="checkbox" id="toggleURL" class="cmn-toggle cmn-toggle-yes-no" >
+                                        <label id="toggleURLLabel" for="toggleURL" data-on="URL" data-off="URL"></label>
                                     </div>
                               </div>
                         </div>
@@ -153,7 +177,7 @@
                     <!--&lt;!&ndash; Keep all page content within the page-content inset div! &ndash;&gt;-->
                     <!--<div class="page-content inset">-->
                     <!--<div class="row">-->
-                <div class="col-sm-8">
+                <div class="col-sm-9">
 
                                 <ul class="nav nav-tabs">
                                     <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
@@ -215,9 +239,11 @@
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <!--<script src="//raw.github.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>-->
         <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
         <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
         <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
+
     </body>
 </html>
 

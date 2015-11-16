@@ -90,7 +90,7 @@ body {
 .cmn-toggle {
     position: absolute;
     margin-left: -9999px;
-    visibility: hidden; //nasconde la checkbox
+    visibility: hidden; /*nasconde la checkbox*/
 }
 
 .cmn-toggle + label {
@@ -104,6 +104,17 @@ body {
 input.cmn-toggle-yes-no + label {
     width: 210px;
     height: 50px;
+}
+
+div#lista_annot.panel-body label#toggleURLLabel{
+    margin-bottom: 0px;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label{
+    height: 35px;
+    width: 190px;
+    margin: auto;
+    margin-bottom: 5px;
 }
 
 input.cmn-toggle-yes-no + label:before,
@@ -121,6 +132,10 @@ input.cmn-toggle-yes-no + label:after {
     line-height: 50px;
 }
 
+#lista_annot input.cmn-toggle-yes-no + label:before, #lista_annot input.cmn-toggle-yes-no + label:after{
+    line-height: 40px;
+}
+
 input.cmn-toggle-yes-no + label:before {
     background-color: #0C3C26;
     content: attr(data-off);
@@ -128,6 +143,10 @@ input.cmn-toggle-yes-no + label:before {
     backface-visibility: hidden;
 }
 
+#lista_annot input.cmn-toggle-yes-no + label:before {
+    background-color: #DCDCDC;
+    color: #0C3C26;
+}
 input.cmn-toggle-yes-no + label:after {
     background-color: white;
     color: #0C3C26;
@@ -137,6 +156,46 @@ input.cmn-toggle-yes-no + label:after {
     backface-visibility: hidden;
 }
 
+#lista_annot input.cmn-toggle-yes-no + label#toggleAutoreLabel:after {
+    background-color: #FFFF00;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleAnnoPLabel:after {
+    background-color: #7FFF00;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleCitLabel:after {
+   background-color: #ff0000;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleCommLabel:after {
+    background-color: #00b33c;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleDOILabel:after {
+    background-color: #007fff;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleFunzRetLabel:after {
+     background-color: #ff9900;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleTitoloLabel:after{
+    background-color: #ff0080;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleURLLabel:after {
+    background-color: #66ccff;
+    color:white;
+}
+
 input.cmn-toggle-yes-no:checked + label:before {
     transform: rotateY(180deg);
 }
@@ -144,6 +203,21 @@ input.cmn-toggle-yes-no:checked + label:after {
     transform: rotateY(0);
 }
 
+
+.btn-primary.active{
+    background-color: #44B78B;
+    border-color: #44B78B;
+}
+
+.btn-primary:hover {
+    background-color: #44B78B;
+    border-color: #39735C;
+}
+
+.btn-primary.active:hover{
+    background-color: #44B78B;
+    border-color: #39735C;
+}
 
 /* bottone autenticazione */
 button.button-lg {
@@ -206,9 +280,6 @@ button.button-lg:active {
     color: Salmon;
 }
 
-.col-sm-4 {
-    padding-left: 5px;
-}
 
 .panel-default>.panel-heading .badge {
     color: #FFFFFF;
@@ -219,20 +290,22 @@ button.button-lg:active {
 /*Stile menu laterale*/
 .panel-group .panel{
     border-radius: 0px;
-    margin-bottom: -5px; /*spazio tra i pannelli*/
+    margin-bottom: -3px; /*spazio tra i pannelli*/
 }
 
 .panel-default > .panel-heading{
     background-color: #f5f5f5;
+    font-variant: small-caps;
+    font-size: 19px;
+    height: 40px;
+}
+.panel-default > .panel-heading h4 {
+    margin-top: 0px;
 }
 
 .row{
     margin-left:0px;
     margin-right:0px;
-}
-
-#lista_doc.panel-body:before{
-    margin:-8px;
 }
 
 #divDocumento{
@@ -243,109 +316,36 @@ button.button-lg:active {
     margin-right: -16px;
 }
 
-/*#wrapper {
-    padding-left: 50px;
-    transition: all .4s ease 0s;
-    height: 100%
+.panel>.panel-collapse>.list-group .list-group-item{
+    width:100%;
+    margin-bottom: -20px;
+    background-color: white;
 }
 
-#sidebar-wrapper{
-    margin-left: -300px;
-    left: 50px;
-    width: 300px;
-    background: rgb(255, 255, 255);
-    position: absolute;
-    height: 100%;
-    z-index: 10000;
-    transition: all .4s ease 0s;
+.panel>.panel-collapse>.list-group a.list-group-item.active{
+    color: white;
+    background-color: #0C3C26;
+    border-color: #0C3C26;
 }
 
-.sidebar-nav {
-    display: block;
-    float: left;
-    width: 300px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-#page-content-wrapper {
-    padding-left: 0;
-    margin-left: 0;
-    width: 100%;
-    height: auto;
-}
-#wrapper.active {
-    padding-left: 300px;
-}
-#wrapper.active #sidebar-wrapper{
-    left: 300px;
+.panel>.panel-heading+.panel-collapse>.list-group .list-group-item:last-of-type{
+    border-bottom: 0px;
 }
 
-#page-content-wrapper {
-  width: 100%;
-}
-*/
-.panel-group  a {
+.panel-group  a, .panel-group a:visited {
     color:#0C3C26;
     text-decoration: none;
-    font-size: 18px;
-    font-variant: small-caps;
     font-weight: 600;
     width: 300px;
     background: #F5F5F5;
-    /*border-bottom: 1px solid #1A1A1A;*/
-    -webkit-transition: background .5s;
-    -moz-transition: background .5s;
-    -o-transition: background .5s;
-    -ms-transition: background .5s;
-    transition: background .5s;
 }
 
 .panel-group  a:hover {
   color: #2DB78B;
-  /*background: rgba(255,255,255,0.2);*/
   text-decoration: none;
 }
 
- .panel-group  a:active, .panel-group  a:focus {
+ .panel-group  a:active {
   text-decoration: none;
+  color: #2DB78B;
 }
-
-/*#main_icon
-{
-   float:right;
-   padding-right: 4px;
-   padding-top: 0px;
-}
-
-.content-header {
-  height: 65px;
-  line-height: 65px;
-}
-
-.content-header h1 {
-  margin: 0;
-  margin-left: 20px;
-  line-height: 65px;
-  display: inline-block;
-}
-
-@media (max-width:768px) {
-    #wrapper {
-    padding-left: 0px;
-    transition: none;
-}
-#sidebar-wrapper {
-    left: 300px;
-    width:100%;
-}
-#wrapper.active {
-    padding-left: 0px;
-    width: 100%;
-}
-#wrapper.active #sidebar-wrapper {
-    left: 0px;
-    width: 100%;
-    transition: none;
-}
-}*/

@@ -5,6 +5,7 @@ $( document ).ready(function() {
 //        $("#wrapper").toggleClass("active");
 //    });
 
+
     $('[data-toggle="tooltip"]').tooltip();
     var stickyNavTop = $('#secondnav').offset().top;
 
@@ -40,9 +41,10 @@ $( document ).ready(function() {
         var out = "";
         var i;
         for(i = 0; i < arr.length; i++) {
-            out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
+            //out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
+            out += '<a class="list-group-item" value="' + arr[i].id + '" onclick="mostraAnnotGruppo(this)">' +arr[i].nome + '</a><br>';
         }
-        $('div#lista_gruppi.panel-body').html(out);
+        $('div#lista_gruppi').html(out);
         $('#numGru').html(arr.length);
     }
 
@@ -63,13 +65,18 @@ $( document ).ready(function() {
         var out = "";
         var i;
         for(i = 0; i < arr.length; i++) {
-            out += '<a class="classeDocumenti" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
+            out += '<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
         }
-       $('div#lista_doc.panel-body').html(out);
+       $('div#lista_doc').html(out);
        $('#numDoc').html(arr.length);
     }
         
-    };
+//     $("div#lista_doc").bootpag({
+//        total: (arr.length / 5)
+//        }).on("page", function(event, 1){
+//            $('div#lista_doc').html(out);
+//        });
+
 
 
     /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
@@ -91,7 +98,9 @@ $( document ).ready(function() {
 
 
 function mostraDocumento(element){
-    var urlDoc = $(element).attr('value')
+    var urlDoc = $(element).attr('value');
+    // aggiunge lo stile al div selezionato e deseleziona quello precedente
+    $(element).addClass("active").siblings().removeClass("active");
     $.ajax({
         url: '/scrapingSingoloDocumento',
         type: 'GET',
@@ -107,6 +116,11 @@ function mostraDocumento(element){
 
 function singoloDocumento(str){
     $("#singoloDocumento").html(str);
+
 }
+
+function mostraAnnotGruppo(element){
+        $(element).addClass("active").siblings().removeClass("active");
+    }
 
 
