@@ -362,3 +362,25 @@ button.button-lg:active {
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 14px;
 }
+
+.tabList{
+    max-width: 100px;
+    max-height: 70px;
+}
+
+a.box{
+    width: 200px;
+    border: 1px solid #000000;
+}
+
+label{
+    width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+span.glyphicon.glyphicon-remove::before{
+    cursor: pointer;
+    cursor: hand;
+}
