@@ -65,12 +65,10 @@ $( document ).ready(function() {
             out += '<a href="' + arr[i].url + '">' +arr[i].title + '</a><br>';
         }
        $('div#lista_doc.panel-body').html(out);
-    }
-        document.getElementById("listaDocumenti").innerHTML = out;
     };
 
 
-    /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
+    /* ottenere data e ora nel formato specificato nelle annotazioni: YYYY-MM-DDTHH:mm */
     function addZero(i) {
         if (i < 10) {
             i = "0" + i;

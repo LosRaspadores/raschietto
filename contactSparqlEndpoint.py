@@ -53,19 +53,25 @@ import rdflib  # per leggere e manipolare grafi RDF
 from SPARQLWrapper import SPARQLWrapper, JSON, N3, TURTLE # per interrogare uno SPARQL end-point
 from rdflib.namespace import RDF  # namespace per RDF
 from rdflib import Namespace  # modulo Namespace per crearne di nuovi
+import json
+from urlparse import urljoin
 
 # endpoint
-sparql_endpoint_remoto = "http://tweb2015.cs.unibo.it:8080/data/"
-sparql_endpoint_locale = "http://localhost:3030/data/"
+sparql_endpoint_remoto = "http://tweb2015.cs.unibo.it:8080/data"
+sparql_endpoint_locale = "http://localhost:3030/data"
 
 # user e pass autenticazione grafo
 PASS = "FF79%bAW"
 USER = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
 # grafi
+# il nome (=l'IRI) di ogni grafo ha struttura: "http://vitali.web.cs.unibo.it/raschietto/graph/[idgruppo]"
+base_name = "http://vitali.web.cs.unibo.it/raschietto/graph/"
+
 nome_grafo_gruppo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 nome_grafo_25_ = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1525"
 nome_grafo_38 = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1538"
+
 
 # dichiarazione namespace
 FOAF = Namespace("http://xmlns.com/foaf/0.1/")
@@ -98,27 +104,39 @@ annotazione_prova = """
         rdfs:label "DOI"^^xsd:string ;
         rsch:type "hasDoi"^^xsd:string ;
         oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
-        oa:annotatedBy <mailto:alice.graziosi@gmail.com>  ;
+        oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
         oa:hasBody _:doi ;
         oa:hasTarget [ a oa:SpecificResource ;
                 oa:hasSelector [ a oa:FragmentSelector ;
-                        rdf:value "form1_table3_tr1_td1_table5_tr1_td1_table1_tr1_td2_h34"^^xsd:string ;
-                        oa:end "190"^^xsd:nonNegativeInteger ;
-                        oa:start "163"^^xsd:nonNegativeInteger ] ;
+                        rdf:value "/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[2]"^^xsd:string ;
+                        oa:end "355"^^xsd:nonNegativeInteger ;
+                        oa:start "328"^^xsd:nonNegativeInteger ] ;
                 oa:hasSource <http://www.dlib.org/dlib/july15/downs/07downs.html> ] .
 
-    <mailto:alice.graziosi@gmail.com> a foaf:mbox ;
-            schema:email "alice.graziosi@gmail.com" ;
-            foaf:name "LosRaspadores"^^xsd:string ;
-            rdfs:label "LosRaspadores"^^xsd:string .
+    <mailto:los.raspadores@gmail.com> a foaf:mbox ;
+        schema:email "los.raspadores@gmail.com" ;
+        foaf:name "LosRaspadores"^^xsd:string ;
+        rdfs:label "LosRaspadores"^^xsd:string .
 
     _:doi a rdf:Statement;
-        rdfs:label "il work ha come doi"^^xsd:string ;
-            rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
-            rdf:predicate prism:doi ;
-            rdf:object "antani"^^xsd:string .
+        rdfs:label "Il work ha come DOI 10.1045/july2015-downs "^^xsd:string ;
+        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
+        rdf:predicate prism:doi ;
+        rdf:object "10.1045/july2015-downs "^^xsd:string .
 
     <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression . """
+
+def get_lista_grafi():
+    lista_grafi = list()
+    with open('listagrafi.json') as data_file:
+        data = json.load(data_file)
+
+    for dato in data:
+        id = dato['id'].strip()
+        nome_grafo = base_name + id
+        lista_grafi.append(nome_grafo)
+
+    return lista_grafi
 
 
 # funzione per visualizzare le triple presenti in un grafo RDF
@@ -179,10 +197,19 @@ def query_select_all_grafo(nome_grafo):
         }""" % (nome_grafo)
     return query
 
+# 'SELECT' all dal grafo specificato >>> LIMIT numero
+def query_select_from_tuttigafi(lista_grafi):
+    query = """SELECT ?subject ?predicate ?object
+            """
+    for grafo in lista_grafi:
+        query = query + "FROM NAMED <"+grafo+">"
+    query = query + "WHERE {GRAPH ?g {?subject ?predicate ?object} }"
+    return query
+
 
 # per query insert e delete
 def do_query_post(endpoint, query):
-    sparql_endpoint = SPARQLWrapper(endpoint+"update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
+    sparql_endpoint = SPARQLWrapper(endpoint+"/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
     sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('POST')
     sparql_endpoint.query()
@@ -190,12 +217,11 @@ def do_query_post(endpoint, query):
 
 # per query select
 def do_query_get(endpoint, query):
-    sparql_endpoint = SPARQLWrapper(endpoint+"query", returnFormat="json")
+    sparql_endpoint = SPARQLWrapper(endpoint+"/query", returnFormat="json")
     sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('GET')
     results = sparql_endpoint.query().convert()
-    for result in results["results"]["bindings"]:
-        print(result["subject"]["value"])+"  "+(result["predicate"]["value"])+"  "+(result["object"]["value"])
+    return results
 
 
 def query_annotazione(nome_grafo, annotazione):
@@ -208,16 +234,43 @@ def query_annotazione(nome_grafo, annotazione):
 
 def main():
 
+    lista = get_lista_grafi()
+    lista2 = list()
+    lista2.append("http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537")
+    lista2.append("http://vitali.web.cs.unibo.it/raschietto/graph/ltw1538")
+    lista2.append("http://vitali.web.cs.unibo.it/raschietto/graph/ltw1539")
+
+    """
     query = query_insert_file(nome_grafo_gruppo, "travel.owl")
     do_query_post(sparql_endpoint_locale, query)
+
 
     query = query_clear_graph(nome_grafo_gruppo)
     do_query_post(sparql_endpoint_locale, query)
 
+
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
     do_query_post(sparql_endpoint_locale, query)
 
-    query = query_select_all_grafo(nome_grafo_gruppo)
+
+    query = query_clear_graph(nome_grafo_gruppo)
+    do_query_post(sparql_endpoint_remoto, query)
+
+
+    query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
+    do_query_post(sparql_endpoint_remoto, query)
+
+
+    query = query_select_from_tuttigafi(lista)
     do_query_get(sparql_endpoint_locale, query)
-    
-main()
+
+    query = query_select_all_grafo(nome_grafo_gruppo)
+    do_query_get(sparql_endpoint_remoto, query)
+    """
+
+
+if __name__ == "__main__":
+    print "this script (contactSparqlEndpoint) is being run directly from %s" % __name__
+    main()
+else:
+    print "this script (contactSparqlEndpoint) is being imported into another module"

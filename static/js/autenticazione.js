@@ -14,18 +14,18 @@ $(document).ready(function() {
         return keyValue ? keyValue[2] : null;
     };
 
-    //inizializzazione modalit‡
+    //inizializzazione modalit√†
     if(getCookie('nomecognome') == null & getCookie('email') == null){
         $('#modalitaToggle').prop('checked', false);
-        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ annotator');
+        $("#modalitaToggleLabel").prop('title','Passa a modalit√† annotator');
         $('#utenteAutenticato').text("Nessun utente autenticato");
     } else {
         $('#modalitaToggle').prop('checked', true);
-        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ reader');
+        $("#modalitaToggleLabel").prop('title','Passa a modalit√† reader');
         $('#utenteAutenticato').text("Utente autenticato come: "+getCookie('nomecognome')+", email: "+getCookie('email'));
     };
 
-    //quando si ritorna a modalit‡ reader
+    //quando si ritorna a modalit√† reader
     //document.cookie = "nomecognome=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     //document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
 
@@ -37,18 +37,18 @@ $(document).ready(function() {
 
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ annotator');
+        $("#modalitaToggleLabel").prop('title','Passa a modalit√† annotator');
         $('[data-toggle="tooltip"]').tooltip();
         $('#utenteAutenticato').text("Nessun utente autenticato.");
     };
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ reader');
+        $("#modalitaToggleLabel").prop('title','Passa a modalit√† reader');
         $('[data-toggle="tooltip"]').tooltip();
     };
 
-    /* Passaggio da modalit‡ reader a modalit‡ annotator e viceversa */
+    /* Passaggio da modalit√† reader a modalit√† annotator e viceversa */
     $('#modalitaToggle').change(function() {
         if ($("#modalitaToggle").prop('checked')) {
             $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
@@ -63,10 +63,10 @@ $(document).ready(function() {
     });
 
     /*
-        Verifica della presenza di un utente gi‡ autenticato come annotator.
+        Verifica della presenza di un utente gi√† autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
         I dati in sessionStorage vengono ripuliti ogniqualvolta la sessione della pagine termina.
-        La sessione della pagina dura fino a quando il browser Ë aperto e sopravvive alla ricarica della pagina e al
+        La sessione della pagina dura fino a quando il browser √® aperto e sopravvive alla ricarica della pagina e al
         ripristino. L'apertuta di una nuova un un nuovo tab o nuova finestra implica l'apertura di una nuova sessione,
         il che differisce da come funzionano i cookie di sessione.
     */
@@ -86,15 +86,15 @@ $(document).ready(function() {
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
         if(nomecognome==""){
-            $('#messaggioErrore').text("Il campo nome e cognome Ë obbligatorio.");
+            $('#messaggioErrore').text("Il campo nome e cognome √® obbligatorio.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(email==""){
-            $('#messaggioErrore').text("Il campo email Ë obbligatorio.");
+            $('#messaggioErrore').text("Il campo email √® obbligatorio.");
             $("#email").val("");
             $("#email").focus();
         } else if(!regexNomecognome.test(nomecognome)){
-            $('#messaggioErrore').text("Il campo nome e cognome puÚ contenere solo caratteri alfabetici.");
+            $('#messaggioErrore').text("Il campo nome e cognome pu√≤ contenere solo caratteri alfabetici.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
@@ -113,7 +113,7 @@ $(document).ready(function() {
         };
     });
 
-    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalit‡ reader */
+    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalitÔøΩ reader */
     $('.close').click(function (){
         $("#nomecognome").val("");
         $("#email").val("");

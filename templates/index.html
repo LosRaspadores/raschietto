@@ -5,7 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- nome applicazione e icona -->
+        <meta name="keywords" content="semantic web, annotazioni, web scraping, progetto raschietto, tecnologie web">
+        <meta name="description" content="Progetto Raschietto - Applicazione web per annotazione semantica di documenti">
+
+        <!-- nome app web e icona -->
         <title>Raschietto</title>
         <link rel="shortcut icon" href="/static/ico/favicon.ico">
 
@@ -16,18 +19,12 @@
         <meta name="author" content="Silvia Borgiani">
         <meta name="author" content="Edoardo Viale">
 
-        <meta name="keywords" content="semantic web, annotazioni, web scraping, progetto raschietto, tecnologie web">
-        <meta name="description" content="Progetto Raschietto - Applicazione web per annotazione semantica di documenti">
-
         <!-- riferimenti css -->
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/ui/1.11.3/jquery-ui.js"></script>
-
-        <link rel="stylesheet" href="/static/css/index.css">
-        <link href="https://fonts.googleapis.com/css?family=Exo:400,900" rel="stylesheet" type="text/css">
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,900' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Exo:400,900">
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:400,900">
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Playball">
     </head>
     <body>
         <!-- prima navbar -->
@@ -41,7 +38,7 @@
                          <span class="icon-bar"></span>
                          <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">raschietto</a>
+                    <a class="navbar-brand" href="">raschietto</a>
                 </div>
                 <div class="navbar-collapse collapse" id="navbar-collapse-uno">
                     <ul class="nav navbar-nav navbar-left">
@@ -49,13 +46,14 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso" title="Info sul progetto Raschietto"><span class="glyphicon glyphicon-info-sign"></span> Info progetto</a></li>
-                        <li><a href="#home" title="Ti serve aiuto?"><span class="glyphicon glyphicon-screenshot"></span> Help</a></li>
+                        <li><a href="#home" title="Ti serve aiuto?"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <!-- barra per autenticazione e caricamento documento -->
+        <!-- seconda navbar -->
+        <!-- barra per passaggio mod reader e mod annotator + caricamento documento -->
         <nav class="navbar navbar-default" id="secondnav">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -189,11 +187,40 @@
             </div>
         </div>
 
+
+         <!-- Modal annotazioni TODO DA ELIMINARE!!!-->
+        <div class="modal fade" id="modalAnnotazioni" role="dialog">
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center" id="numeroAnnotazioni"></h3>
+                    </div>
+                    <div class="modal-body col-md-12">
+                        <form class="form col-md-12 center-block">
+                        <div id="listaAnnotazioni"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+
         <!-- riferimenti javascript -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
+
+        <!--Sgvizler is a javascript which renders the result of SPARQL SELECT queries into charts or html elements
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="http://beta.data2000.no/sgvizler/release/0.6/sgvizler.js"></script>
+        <script type="text/javascript" src="/static/js/sgvizler-setup.js"></script>-->
     </body>
 </html>
 
