@@ -69,6 +69,7 @@ $( document ).ready(function() {
        $('div#lista_doc').html(out);
        $('#numDoc').html(arr.length);
     }
+
         
 //     $("div#lista_doc").bootpag({
 //        total: (arr.length / 5)
@@ -107,6 +108,8 @@ $( document ).ready(function() {
 
 });
 
+
+
 function mostraDocumento(element){
     var urlDoc = $(element).attr('value');
     // aggiunge lo stile al div selezionato e deseleziona quello precedente
@@ -139,3 +142,22 @@ function closeTab(element){
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
     $(tabContentId).remove(); //remove respective tab content
 }
+
+
+    function lanciaScraper() {
+        alert("ciao");
+        var urlDoc = "http://www.dlib.org/dlib/november14/beel/11beel.html";
+        $.ajax({
+            url: '/scrapingAutomatico',  //scrapingGruppi
+            type: 'GET',
+            data: {url: urlDoc},
+            success: function(result) {
+                alert(result,urlDoc);
+            },
+            error: function(error) {
+                alert("Error2222: " + error);
+            }
+        });
+
+        return "";
+    }
