@@ -17,7 +17,7 @@ import mechanize
 import re
 from urlparse import urlparse, urljoin
 import urllib2, httplib
-# import json
+import json
 
 # Browser mechanize
 br = mechanize.Browser()
