@@ -17,6 +17,7 @@ from flask import Flask, render_template, request
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
+from scrapingAutomatico import scraping_titolo, scraping_titolo_dlib, scarping_autore, scraping_autore_dlib,scraping_doi,scraping_doi_dlib
 
 
 # initializzazione applicazione
@@ -45,6 +46,18 @@ def return_documenti():
     return data
 
 
+@app.route('/scrapingAutomatico')
+def return_titolo():
+    #data = scraping_titolo()
+    #data = scraping_titolo_dlib()
+    #data = scarping_autore()
+    #data =scraping_autore_dlib()
+    #data = scraping_doi()
+    data = scraping_doi_dlib()
+    return data
+
+
+
 @app.route('/scrapingGruppi')
 def return_gruppi():
     data = scraping_gruppi()
@@ -57,9 +70,6 @@ def return_singolo_documento():
     # print("***** "+url)
     data = scraping_singolo_documento(url)
     return data
-
-
-
 
 # launch app
 if __name__ == "__main__":

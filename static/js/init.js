@@ -146,7 +146,7 @@ function closeTab(element){
 
     function lanciaScraper() {
         alert("ciao");
-        var urlDoc = "http://www.dlib.org/dlib/november14/beel/11beel.html";
+        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
         $.ajax({
             url: '/scrapingAutomatico',  //scrapingGruppi
             type: 'GET',

@@ -42,6 +42,8 @@ def main():
     scraping_gruppi()
 
 
+
+
 def scraping_gruppi():
     lista = []
     url_gruppi = "http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso"
