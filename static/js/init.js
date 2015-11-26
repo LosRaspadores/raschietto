@@ -82,7 +82,7 @@ $( document ).ready(function() {
         var i;
         for(i = 0; i < arr.length; i++) {
             //out += '<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
-            $('div#lista_doc').append('<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>');
+            $('div#lista_doc').append('<a class="list-group-item" value="' + arr[i].url + '">' +arr[i].title + '</a><br>');
         }
        //$('div#lista_doc').html(out);
        $('#numDoc').html(arr.length);
@@ -275,25 +275,25 @@ $( document ).ready(function() {
         window.alert(selection());
     });
 
-});
 
-
-function mostraDocumento(element){
-    var title = $(element).text()
-    var urlDoc = $(element).attr('value')
-    $(element).addClass("active").siblings().removeClass("active");
-    $.ajax({
-        url: '/scrapingSingoloDocumento',
-        type: 'GET',
-        data: {url: urlDoc},
-        success: function(result) {
-            singoloDocumento(result, urlDoc, title);
-        },
-        error: function(error) {
-            alert("Error: " + error);
-        }
+    $(document).on("click", "a.list-group-item", function(){
+        var title = $(this).text()
+        var urlDoc = $(this).attr('value');
+        $(this).addClass("active").siblings().removeClass("active");
+        $.ajax({
+            url: '/scrapingSingoloDocumento',
+            type: 'GET',
+            data: {url: urlDoc},
+            success: function(result) {
+                singoloDocumento(result, urlDoc, title);
+            },
+            error: function(error) {
+                alert("Error: " + error);
+            }
+        });
     });
-}
+
+});
 
 function singoloDocumento(str, url, title){
     //$("#singoloDocumento").html(str);
@@ -313,3 +313,4 @@ function closeTab(element){
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
 
 }
+

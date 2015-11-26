@@ -157,7 +157,7 @@ def scraping_documenti():
     """
 
     url_base = "http://antropologiaeteatro.unibo.it/issue/view/513"
-    resp = br.open("http://antropologiaeteatro.unibo.it/issue/view/513")
+    resp = br.open(url_base)
     raw_html = resp.read()  # raw html source code
     soup = BeautifulSoup(raw_html)
     results = soup.select("div.tocTitle a")

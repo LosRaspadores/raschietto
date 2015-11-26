@@ -60,7 +60,6 @@ def return_citazioni():
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
     url = request.args.get('url')
-    # print("***** "+url)
     data = scraping_singolo_documento(url)
     return data
 
