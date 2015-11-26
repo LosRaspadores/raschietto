@@ -40,12 +40,14 @@ $(document).ready(function() {
         $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
         $('[data-toggle="tooltip"]').tooltip();
         $('#utenteAutenticato').text("Nessun utente autenticato.");
+        $('#bottoniAnnotator').hide();
     };
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
         $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
         $('[data-toggle="tooltip"]').tooltip();
+        $('#bottoniAnnotator').show();
     };
 
     /* Passaggio da modalità reader a modalità annotator e viceversa */
@@ -76,7 +78,7 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text("Utente autenticato: "+sessionStorage.nomecognome+", email: "+sessionStorage.email);
+        $('#utenteAutenticato').text(sessionStorage.nomecognome+", email: "+sessionStorage.email);
     };
 
     /* Validazione autenticazione utente */
@@ -114,7 +116,7 @@ $(document).ready(function() {
     });
 
     /* Gestione della chiusura del modal autenticazione: si ritorna alla modalità reader */
-    $('.close').click(function (){
+    $('#modalAutenticazione button.close').click(function (){
         $("#nomecognome").val("");
         $("#email").val("");
         $('#messaggioErrore').text("");

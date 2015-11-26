@@ -17,7 +17,7 @@ import mechanize
 import re
 from urlparse import urlparse, urljoin
 import urllib2, httplib
-# import json
+import json
 
 # Browser mechanize
 br = mechanize.Browser()
@@ -32,7 +32,7 @@ def scraping_singolo_documento(url):
     print("url " + url)
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    # print ("domain: " + domain)
+    #print ("domain: " + domain)
     doc_html = br.open(url).read()
     soup = BeautifulSoup(doc_html, 'html.parser')
     html = domain_manager(url, domain, soup)
@@ -47,6 +47,7 @@ def scraping_singolo_documento(url):
 
 
 def domain_manager(url, domain, soup):
+
     if domain == 'http://www.dlib.org/':
         html = soup.find("table", {
             "width": "100%",

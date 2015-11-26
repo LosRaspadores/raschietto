@@ -8,13 +8,12 @@ __author__ = 'Los Raspadores'
 
 """
     pip install pyquery
-
     La libreria PyQuery aggiunge a Python la comodità di jQuery e permette la selezione degli elementi nella pagina web
     tramite selettori CSS
 """
 
 
-# moduli importati
+ # moduli importati
 from pyquery import PyQuery
 from urlparse import urlparse
 import json
