@@ -42,6 +42,7 @@ def scraping_singolo_documento(url):
     for t in soup.findAll('a', target=True):
         del t['target']
 
+    # print(html)
     return str(html)
 
 

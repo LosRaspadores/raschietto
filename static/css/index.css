@@ -371,6 +371,7 @@ button.button-lg:active {
 a.box{
     width: 200px;
     border: 1px solid #000000;
+    color: #555;
 }
 
 label{
@@ -383,4 +384,12 @@ label{
 span.glyphicon.glyphicon-remove::before{
     cursor: pointer;
     cursor: hand;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color: #0D670B;
+}
+
+.nav-tabs>li>a{
+    color: #555;
 }

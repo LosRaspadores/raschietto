@@ -85,18 +85,27 @@ $( document ).ready(function() {
                     + currentdate.getHours() + ":"
                     + addZero(currentdate.getMinutes());
 
+    $("div#tabs").tabs();
 
     $(function() {
       addTab = function(text, url, title){
             var url = url.replace(/([/|_.|_:|_-])/g, '');
+            //alert("#"+url)
             $("ul.nav.nav-tabs").append("<li><a class='box' data-toggle='tab' href='#"+url+"' role='tabpanel'><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
             $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
+            var tabIndex = $("#"+url).index();
+            $("div#tabs").tabs("option", "active", tabIndex);
             $("#"+url+"t").html(text);
 
-//            $('div#tabs').tabs();
-//            $('div#tabs').tabs('select', url+'t');
+
+
+
+            //$('#tabs a[href="#'+url+'"]').click();
+            //$("#"+url).tabs("option", "active", 1);
         }
     });
+
+
 
 });
 
