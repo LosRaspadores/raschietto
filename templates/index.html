@@ -93,9 +93,9 @@
 
                               <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>  <!--data-toggle="modal" data-target="#modalAnnotDoc" -->
 
-                              <button type="button" class="btn btn-default navbar-btn"  data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
+                              <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
 
-                              <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                              <button type="button" class="btn btn-default navbar-btn" id="bott" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
                         </li>
                       </ul>
                 </div>
@@ -183,12 +183,13 @@
                     <!--&lt;!&ndash; Keep all page content within the page-content inset div! &ndash;&gt;-->
                     <!--<div class="page-content inset">-->
                     <!--<div class="row">-->
-                <div class="col-sm-9">
+                <div class="col-sm-9" >
 
                                 <ul class="nav nav-tabs">
                                     <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
                                 </ul>
-                                <div class="tab-content">
+
+                                <div class="tab-content" >
                                     <div class="tab-pane fade in active" id="home">
                                         <div>
                                             <h4>ANTANI</h4>
@@ -337,15 +338,13 @@
                     </div>
                     <form>
                         <div class="modal-body">
-                            <div class="alert alert-warning alert-dismissible" role="alert">
-                              <strong>Attenzione!</strong> Nessuna citazione presente.
-                            </div>
+
 
 
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
-                            <button id="salvaInsertCit" type="button" class="btn btn-success" onclick="getCitazioni()">Salva</button>
+                            <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
                         </div>
                     </form>
                  </div>

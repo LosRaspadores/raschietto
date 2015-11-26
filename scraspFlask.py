@@ -17,7 +17,7 @@ from flask import Flask, render_template, request
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
-from scrapingSingoloDocumento import scraping_citazioni
+from scrapingCitazioni import scraping_citazioni
 
 
 # initializzazione applicazione
@@ -53,8 +53,8 @@ def return_gruppi():
 
 @app.route('/scrapingCitazioni')
 def return_citazioni():
-    url = request.args.get('url')
-    data = scraping_citazioni(url)
+    urlD = request.args.get('url')
+    data = scraping_citazioni(urlD)
     return data
 
 @app.route('/scrapingSingoloDocumento')

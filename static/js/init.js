@@ -13,6 +13,9 @@ $( document ).ready(function() {
 
     $('#salvaInsert').attr('disabled', 'disabled');
 
+
+
+
     var year = new Date().getFullYear();
     for(i = year; i >=  1800; i--){
         $('select#anno').append('<option value="'+i+'">'+i+'</option>');
@@ -102,9 +105,9 @@ $( document ).ready(function() {
 
 
     $(function() {
-      addTab = function(text, url){
-            var url = url.replace(/([/|_.|_:|_-])/g, '');
-            $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"'>Doc<button class='close closeTab' type='button' onclick='closeTab(this)'>x</button></a></li>");
+      addTab = function(text, urlP){
+            var url = urlP.replace(/([/|_.|_:|_-])/g, '');
+            $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" >Doc<button class='close closeTab' type='button' onclick='closeTab(this)'>x</button></a></li>");
             $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
             $("#"+url+"t").html(text);
        }
@@ -131,7 +134,6 @@ $( document ).ready(function() {
 
     $('#selectTipoAnnot').change(function(){
         var annot = $(this).val();
-        //alert(annot);
         switch (annot) {
             case "autore":
                 $('#insertAutore').css('display', 'block');
@@ -216,22 +218,56 @@ $( document ).ready(function() {
         }
    });
 
+   function citazioniWidget(lista_cit){
+
+        var cit = '';
+        $('#modalAnnotCit div.modal-body').html('<form><div class="form-group" id="insertCit"><label for="selectCit">Scegli un riferimento bibliografico</label>'
+                                   + '<select class="form-control" id="selectCit"><option value=""></option></select></div></form>');
+         for(i = 0; i < lista_cit.length; i++){
+         if(lista_cit[i].cit.length > 50){
+            cit = lista_cit[i].cit.substring(0, 50)+'...';
+         } else {
+            cit = lista_cit[i].cit;
+         }
+            $('#selectCit').append('<option value="">'+cit+'</option>');
+         }
+   };
+
+    function getCitazioni(urlDoc){
+        //var urlDoc = 'http://www.dlib.org/dlib/november14/brook/11brook.html';
+        $.ajax({
+            url: '/scrapingCitazioni',
+            type: 'GET',
+            data: {url: urlDoc},
+            success: function(result) {
+                lista_cit = JSON.parse(result);
+                if(lista_cit.length > 0){
+                    citazioniWidget(lista_cit)
+                } else {
+                $('#modalAnnotCit div.modal-body').html('<div class="alert alert-warning alert-dismissible" role="alert">'
+                              +'<strong>Attenzione!</strong> Nessuna citazione presente.'
+                            +'</div>');
+                }
+//                alert(result);
+            },
+            error: function(error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+
+    $('#buttonCit').click(function(){
+        var href = $("ul.nav.nav-tabs li.active a").attr("id");
+        getCitazioni(href);
+    });
+
+    $('#bott').click(function() {
+        //var s = window.getSelection().toString();
+        window.alert(selection());
+    });
+
 });
 
-function getCitazioni(){
-    var urlDoc = 'http://almatourism.unibo.it/article/view/5290';
-    $.ajax({
-        url: '/scrapingCitazioni',
-        type: 'GET',
-        data: {url: urlDoc},
-        success: function(result) {
-            alert(result);
-        },
-        error: function(error) {
-            alert("Error: " + error);
-        }
-    });
-}
 
 function mostraDocumento(element){
     var urlDoc = $(element).attr('value');
@@ -263,5 +299,7 @@ function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
     $(element).parent().parent().remove(); //remove li of tab
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
+//    $('ul.nav.nav-tabs li:last').addClass('active');
+//    $('div.tab-content div.tab-pane.fade:last').addClass('active');
     $(tabContentId).remove(); //remove respective tab content
 }
