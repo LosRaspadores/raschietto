@@ -103,15 +103,15 @@ $( document ).ready(function() {
                     + currentdate.getHours() + ":"
                     + addZero(currentdate.getMinutes());
 
-    $("div#tabs").tabs();
+    //$("div#tabs").tabs();
 
     $(function() {
       addTab = function(text, urlP, title){
             var url = urlP.replace(/([/|_.|_:|_-])/g, '');
             $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" ><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
             $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
-            var tabIndex = $("#"+url).index();
-            $("div#tabs").tabs("option", "active", tabIndex);
+            //var tabIndex = $("#"+url).index();
+            //$("div#tabs").tabs("option", "active", tabIndex);
             $("#"+url+"t").html(text);
 
 
