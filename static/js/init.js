@@ -104,23 +104,18 @@ $( document ).ready(function() {
                     + addZero(currentdate.getMinutes());
 
     //$("div#tabs").tabs();
-
-    $(function() {
-      addTab = function(text, urlP, title){
-            var url = urlP.replace(/([/|_.|_:|_-])/g, '');
-            $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" ><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
-            $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
-            //var tabIndex = $("#"+url).index();
-            //$("div#tabs").tabs("option", "active", tabIndex);
-            $("#"+url+"t").html(text);
-
-
-
-
-            //$('#tabs a[href="#'+url+'"]').click();
-            //$("#"+url).tabs("option", "active", 1);
-        }
-    });
+//    $(function() {
+//      addTab = function(text, urlP, title){
+//            var url = urlP.replace(/([/|_.|_:|_-])/g, '');
+//            $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" ><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
+//            $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
+//            //var tabIndex = $("#"+url).index();
+//            //$("div#tabs").tabs("option", "active", tabIndex);
+//            $("#"+url+"t").html(text);
+//            //$('#tabs a[href="#'+url+'"]').click();
+//            //$("#"+url).tabs("option", "active", 1);
+//        }
+//    });
 
     $('#modalAnnotCit').draggable({
         handle: ".modal-content"
@@ -285,7 +280,7 @@ $( document ).ready(function() {
             type: 'GET',
             data: {url: urlDoc},
             success: function(result) {
-                singoloDocumento(result, urlDoc, title);
+                addTab(result, urlDoc, title);
             },
             error: function(error) {
                 alert("Error: " + error);
@@ -295,22 +290,21 @@ $( document ).ready(function() {
 
 });
 
-function singoloDocumento(str, url, title){
-    //$("#singoloDocumento").html(str);
-    addTab(str, url, title);
+function addTab(text, urlP, title){
+    var url = urlP.replace(/([/|_.|_:|_-])/g, '');
+    $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" ><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
+    $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
+    $("#"+url+"t").html(text);
 }
 
 function mostraAnnotGruppo(element){
-        $(element).addClass("active").siblings().removeClass("active");
-    }
+    $(element).addClass("active").siblings().removeClass("active");
+}
 
 function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
     $(element).parent().parent().remove(); //remove li of tab
-//    $('ul.nav.nav-tabs li:last').addClass('active');
-//    $('div.tab-content div.tab-pane.fade:last').addClass('active');
     $(tabContentId).remove(); //remove respective tab content
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
-
 }
 
