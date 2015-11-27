@@ -406,8 +406,26 @@ span.glyphicon.glyphicon-remove::before{
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
     color: #0D670B;
+    background: transparent url(../uiTabsArrow.png) no-repeat bottom center;
+    border: none;
+    height: 40px;
+}
+.nav-tabs>li>a:hover {
+    border-color: #eee #eee #ddd;
+    height: 40px;
 }
 
 .nav-tabs>li>a{
     color: #555;
+}
+.nav-tabs>li{
+    height: 40px;
+}
+.nav-tabs {
+    border-bottom: 1px solid #ddd;
+    height: 40px;
+}
+span.glyphicon.glyphicon-remove{
+    top: -8px;
+    height: 5px;
 }

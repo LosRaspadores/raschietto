@@ -276,7 +276,8 @@ $( document ).ready(function() {
         });
     });
 
-        //$("div#tabs").tabs();
+    //$("div#tabs").tabs();
+
 //    $(function() {
 //      addTab = function(text, urlP, title){
 //            var url = urlP.replace(/([/|_.|_:|_-])/g, '');
@@ -296,9 +297,11 @@ $( document ).ready(function() {
  * Funzioni per la gestione delle tab in cui visualizzare i documenti
  */
 function addTab(text, urlP, title){
+    //ottenere tab attiva
+    $('.active').removeClass('active');
     var url = urlP.replace(/([/|_.|_:|_-])/g, '');
-    $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" ><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
-    $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
+    $("ul.nav.nav-tabs").append("<li class='active'><a data-toggle='tab' href='#"+url+"' id="+urlP+"><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
+    $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
     $("#"+url+"t").html(text);
 }
 
