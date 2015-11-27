@@ -13,11 +13,8 @@ __author__ = 'Los Raspadores'
 """
 
 from bs4 import BeautifulSoup
-import mechanize
-import re
 from urlparse import urlparse, urljoin
-import urllib2, httplib
-import json
+import mechanize
 
 # Browser mechanize
 br = mechanize.Browser()
@@ -64,16 +61,6 @@ def domain_manager(url, domain, soup):
             or 'http://almatourism.unibo.it/' or 'http://antropologiaeteatro.unibo.it/':
         html = soup.find("div", {"id": "content"})
         return html
-    # else:
-    #     print("******** 1 ********")
-    #     html = soup.find("div", {"id": "content"})
-    #     print("******** 2 ********")
-    #     # for script in soup.findAll('script'):
-    #     #     print("********")
-    #     #     print(script)
-    #     #     del script
-    #     return html
-
 
 if __name__ == "__main__":
     print "this script (scrapingSingoloDocumento) is being run directly from %s" % __name__
