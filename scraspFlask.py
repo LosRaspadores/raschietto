@@ -51,11 +51,13 @@ def return_gruppi():
     data = scraping_gruppi()
     return data
 
+
 @app.route('/scrapingCitazioni')
 def return_citazioni():
     urlD = request.args.get('url')
     data = scraping_citazioni(urlD)
     return data
+
 
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
