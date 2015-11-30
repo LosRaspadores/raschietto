@@ -265,19 +265,24 @@ $( document ).ready(function() {
         if(isOpen(urlDoc)){
             $("ul.nav.nav-tabs a[id='" + urlDoc + "']").tab("show");
         }else{
-            var title = $(this).text()
-            $(this).addClass("active").siblings().removeClass("active");
-            $.ajax({
-                url: '/scrapingSingoloDocumento',
-                type: 'GET',
-                data: {url: urlDoc},
-                success: function(result) {
-                    addTab(result, urlDoc, title);
-                },
-                error: function(error) {
-                    alert("Error: " + error);
-                }
-            });
+            var numTabs = $("ul.nav.nav-tabs").children().length;
+            if(numTabs <= 4){
+                var title = $(this).text()
+                $(this).addClass("active").siblings().removeClass("active");
+                $.ajax({
+                    url: '/scrapingSingoloDocumento',
+                    type: 'GET',
+                    data: {url: urlDoc},
+                    success: function(result) {
+                        addTab(result, urlDoc, title);
+                    },
+                    error: function(error) {
+                        alert("Error: " + error);
+                    }
+                });
+            }else{
+                alert("Puoi aprire 4 documenti contemporaneamente.")
+            }
         }
     });
 });
@@ -285,6 +290,17 @@ $( document ).ready(function() {
 /*
  * Funzioni per la gestione delle tab in cui visualizzare i documenti
  */
+function isOpen(url){
+    var res = false;
+    $("ul.nav.nav-tabs").children().each(function() {
+        if(url == $(this).children().attr("id")){
+            res = true;
+            return res;
+        }
+    });
+    return res;
+}
+
 function addTab(text, urlP, title){
     $('.active').removeClass('active');
     var url = urlP.replace(/([/|_.|_:|_-])/g, '');
@@ -300,17 +316,6 @@ function closeTab(element){
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
 }
 
-function isOpen(url){
-    //var numTabs = $("ul.nav.nav-tabs").children().length;
-    var res = false;
-    $("ul.nav.nav-tabs").children().each(function() {
-        if(url == $(this).children().attr("id")){
-            res = true;
-            return res;
-        }
-    });
-    return res;
-}
 
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");
