@@ -260,44 +260,32 @@ $( document ).ready(function() {
      * Chiamata ajax per ottenere il documento selezionato
      */
     $(document).on("click", "a.list-group-item", function(){
-        var title = $(this).text()
         var urlDoc = $(this).attr('value');
-        $(this).addClass("active").siblings().removeClass("active");
-        $.ajax({
-            url: '/scrapingSingoloDocumento',
-            type: 'GET',
-            data: {url: urlDoc},
-            success: function(result) {
-                addTab(result, urlDoc, title);
-            },
-            error: function(error) {
-                alert("Error: " + error);
-            }
-        });
+
+        if(isOpen(urlDoc)){
+            $("ul.nav.nav-tabs a[id='" + urlDoc + "']").tab("show");
+        }else{
+            var title = $(this).text()
+            $(this).addClass("active").siblings().removeClass("active");
+            $.ajax({
+                url: '/scrapingSingoloDocumento',
+                type: 'GET',
+                data: {url: urlDoc},
+                success: function(result) {
+                    addTab(result, urlDoc, title);
+                },
+                error: function(error) {
+                    alert("Error: " + error);
+                }
+            });
+        }
     });
-
-    //$("div#tabs").tabs();
-
-//    $(function() {
-//      addTab = function(text, urlP, title){
-//            var url = urlP.replace(/([/|_.|_:|_-])/g, '');
-//            $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" ><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
-//            $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
-//            //var tabIndex = $("#"+url).index();
-//            //$("div#tabs").tabs("option", "active", tabIndex);
-//            $("#"+url+"t").html(text);
-//            //$('#tabs a[href="#'+url+'"]').click();
-//            //$("#"+url).tabs("option", "active", 1);
-//        }
-//    });
-
 });
 
 /*
  * Funzioni per la gestione delle tab in cui visualizzare i documenti
  */
 function addTab(text, urlP, title){
-    //ottenere tab attiva
     $('.active').removeClass('active');
     var url = urlP.replace(/([/|_.|_:|_-])/g, '');
     $("ul.nav.nav-tabs").append("<li class='active'><a data-toggle='tab' href='#"+url+"' id="+urlP+"><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
@@ -312,6 +300,17 @@ function closeTab(element){
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
 }
 
+function isOpen(url){
+    //var numTabs = $("ul.nav.nav-tabs").children().length;
+    var res = false;
+    $("ul.nav.nav-tabs").children().each(function() {
+        if(url == $(this).children().attr("id")){
+            res = true;
+            return res;
+        }
+    });
+    return res;
+}
 
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");
