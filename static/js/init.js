@@ -256,9 +256,7 @@ $( document ).ready(function() {
         window.alert(selection());
     });
 
-    /*
-     * Chiamata ajax per ottenere il documento selezionato
-     */
+    /* Chiamata ajax per ottenere il documento selezionato */
     $(document).on("click", "a.list-group-item", function(){
         var urlDoc = $(this).attr('value');
 
@@ -287,9 +285,7 @@ $( document ).ready(function() {
     });
 });
 
-/*
- * Funzioni per la gestione delle tab in cui visualizzare i documenti
- */
+/* Funzioni per la gestione delle tab in cui visualizzare i documenti */
 function isOpen(url){
     var res = false;
     $("ul.nav.nav-tabs").children().each(function() {
@@ -300,7 +296,6 @@ function isOpen(url){
     });
     return res;
 }
-
 function addTab(text, urlP, title){
     $('.active').removeClass('active');
     var url = urlP.replace(/([/|_.|_:|_-])/g, '');
@@ -308,7 +303,6 @@ function addTab(text, urlP, title){
     $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
     $("#"+url+"t").html(text);
 }
-
 function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
     $(element).parent().parent().remove(); //remove li of tab
