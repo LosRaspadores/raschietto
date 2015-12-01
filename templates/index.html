@@ -21,14 +21,13 @@
 
         <!-- riferimenti css -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
+        <!--<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>-->
 
         <link rel="stylesheet" href="/static/css/index.css">
         <link href="https://fonts.googleapis.com/css?family=Exo:400,900" rel="stylesheet" type="text/css">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,900' rel='stylesheet' type='text/css'>
         <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
-
     </head>
     <body>
         <!-- prima navbar -->
@@ -78,7 +77,6 @@
                         <form class="navbar-form" role="search">
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" data-placement="bottom" title="Carica un nuovo documento su cui aggiungere annotazioni">
-
                                 <div class="input-group-btn">
                                     <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                                 </div>
@@ -88,18 +86,26 @@
                     <li>
                         <p id="utenteAutenticato" class="navbar-text">bla bla</p></li>
                     </ul>
-                       <div>
-                                    <a onclick="lanciaScraper()">scraping auto</a>
-                                </div>
+
+                    <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
+                        <li>
+                              <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
+
+                              <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>  <!--data-toggle="modal" data-target="#modalAnnotDoc" -->
+
+                              <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
+
+                              <button type="button" class="btn btn-default navbar-btn" id="bott" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                        </li>
+                      </ul>
                 </div>
             </div>
         </nav>
 
-        <!--<div id="wrapper" class="container-fluid">-->
+
         <div class="container-fluid">
             <div class="row">
             <!-- Sidebar -->
-                    <!--<div id="sidebar-wrapper">-->
                 <div class="col-sm-3">
                     <div class="panel-group">
                         <div class="panel panel-default">
@@ -109,11 +115,6 @@
                                     </h4>
                               </div>
                               <div id="doc" class="panel-collapse collapse">
-                                    <!--<div class="panel-body" id="lista_doc">-->
-                                        <!--<dihttps://www.google.it/url?sa=t&rct=j&q=&esrc=s&source=web&cd=2&ved=0ahUKEwi1o5roj5_JAhVG6w4KHf0sAngQFggkMAE&url=http%3A%2F%2Fwww.danilopetrozzi.it%2Fcome-costruire-uno-web-scraper-personalizzato-con-python-2001748&usg=AFQjCNFEBThCfjjk1sLg-qqNSdxZALYnFg&bvm=bv.108194040,d.bGQv id="divDocumento">-->
-                                            <!--Titolo documento-->
-                                        <!--</div>-->
-                                    <!--</div>-->
                                   <div class="list-group" id="lista_doc">
                                     </div>
                               </div>
@@ -182,12 +183,13 @@
                     <!--&lt;!&ndash; Keep all page content within the page-content inset div! &ndash;&gt;-->
                     <!--<div class="page-content inset">-->
                     <!--<div class="row">-->
-                <div class="col-sm-9">
+                <div class="col-sm-9" >
 
                                 <ul class="nav nav-tabs">
                                     <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
                                 </ul>
-                                <div class="tab-content">
+
+                                <div class="tab-content" >
                                     <div class="tab-pane fade in active" id="home">
                                         <div>
                                             <h4>ANTANI</h4>
@@ -234,13 +236,128 @@
             </div>
             </div>
 
-        </div>
+
+        <!--Modal creazione annotazioni sul documento-->
+        <div class="modal fade" id="modalAnnotDoc" role="dialog">
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Inserisci annotazione sul documento</h3>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+
+                                <div class="form-group" id="divInsert">
+                                    <label for="selectTipoAnnot">Seleziona il tipo di annotazione</label>
+                                    <div>
+                                        <select class="form-control" id="selectTipoAnnot">
+                                            <option value=""></option>
+                                            <option value="autore">Autore</option>
+                                            <option value="anno">Anno pubblicazione</option>
+                                            <!--<option value="citazione">Citazione</option>-->
+                                            <option value="commento">Commento</option>
+                                            <option value="doi">DOI</option>
+                                            <option value="funzione">Funzione retorica</option>
+                                            <option value="titolo">Titolo</option>
+                                            <option value="url">URL</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="insertAutore">
+                                    <label for="autore">Inserisci il nome dell'autore</label>
+
+                                        <input type="text" class="form-control" placeholder="" id="autore">
+
+                                </div>
+
+                                <div class="form-group" id="insertAnnoPub">
+                                    <label for="anno">Seleziona l'anno di pubblicazione</label>
+                                            <select class="form-control" id="anno">
+                                                <option value=" "></option>
+                                            </select>
+                                </div>
+
+                                <div class="form-group" id="insertTitolo">
+                                    <label for="titolo">Inserisci il titolo del documento</label>
+                                        <textarea class="form-control" placeholder="" id="titolo" rows="2"></textarea>
+
+                                </div>
+
+                                <div class="form-group" id="insertURL">
+                                    <label for="url">Inserisci un URL associato al documento</label>
+                                        <input type="text" class="form-control" placeholder="" id="url">
+                                </div>
+
+                                <div class="form-group" id="insertDOI">
+                                    <label for="doi">Inserisci un DOI</label>
+                                        <input type="text" class="form-control" placeholder="" id="doi">
+                                </div>
+
+                                <!--<div class="form-group" id="insertCit">-->
+                                    <!--<label for="cit">Inserisci un DOI</label>-->
+                                        <!--<input type="text" class="form-control" placeholder="" id="cit">-->
+                                <!--</div>-->
+
+                                <div class="form-group" id="insertComm">
+                                    <label for="comm">Inserisci un commento</label>
+                                        <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
+                                </div>
+
+                                <div class="form-group" id="insertfunzRet">
+                                    <label for="funcRet">Scegli una funzione retorica</label>
+                                        <select class="form-control" id="funcRet">
+                                            <option value=""></option>
+                                            <option value="abstract">Abstract</option>
+                                            <option value="introduction">Introduction</option>
+                                            <option value="materials">Materials</option>
+                                            <option value="methods">Methods</option>
+                                            <option value="results">Results</option>
+                                            <option value="discussion">Discussion</option>
+                                            <option value="conclusion">Conclusion</option>
+                                        </select>
+                                </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button id="annullaInsert" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="salvaInsert" type="button" class="btn btn-success">Salva</button>
+                        </div>
+                    </form>
+                 </div>
+                </div>
+            </div>
+
+        <!--Modal inserimento e gestione delle citazioni-->
+            <div class="modal fade" id="modalAnnotCit" role="dialog">
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Inserisci citazione</h3>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
+                        </div>
+                    </form>
+                 </div>
+                </div>
+
+            </div>
 
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <!--<script src="//raw.github.com/botmonster/jquery-bootpag/master/lib/jquery.bootpag.min.js"></script>-->
         <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
         <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
         <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
 

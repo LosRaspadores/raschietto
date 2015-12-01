@@ -1,0 +1,7 @@
+$(document).ready(function() {
+    $('#selectTipoAnnot').change(function(){
+        var annot = $(this).val();
+        //alert(annot);
+        $('form.form-horizontal').append(annot);
+   });
+});

@@ -3,11 +3,13 @@
 /* tutti gli elementi */
 * {
    box-sizing: border-box;
+
 }
 
 body {
     overflow: auto;
     font-family: Arial, Helvetica, 'Exo' sans-serif;
+
 }
 
 
@@ -83,7 +85,22 @@ body {
     left: 0;
     top: 0;
     z-index: 100;
-    //border-top: 0;
+    border-top: 0;
+}
+
+.btn-default {
+    color: #0C3C26
+}
+
+.glyphicon{
+    top: 3px;
+}
+
+.navbar-btn {
+    font-size: 21px;
+    margin-left: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
 
 /* toggle checkbox autenticazione */
@@ -239,6 +256,11 @@ button.button-lg:active {
     color: #44b78b;
 }
 
+#doc.collapse.in, #gruppi.collapse.in {
+    height: 350px;
+    overflow-y: auto;
+}
+
 /* filtri */
 .filtri{
     font-weight: bold;
@@ -289,12 +311,12 @@ button.button-lg:active {
 
 /*Stile menu laterale*/
 .panel-group .panel{
-    border-radius: 0px;
     margin-bottom: -3px; /*spazio tra i pannelli*/
 }
 
 .panel-default > .panel-heading{
-    background-color: #f5f5f5;
+    /*#f5f5f5*/
+    background-color: #0C3C26;
     font-variant: small-caps;
     font-size: 19px;
     height: 40px;
@@ -303,6 +325,11 @@ button.button-lg:active {
     margin-top: 0px;
 }
 
+.panel-default > .panel-heading a {
+    color: white;
+    background-color: #0C3C26;
+
+}
 .row{
     margin-left:0px;
     margin-right:0px;
@@ -324,8 +351,8 @@ button.button-lg:active {
 
 .panel>.panel-collapse>.list-group a.list-group-item.active{
     color: white;
-    background-color: #0C3C26;
-    border-color: #0C3C26;
+    background-color: #44B78B;
+    border-color: #44B78B;
 }
 
 .panel>.panel-heading+.panel-collapse>.list-group .list-group-item:last-of-type{
@@ -355,3 +382,4 @@ button.button-lg:active {
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 14px;
 }
+
