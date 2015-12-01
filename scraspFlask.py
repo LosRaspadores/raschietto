@@ -52,6 +52,7 @@ def return_gruppi():
     data = scraping_gruppi()
     return data
 
+
 @app.route('/scrapingCitazioni')
 def return_citazioni():
     urlD = request.args.get('url')
@@ -66,10 +67,10 @@ def return_titolo():
     #data = scraping_anno(urlDoc="http://www.dlib.org/dlib/november14/fedoryszak/11fedoryszak.html")
     return data
 
+
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
     url = request.args.get('url')
-    # print("***** "+url)
     data = scraping_singolo_documento(url)
     return data
 

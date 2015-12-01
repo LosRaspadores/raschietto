@@ -13,18 +13,14 @@ __author__ = 'Los Raspadores'
 """
 
 from bs4 import BeautifulSoup
-import mechanize
-import re
 from urlparse import urlparse, urljoin
-import urllib2, httplib
-import json
+import mechanize
 
 # Browser mechanize
 br = mechanize.Browser()
 
 
 def main():
-    # url = "http://rivista-statistica.unibo.it/article/view/4594"
     scraping_singolo_documento()
 
 
@@ -32,7 +28,6 @@ def scraping_singolo_documento(url):
     print("url " + url)
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    #print ("domain: " + domain)
     doc_html = br.open(url).read()
     soup = BeautifulSoup(doc_html, 'html.parser')
     html = domain_manager(url, domain, soup)
@@ -42,6 +37,7 @@ def scraping_singolo_documento(url):
     for t in soup.findAll('a', target=True):
         del t['target']
 
+    # print(html)
     return str(html)
 
 
@@ -55,20 +51,16 @@ def domain_manager(url, domain, soup):
             "cellpadding": "0",
             "cellspacing": "0"
         })
-        for i in soup.findAll('img'):  # ('img', {'src': re.compile(r'(jpe?g)|(png)$')})
+        for i in soup.findAll('img'):
             relative = i["src"]
             absolute = urljoin(url, relative)
-            # print(absolute)  # http://www.dlib.org/dlib/november14/brook/
             i["src"] = absolute
         return html
-    elif domain == 'http://rivista-statistica.unibo.it/' \
-            or 'http://almatourism.unibo.it/':
-        html = soup.find("div", {"id": "content"})
-        return html
-    elif domain == 'http://antropologiaeteatro.unibo.it/':  # non funziona
-        html = soup.find("div", {"id": "content"})
-        return html
 
+    elif domain == 'http://rivista-statistica.unibo.it/' \
+            or 'http://almatourism.unibo.it/' or 'http://antropologiaeteatro.unibo.it/':
+        html = soup.find("div", {"id": "content"})
+        return html
 
 if __name__ == "__main__":
     print "this script (scrapingSingoloDocumento) is being run directly from %s" % __name__
