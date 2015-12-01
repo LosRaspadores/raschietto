@@ -18,6 +18,7 @@ from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
 from scrapingCitazioni import scraping_citazioni
+from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno
 
 
 # initializzazione applicazione
@@ -55,6 +56,14 @@ def return_gruppi():
 def return_citazioni():
     urlD = request.args.get('url')
     data = scraping_citazioni(urlD)
+    return data
+
+@app.route('/scrapingAutomatico')
+def return_titolo():
+    data = scraping_titolo(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
+    #data = scarping_autore(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
+    #data = scraping_doi(urlDoc="http://www.dlib.org/dlib/september15/wu/09wu.html")
+    #data = scraping_anno(urlDoc="http://www.dlib.org/dlib/november14/fedoryszak/11fedoryszak.html")
     return data
 
 @app.route('/scrapingSingoloDocumento')
