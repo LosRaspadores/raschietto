@@ -1,6 +1,9 @@
 $( document ).ready(function() {
 
-    //$('[data-toggle="tooltip"]').tooltip();
+    getGruppi();
+    //getDocumenti();
+
+    $('[data-toggle="tooltip"]').tooltip();
     $('[data-tooltip="tooltip"]').tooltip();
 
     $('#insertAutore').css('display', 'none');
@@ -13,8 +16,12 @@ $( document ).ready(function() {
 
     $('#salvaInsert').attr('disabled', 'disabled');
 
-
-
+    $('ul#bottoniAnnotator button').click(function(e){
+        if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
+            $('#alertDoc').modal('show');
+            e.stopPropagation();
+        }
+    });
 
     var year = new Date().getFullYear();
     for(i = year; i >=  1800; i--){
@@ -37,56 +44,6 @@ $( document ).ready(function() {
     $(window).scroll(function() {
         stickyNav();
     });
-
-    $.ajax({
-        url: '/scrapingGruppi',
-        type: 'GET',
-        success: function(result) {
-            //convert json string to json object
-            lista_gruppi = JSON.parse(result);
-            listaGruppi(lista_gruppi);
-        },
-        error: function(error) {
-            alert("Error: " + error);
-        }
-    });
-
-    function listaGruppi(arr) {
-        var out = "";
-        var i;
-        for(i = 0; i < arr.length; i++) {
-            //out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
-            out += '<a class="list-group-item" value="' + arr[i].id + '" onclick="mostraAnnotGruppo(this)">' +arr[i].nome + '</a><br>';
-        }
-        $('div#lista_gruppi').html(out);
-        $('#numGru').html(arr.length);
-    }
-
-    $.ajax({
-        url: '/scrapingDocumenti',
-        type: 'GET',
-        success: function(result) {
-            //convert json string to json object
-            lista_doc = JSON.parse(result);
-            listaDocumenti(lista_doc);
-        },
-        error: function(error) {
-            alert("Error: " + error);
-        }
-    });
-
-
-
-    function listaDocumenti(arr) {
-        //var out="";
-        var i;
-        for(i = 0; i < arr.length; i++) {
-            //out += '<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
-            $('div#lista_doc').append('<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>');
-        }
-       //$('div#lista_doc').html(out);
-       $('#numDoc').html(arr.length);
-    }
 
     /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
     function addZero(i) {
@@ -257,15 +214,13 @@ $( document ).ready(function() {
     }
 
     $('#buttonCit').click(function(){
-        var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        getCitazioni(href);
+        var id = $("ul.nav.nav-tabs li.active a").attr("id");
+        if(id != 'homeTab'){
+            getCitazioni(id);
+        }
     });
 
-    $('#bott').click(function() {
         //var s = window.getSelection().toString();
-        window.alert(selection());
-    });
-
 });
 
 

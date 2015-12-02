@@ -89,13 +89,13 @@
 
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
                         <li>
-                              <button type="button" class="btn btn-default navbar-btn" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
+                              <button type="button" class="btn btn-default navbar-btn" id="buttonScrapAuto" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
 
                               <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>  <!--data-toggle="modal" data-target="#modalAnnotDoc" -->
 
                               <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
 
-                              <button type="button" class="btn btn-default navbar-btn" id="bott" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                              <button type="button" class="btn btn-default navbar-btn" id="buttonGest" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
                         </li>
                       </ul>
                 </div>
@@ -186,7 +186,7 @@
                 <div class="col-sm-9" >
 
                                 <ul class="nav nav-tabs">
-                                    <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#home" id="homeTab">Home</a></li>
                                 </ul>
 
                                 <div class="tab-content" >
@@ -194,7 +194,7 @@
                                         <div>
                                             <h4>ANTANI</h4>
                                             <h5>Lista documenti</h5>
-                                            <div id="listaDocumenti"></div>
+                                            <div id="prova"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -338,9 +338,6 @@
                     </div>
                     <form>
                         <div class="modal-body">
-
-
-
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
@@ -352,6 +349,16 @@
 
             </div>
 
+        <div class="modal fade" id="alertDoc" role="dialog">
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="alert alert-danger" >
+                        <strong>Attenzione!</strong> Seleziona un documento.
+                    </div>
+                 </div>
+            </div>
+        </div>
+
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -360,6 +367,7 @@
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
         <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
         <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/js/readFunctions.js" type="text/javascript" charset="utf-8"></script>
 
     </body>
 </html>
