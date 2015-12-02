@@ -283,6 +283,30 @@ $( document ).ready(function() {
             }
         }
     });
+    
+    function lanciaScraper() {
+        alert("ciao");
+        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
+        $.ajax({
+            url: '/scrapingAutomatico',
+            type: 'GET',
+            data: {url: urlDoc},
+            success: function(result) {
+                alert(result,urlDoc);
+            },
+            error: function(error) {
+                alert("Error2222: " + error);
+            }
+        });
+
+        return "";
+    }
+
+    $('#buttonScraper').click(function(){
+        var href = $("ul.nav.nav-tabs li.active a").attr("id");
+        lanciaScraper(href);
+    });
+    
 });
 
 /* Funzioni per la gestione delle tab in cui visualizzare i documenti */
