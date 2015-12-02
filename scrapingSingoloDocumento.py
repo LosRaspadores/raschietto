@@ -30,7 +30,7 @@ def scraping_singolo_documento(url):
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     doc_html = br.open(url).read()
     soup = BeautifulSoup(doc_html, 'html.parser')
-    html = domain_manager(url, domain, soup)
+    html = domain_manager(domain, soup)
 
     for a in soup.findAll('a', href=True):
         del a['href']
@@ -49,8 +49,7 @@ def scraping_singolo_documento(url):
     return str(html)
 
 
-def domain_manager(url, domain, soup):
-
+def domain_manager(domain, soup):
     if domain == 'http://www.dlib.org/':
         html = soup.find("table", {
             "width": "100%",
@@ -59,10 +58,6 @@ def domain_manager(url, domain, soup):
             "cellpadding": "0",
             "cellspacing": "0"
         })
-        # for i in soup.findAll('img'):
-        #     relative = i["src"]
-        #     absolute = urljoin(url, relative)
-        #     i["src"] = absolute
         return html
 
     elif domain == 'http://rivista-statistica.unibo.it/' \
