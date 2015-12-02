@@ -392,7 +392,7 @@ a.box{
     color: #555;
 }
 
-label{
+ul.nav.nav-tabs label{
     width: 150px;
     text-overflow: ellipsis;
     white-space: nowrap;
