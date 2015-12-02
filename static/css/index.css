@@ -383,3 +383,7 @@ button.button-lg:active {
     font-size: 14px;
 }
 
+#alertDoc .alert{
+    margin-bottom: 0px;
+}
+
