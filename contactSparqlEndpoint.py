@@ -102,13 +102,13 @@ prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 annotazione_prova = """
     [] a oa:Annotation ;
         rdfs:label "DOI"^^xsd:string ;
-        rsch:type "hasDoi"^^xsd:string ;
+        rsch:type "hasDOI"^^xsd:string ;
         oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
         oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
         oa:hasBody _:doi ;
         oa:hasTarget [ a oa:SpecificResource ;
                 oa:hasSelector [ a oa:FragmentSelector ;
-                        rdf:value "/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[2]"^^xsd:string ;
+                        rdf:value "form1_table3_tr1_td1_table5_tr1_td1_table1_tr1_td2_p2"^^xsd:string ;
                         oa:end "355"^^xsd:nonNegativeInteger ;
                         oa:start "328"^^xsd:nonNegativeInteger ] ;
                 oa:hasSource <http://www.dlib.org/dlib/july15/downs/07downs.html> ] .
@@ -252,15 +252,14 @@ def main():
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
     do_query_post(sparql_endpoint_locale, query)
 
-
+"""
     query = query_clear_graph(nome_grafo_gruppo)
     do_query_post(sparql_endpoint_remoto, query)
-
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
     do_query_post(sparql_endpoint_remoto, query)
 
-
+"""
     query = query_select_from_tuttigafi(lista)
     do_query_get(sparql_endpoint_locale, query)
 

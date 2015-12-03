@@ -7,11 +7,7 @@ __author__ = 'Los Raspadores'
 
 
 """
-    pip install pyquery
     pip install beautifulsoup4
-
-    La libreria PyQuery aggiunge a Python la comodità di jQuery e permette la selezione degli elementi nella pagina web
-    tramite selettori CSS
 """
 
 
@@ -20,21 +16,12 @@ import json
 from bs4 import BeautifulSoup
 import mechanize
 
+
 # Browser mechanize
 br = mechanize.Browser()
 
 # url dove si trova l'elenco dei gruppi
-url_grafi = "http://vitali.web.cs.unibo.it/TechWeb15/GrafiGruppi"
-
-# il nome (=l'IRI) di ogni grafo ha struttura: "http://vitali.web.cs.unibo.it/raschietto/graph/[idgruppo]"
-base_name = "http://vitali.web.cs.unibo.it/raschietto/graph/"
-
-# nostri dati
-our_graph = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
-
-our_group_id = "ltw1537"
-
-our_group_name = "Los Raspadores"
+url_gruppi = "http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso"
 
 
 def main():
@@ -43,13 +30,12 @@ def main():
 
 def scraping_gruppi():
     lista = []
-    url_gruppi = "http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso"
     page = br.open(url_gruppi)
     html = page.read()
     soup = BeautifulSoup(html)
     table = soup.find("table", cellpadding="5")
     for r in table.findAll('tr')[1:]:
-        list =  r.findAll("font")
+        list = r.findAll("font")
         data = {}
         data['id'] = list[0].text
         data['nome'] = list[1].text
@@ -57,7 +43,8 @@ def scraping_gruppi():
 
     with open('listagrafi.json', 'w') as fp:
         json.dump(lista, fp)
-    return  json.dumps(lista)
+
+    return json.dumps(lista)
 
 
 if __name__ == "__main__":

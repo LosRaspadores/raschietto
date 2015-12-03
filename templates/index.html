@@ -74,9 +74,9 @@
                         <!-- caricamento nuovo documento -->
                         <form class="navbar-form" role="search">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" data-placement="bottom" title="Carica un nuovo documento su cui aggiungere annotazioni">
+                                <input type="text" class="form-control" id="uriNuovoDoc" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" data-placement="bottom" title="Carica un nuovo documento su cui aggiungere annotazioni">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                    <button class="btn btn-default" type="button" id="nuovoDoc"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                                 </div>
                             </div>
                         </form>
@@ -88,71 +88,99 @@
                 </div>
             </div>
         </nav>
-        
-        <div id="wrapper">
-            <!-- Sidebar -->
-              <div id="sidebar-wrapper">
-                      <div class="panel-group">
-                          <div class="panel panel-default">
-                                  <div class="panel-heading">
-                                        <h4 class="sidebar-brand">
-                                          <a id="menu-toggle">Menu<span id="main_icon" class="glyphicon glyphicon-align-justify"></span></a>
-                                        </h4>
-                                  </div>
-                            </div>
-                            <div class="panel panel-default">
-                                  <div class="panel-heading">
-                                        <h4 class="sidebar-brand">
-                                          <a data-toggle="collapse" href="#doc">Documenti</a>
-                                        </h4>
-                                  </div>
-                                  <div id="doc" class="panel-collapse collapse">
-                                        <div class="panel-body" id="lista_doc"></div>
-                                  </div>
-                            </div>
 
-                            <div class="panel panel-default">
-                                  <div class="panel-heading">
-                                        <h4 class="sidebar-brand">
-                                          <a data-toggle="collapse" href="#gruppi">Gruppi</a>
-                                        </h4>
-                                  </div>
-                                  <div id="gruppi" class="panel-collapse collapse">
-                                        <div class="panel-body" id="lista_gruppi"></div>
-                                  </div>
+
+
+        <!--<div id="wrapper" class="container-fluid">-->
+        <div class="container-fluid">
+            <div class="row">
+            <!-- Sidebar -->
+                    <!--<div id="sidebar-wrapper">-->
+                <div class="col-sm-4">
+                    <div class="panel-group">
+
+                        <div class="panel panel-default">
+                              <div class="panel-heading">
+                                    <h4 class="sidebar-brand">
+                                      <a data-toggle="collapse" href="#doc">Documenti<span class="badge" id="numDoc">0</span></a>
+                                    </h4>
+                              </div>
+                              <div id="doc" class="panel-collapse collapse">
+                                    <!--<div class="panel-body" id="lista_doc">-->
+                                        <!--<div id="divDocumento">-->
+                                            <!--Titolo documento-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                  <div class="list-group" id="lista_doc">
+                                    </div>
+                              </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                              <div class="panel-heading">
+                                    <h4 class="sidebar-brand">
+                                      <a data-toggle="collapse" href="#gruppi">Gruppi<span class="badge" id="numGru">0</span></a>
+                                    </h4>
+                              </div>
+                              <div id="gruppi" class="panel-collapse collapse">
+                                    <div class="list-group" id="lista_gruppi">
+                                    </div>
+                              </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#filtriAnnotazioni">Tipi di annotazioni</a></h4>
+                            </div>
+                            <div id="filtriAnnotazioni" class="panel-collapse collapse">
+                                <div class="panel-body" id="lista_annot">
+                                    <input type="checkbox" id="toggleTitolo" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleTitoloLabel" for="toggleTitolo" data-on="Titolo" data-off="Titolo"></label>
+                                    <input type="checkbox" id="toggleURL" class="cmn-toggle cmn-toggle-yes-no" checked >
+                                    <label id="toggleURLLabel" for="toggleURL" data-on="URL" data-off="URL"></label>
+                                    <input type="checkbox" id="toggleAutore" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleAutoreLabel" for="toggleAutore" data-on="Autore" data-off="Autore"></label>
+                                    <input type="checkbox" id="toggleAnnoP" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleAnnoPLabel" for="toggleAnnoP" data-on="Anno Pubblicazione" data-off="Anno Pubblicazione"></label>
+                                    <input type="checkbox" id="toggleDOI" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleDOILabel" for="toggleDOI" data-on="DOI" data-off="DOI"></label>
+                                    <input type="checkbox" id="toggleFunzRet" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleFunzRetLabel" for="toggleFunzRet" data-on="Funzioni Retoriche" data-off="Funzioni Retoriche"></label>
+                                    <input type="checkbox" id="toggleCit" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleCitLabel" for="toggleCit" data-on="Citazioni" data-off="Citazioni"></label>
+                                    <input type="checkbox" id="toggleComm" class="cmn-toggle cmn-toggle-yes-no" checked >
+                                    <label id="toggleCommLabel" for="toggleComm" data-on="Commenti" data-off="Commenti"></label>
+                                </div>
                             </div>
                         </div>
-              </div>
 
+                        <div id="panelAnnot" class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#listaAnnotazioni">Annotazioni<span class="badge" id="numAnn">0</span></a></h4>
+                            </div>
+                            <div id="#listaAnnotazioni" class="panel-collapse collapse">
+                                <div class="panel-body">
 
-            <!-- Page content -->
-            <div id="page-content-wrapper">
-                <!-- Keep all page content within the page-content inset div! -->
-                <div class="page-content inset">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div>
-                                <ul class="nav nav-tabs">
-                                    <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
-                                    <li><a data-toggle="tab" href="#doc1">doc1</a></li>
-                                </ul>
-                                <div class="tab-content">
-                                    <div class="tab-pane fade in active" id="home">
-                                        <div>
-                                            <h4>ANTANI</h4>
-                                            <h5>Lista documenti</h5>
-                                            <div id="listaDocumenti"></div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="doc1">
-                                        <div>
-                                        </div>
-                                    </div>
                                 </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-8">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#home">Home</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="home">
+                            <div>
+                                <div id="listaDocumenti"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -188,21 +216,35 @@
         </div>
 
 
-         <!-- Modal annotazioni TODO DA ELIMINARE!!!-->
+        <!-- Modal annotazioni -->
         <div class="modal fade" id="modalAnnotazioni" role="dialog">
-            <div class="modal-dialog modal-md">
+            <div class="modal-dialog modal-lg">
                  <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h3 class="text-center" id="numeroAnnotazioni"></h3>
                     </div>
                     <div class="modal-body col-md-12">
-                        <form class="form col-md-12 center-block">
                         <div id="listaAnnotazioni"></div>
-                        </form>
                     </div>
                     <div class="modal-footer">
+                    </div>
+                 </div>
+            </div>
+        </div>
 
+
+        <div class="modal fade" id="modalAnnotazioneSingola" role="dialog">
+            <div class="modal-dialog modal-lg">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Annotazione</h3>
+                    </div>
+                    <div class="modal-body col-md-12">
+                        <div id="infoAnnotazione"></div>
+                    </div>
+                    <div class="modal-footer">
                     </div>
                  </div>
             </div>
@@ -210,17 +252,22 @@
 
 
         <!-- riferimenti javascript -->
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+
 
         <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
-        <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/annotator.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/utils.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
 
         <!--Sgvizler is a javascript which renders the result of SPARQL SELECT queries into charts or html elements
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript" src="http://beta.data2000.no/sgvizler/release/0.6/sgvizler.js"></script>
         <script type="text/javascript" src="/static/js/sgvizler-setup.js"></script>-->
+
     </body>
 </html>
 

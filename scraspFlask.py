@@ -11,11 +11,12 @@ __author__ = 'Los Raspadores'
     spazio web nostro gruppo url: http://ltw1537.web.cs.unibo.it/
 """
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 
 # script importati
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
+from scrapingSingoloDocumento import scraping_singolo_documento
 from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto
 import json
 
@@ -23,18 +24,13 @@ import json
 # initializzazione applicazione
 app = Flask(__name__)
 
-# valori di configurazione, DEBUG=True >>> eliminare dopo la migrazione sul server!!
+# valori di configurazione, TODO DEBUG=True >>> eliminare dopo la migrazione sul server!!
 app.config.update(
     DEBUG=True,
 )
 
 
 # controllers
-@app.route("/hello")
-def hello():
-    return "Hello from Python!"
-
-
 @app.route('/')
 def index(name=None):
     return render_template('index.html', name=name)
@@ -46,10 +42,18 @@ def return_documenti():
     return data
 
 
+@app.route('/scrapingSingoloDocumento')
+def return_singolo_documento():
+    url = request.args.get('url')
+    data = scraping_singolo_documento(url)
+    return data
+
+
 @app.route('/scrapingGruppi')
 def return_gruppi():
     data = scraping_gruppi()
     return data
+
 
 @app.route('/getAllAnnotazioni')
 def return_all_annotazioni():
@@ -66,11 +70,10 @@ def return_all_annotazioni():
     return json.dumps(results)  #dict to json
 
 
-
 # launch app
 if __name__ == "__main__":
-
     # app.run(host='bla', port=8080)
 
     # in locale: run on default port localhost:5000
     app.run()
+    

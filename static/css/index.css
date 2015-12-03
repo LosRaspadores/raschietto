@@ -90,7 +90,7 @@ body {
 .cmn-toggle {
     position: absolute;
     margin-left: -9999px;
-    visibility: hidden; //nasconde la checkbox
+    visibility: hidden; /*nasconde la checkbox*/
 }
 
 .cmn-toggle + label {
@@ -104,6 +104,17 @@ body {
 input.cmn-toggle-yes-no + label {
     width: 210px;
     height: 50px;
+}
+
+div#lista_annot.panel-body label#toggleURLLabel{
+    margin-bottom: 0px;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label{
+    height: 35px;
+    width: 190px;
+    margin: auto;
+    margin-bottom: 5px;
 }
 
 input.cmn-toggle-yes-no + label:before,
@@ -121,6 +132,10 @@ input.cmn-toggle-yes-no + label:after {
     line-height: 50px;
 }
 
+#lista_annot input.cmn-toggle-yes-no + label:before, #lista_annot input.cmn-toggle-yes-no + label:after{
+    line-height: 40px;
+}
+
 input.cmn-toggle-yes-no + label:before {
     background-color: #0C3C26;
     content: attr(data-off);
@@ -128,6 +143,10 @@ input.cmn-toggle-yes-no + label:before {
     backface-visibility: hidden;
 }
 
+#lista_annot input.cmn-toggle-yes-no + label:before {
+    background-color: #DCDCDC;
+    color: #0C3C26;
+}
 input.cmn-toggle-yes-no + label:after {
     background-color: white;
     color: #0C3C26;
@@ -137,6 +156,46 @@ input.cmn-toggle-yes-no + label:after {
     backface-visibility: hidden;
 }
 
+#lista_annot input.cmn-toggle-yes-no + label#toggleAutoreLabel:after {
+    background-color: #ffd700;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleAnnoPLabel:after {
+    background-color: #F44611;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleCitLabel:after {
+   background-color: #d29aaf;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleCommLabel:after {
+    background-color: #BC8F8F;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleDOILabel:after {
+    background-color: #DC143C;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleFunzRetLabel:after {
+    background-color: #b3ff66;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleTitoloLabel:after{
+    background-color: #48D1CC;
+    color:white;
+}
+
+#lista_annot input.cmn-toggle-yes-no + label#toggleURLLabel:after {
+    background-color: #008080;
+    color:white;
+}
+
 input.cmn-toggle-yes-no:checked + label:before {
     transform: rotateY(180deg);
 }
@@ -144,6 +203,21 @@ input.cmn-toggle-yes-no:checked + label:after {
     transform: rotateY(0);
 }
 
+
+.btn-primary.active{
+    background-color: #44B78B;
+    border-color: #44B78B;
+}
+
+.btn-primary:hover {
+    background-color: #44B78B;
+    border-color: #39735C;
+}
+
+.btn-primary.active:hover{
+    background-color: #44B78B;
+    border-color: #39735C;
+}
 
 /* bottone autenticazione */
 button.button-lg {
@@ -168,52 +242,93 @@ button.button-lg:active {
 /* filtri */
 .filtri{
     font-weight: bold;
-    padding: 10px;
-    border: 2px solid #003366;
-    margin-bottom: 15px;
-    border-radius: 25px;
 }
 
-#labelURL{
-    color: FireBrick;
+.labelURL{
+    color: ##008080;
 }
 
-#labelTitolo{
-    color: DarkOrange;
+.highlightURL{
+    background-color: #008080;
 }
 
-#labelAutore{
-    color: Gold;
+.labelTitle{
+    color: #48D1CC;
 }
 
-#labelAnnoDiPubblicazione{
-    color: RosyBrown;
+.highlightTitle{
+    background-color: #48D1CC;
 }
 
-#labelDOI{
-    color: MediumSpringGreen;
+.labelAuthor{
+    color: #ffd700;
 }
 
-#labelRetorica{
-    color: Turquoise;
+.highlightAuthor{
+    background-color: #ffd700;
 }
 
-#labelCommento{
-    color: SlateBlue;
+.labelPublicationYear{
+    color: #F44611;
 }
 
-#labelCitazione{
-    color: Salmon;
+.highlightPublicationYear{
+    background-color: #F44611;
 }
+
+.labelDOI{
+    color: #DC143C;
+}
+
+.highlightDOI{
+    background-color: #DC143C;
+}
+
+.labelDenotesRhetoric{
+    color: #b3ff66;
+}
+
+.highlightDenotesRhetoric{
+    background-color: #b3ff66;
+}
+
+.labelComment{
+    color: #BC8F8F;
+}
+
+.highlightComment{
+    background-color: #BC8F8F;
+}
+
+.labelCites{
+    color: #d29aaf;
+}
+
+.highlightCites{
+    background-color: #d29aaf;
+}
+
+
+.panel-default>.panel-heading .badge {
+    color: #FFFFFF;
+    background-color: #44B78B;
+    margin-left: 20px;
+    }
 
 /*Stile menu laterale*/
 .panel-group .panel{
     border-radius: 0px;
-    margin-bottom: -5px; /*spazio tra i pannelli*/
+    margin-bottom: -3px; /*spazio tra i pannelli*/
 }
 
 .panel-default > .panel-heading{
     background-color: #f5f5f5;
+    font-variant: small-caps;
+    font-size: 19px;
+    height: 40px;
+}
+.panel-default > .panel-heading h4 {
+    margin-top: 0px;
 }
 
 .row{
@@ -221,138 +336,50 @@ button.button-lg:active {
     margin-right:0px;
 }
 
-#wrapper {
-    padding-left: 50px;
-    transition: all .4s ease 0s;
-    height: 100%
+#divDocumento{
+    border: 1px solid;
+    padding: 3px;
+    margin-top: -1px;
+    margin-left: -16px;
+    margin-right: -16px;
 }
 
-#sidebar-wrapper{
-    margin-left: -300px;
-    left: 50px;
-    width: 300px;
-    background: rgb(255, 255, 255);
-    position: absolute;
-    height: 100%;
-    z-index: 10000;
-    transition: all .4s ease 0s;
+.panel>.panel-collapse>.list-group .list-group-item{
+    width:100%;
+    margin-bottom: -20px;
+    background-color: white;
 }
 
-.sidebar-nav {
-    display: block;
-    float: left;
-    width: 300px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-#page-content-wrapper {
-    padding-left: 0;
-    margin-left: 0;
-    width: 100%;
-    height: auto;
-}
-#wrapper.active {
-    padding-left: 300px;
-}
-#wrapper.active #sidebar-wrapper{
-    left: 300px;
+.panel>.panel-collapse>.list-group a.list-group-item.active{
+    color: white;
+    background-color: #0C3C26;
+    border-color: #0C3C26;
 }
 
-#page-content-wrapper {
-  width: 100%;
+.panel>.panel-heading+.panel-collapse>.list-group .list-group-item:last-of-type{
+    border-bottom: 0px;
 }
 
-.panel-group  a {
+.panel-group  a, .panel-group a:visited {
     color:#0C3C26;
     text-decoration: none;
-    font-size: 18px;
-    font-variant: small-caps;
     font-weight: 600;
     width: 300px;
     background: #F5F5F5;
-    /*border-bottom: 1px solid #1A1A1A;*/
-    -webkit-transition: background .5s;
-    -moz-transition: background .5s;
-    -o-transition: background .5s;
-    -ms-transition: background .5s;
-    transition: background .5s;
 }
-/*.sidebar_name {
-    padding-top: 25px;
-    color: #fff;
-    opacity: .7;
-}
-
-.sidebar-nav li {
-  line-height: 40px;
-  text-indent: 20px;
-}
-
-.sidebar-nav li a {
-  color: #999999;
-  display: block;
-  text-decoration: none;
-}*/
 
 .panel-group  a:hover {
   color: #2DB78B;
-  /*background: rgba(255,255,255,0.2);*/
   text-decoration: none;
 }
 
- .panel-group  a:active, .panel-group  a:focus {
+ .panel-group  a:active {
   text-decoration: none;
-}
-/*
-.sidebar-nav > .sidebar-brand {
-  height: 65px;
-  line-height: 60px;
-  font-size: 18px;
+  color: #2DB78B;
 }
 
-.sidebar-nav > .sidebar-brand a {
-  color: #999999;
-}
-
-.sidebar-nav > .sidebar-brand a:hover {
-  color: #fff;
-  background: none;
-}*/
-
-#main_icon
-{
-   float:right;
-   padding-right: 4px;
-   padding-top: 0px;
-}
-
-.content-header {
-  height: 65px;
-  line-height: 65px;
-}
-
-.content-header h1 {
-  margin: 0;
-  margin-left: 20px;
-  line-height: 65px;
-  display: inline-block;
-}
-
-@media (max-width:767px) {
-    #wrapper {
-    padding-left: 50px;
-    transition: all .4s ease 0s;
-}
-#sidebar-wrapper {
-    left: 70px;
-}
-#wrapper.active {
-    padding-left: 300px;
-}
-#wrapper.active #sidebar-wrapper {
-    left: 300px;
-    width: 300px;
-    transition: all .4s ease 0s;
-}
+/* Visualizzazione documento */
+#singoloDocumento{
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-size: 14px;
 }
