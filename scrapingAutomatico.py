@@ -28,18 +28,19 @@ br = mechanize.Browser()
 
 
 def main():
-     scraping_titolo()
-    # scarping_autore()
-    # scraping_doi()
-    # scraping_anno()
+     #scraping_titolo()
+     #scarping_autore()
+     #scraping_doi()
+     #scraping_anno()
+     c=1
 
-def scraping_titolo(urlDoc):
+def scraping_titolo(url):
     lista = []
-    resp = br.open(urlDoc)
+    resp = br.open(url)
     raw_html = resp.read()
     soup = BeautifulSoup(raw_html)
 
-    parsed_uri = urlparse(urlDoc)
+    parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
 
@@ -62,13 +63,13 @@ def scraping_titolo(urlDoc):
     print json.dumps(lista)
     return json.dumps(lista)
 
-def scarping_autore(urlDoc):
+def scarping_autore(url):
     lista = []
-    resp = br.open(urlDoc)
+    resp = br.open(url)
     raw_html = resp.read()
     soup = BeautifulSoup(raw_html)
 
-    parsed_uri = urlparse(urlDoc)
+    parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
 
@@ -94,14 +95,14 @@ def scarping_autore(urlDoc):
     return json.dumps(lista)
 
 
-def scraping_doi(urlDoc):
+def scraping_doi(url):
 
     lista = []
-    resp = br.open(urlDoc)
+    resp = br.open(url)
     raw_html = resp.read()
     soup = BeautifulSoup(raw_html)
 
-    parsed_uri = urlparse(urlDoc)
+    parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
 
@@ -138,13 +139,13 @@ def scraping_doi(urlDoc):
     return json.dumps(lista)
 
 
-def scraping_anno(urlDoc):
+def scraping_anno(url):
     lista = []
-    resp = br.open(urlDoc)
+    resp = br.open(url)
     raw_html = resp.read()
     soup = BeautifulSoup(raw_html)
 
-    parsed_uri = urlparse(urlDoc)
+    parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
 

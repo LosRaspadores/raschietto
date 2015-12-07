@@ -286,9 +286,9 @@ $( document ).ready(function() {
         }
     });
     
-    function lanciaScraper() {
-        alert("ciao");
-        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
+    function lanciaScraper(urlDoc) {
+        //alert("ciao");
+        //var urlDoc = "";
         $.ajax({
             url: '/scrapingAutomatico',
             type: 'GET',
@@ -308,7 +308,7 @@ $( document ).ready(function() {
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
         lanciaScraper(href);
     });
-    
+
 });
 
 

@@ -14,18 +14,18 @@ $(document).ready(function() {
         return keyValue ? keyValue[2] : null;
     };
 
-    //inizializzazione modalità
+    //inizializzazione modalitï¿½
     if(getCookie('nomecognome') == null & getCookie('email') == null){
         $('#modalitaToggle').prop('checked', false);
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
+        $("#modalitaToggleLabel").prop('title','Passa a modalitï¿½ annotator');
         $('#utenteAutenticato').text("Nessun utente autenticato");
     } else {
         $('#modalitaToggle').prop('checked', true);
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
+        $("#modalitaToggleLabel").prop('title','Passa a modalitï¿½ reader');
         $('#utenteAutenticato').text("Utente autenticato come: "+getCookie('nomecognome')+", email: "+getCookie('email'));
     };
 
-    //quando si ritorna a modalità reader
+    //quando si ritorna a modalitï¿½ reader
     //document.cookie = "nomecognome=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     //document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
 
@@ -37,7 +37,7 @@ $(document).ready(function() {
 
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
+        $("#modalitaToggleLabel").prop('title','Passa a modalitï¿½ annotator');
         $('[data-toggle="tooltip"]').tooltip();
         $('#utenteAutenticato').text("Nessun utente autenticato.");
         $('#bottoniAnnotator').hide();
@@ -45,12 +45,12 @@ $(document).ready(function() {
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
+        $("#modalitaToggleLabel").prop('title','Passa a modalitï¿½ reader');
         $('[data-toggle="tooltip"]').tooltip();
         $('#bottoniAnnotator').show();
     };
 
-    /* Passaggio da modalità reader a modalità annotator e viceversa */
+    /* Passaggio da modalitï¿½ reader a modalitï¿½ annotator e viceversa */
     $('#modalitaToggle').change(function() {
         if ($("#modalitaToggle").prop('checked')) {
             $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
@@ -65,10 +65,10 @@ $(document).ready(function() {
     });
 
     /*
-        Verifica della presenza di un utente già autenticato come annotator.
+        Verifica della presenza di un utente giï¿½ autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
         I dati in sessionStorage vengono ripuliti ogniqualvolta la sessione della pagine termina.
-        La sessione della pagina dura fino a quando il browser è aperto e sopravvive alla ricarica della pagina e al
+        La sessione della pagina dura fino a quando il browser ï¿½ aperto e sopravvive alla ricarica della pagina e al
         ripristino. L'apertuta di una nuova un un nuovo tab o nuova finestra implica l'apertura di una nuova sessione,
         il che differisce da come funzionano i cookie di sessione.
     */
@@ -88,15 +88,15 @@ $(document).ready(function() {
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
         if(nomecognome==""){
-            $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
+            $('#messaggioErrore').text("Il campo nome e cognome ï¿½ obbligatorio.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(email==""){
-            $('#messaggioErrore').text("Il campo email è obbligatorio.");
+            $('#messaggioErrore').text("Il campo email ï¿½ obbligatorio.");
             $("#email").val("");
             $("#email").focus();
         } else if(!regexNomecognome.test(nomecognome)){
-            $('#messaggioErrore').text("Il campo nome e cognome può contenere solo caratteri alfabetici.");
+            $('#messaggioErrore').text("Il campo nome e cognome puï¿½ contenere solo caratteri alfabetici.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
@@ -115,7 +115,7 @@ $(document).ready(function() {
         };
     });
 
-    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalità reader */
+    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalitï¿½ reader */
     $('#modalAutenticazione button.close').click(function (){
         $("#nomecognome").val("");
         $("#email").val("");

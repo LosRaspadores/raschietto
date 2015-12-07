@@ -133,6 +133,23 @@ def print_triples(graph):
     print graph.serialize(format="nt")  # serializzazione in N-triples
     # print graph.serialize(format="turtle")  # serializzazione in Turtle
 
+#def query_delete_doi(grafo,file):
+ #    rdf_graph = rdflib.Graph()  # nuovo grafo RDF vuoto
+ #    rdf_graph.load("data\\"+file)  # dati caricati da un file .owl
+ #    query = " DELETE  WHERE {GRAPH <%s> {%s} " \
+ #            "?annotation" \
+ #            "a oa:annotation;" \
+#             "oa:hasBody ?body;" \
+ #            "oa:hasTarget ?target;" \
+ #           "rdfs:label ""DOI""^^<http:// www.w3.org/2001/XMLSchema#string> ;"\
+   #          "raschietto:type ""hasDOI""^^<http://www.w3.org/2001/XMLSchema#normalizedString> ; "\
+    #         "oa:annotatedAt  ""'.$array->ora.'""^^<http://www.w3.org/2001/XMLSchema#dataTime> ; " \
+     #        "oa:annotatedBy <'.$array->autore.'>." \
+
+
+
+
+
 
 # 'INSERT' per inserire dati da un file in un grafo (servizio /update, metodo POST)
 def query_insert_file(nome_grafo, file):
@@ -208,16 +225,19 @@ def query_annotazione(nome_grafo, annotazione):
 
 def main():
 
-    query = query_insert_file(nome_grafo_gruppo, "travel.owl")
-    do_query_post(sparql_endpoint_locale, query)
+    query = query_select_all_default()                 #funziona
+    do_query_get(sparql_endpoint_remoto, query)
 
-    query = query_clear_graph(nome_grafo_gruppo)
-    do_query_post(sparql_endpoint_locale, query)
+    #query = query_insert_file(nome_grafo_gruppo, "travel.owl")
+    #do_query_post(sparql_endpoint_locale, query)
 
-    query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
-    do_query_post(sparql_endpoint_locale, query)
+    #query = query_clear_graph(nome_grafo_gruppo)        #funziona
+    #do_query_post(sparql_endpoint_remoto, query)
 
-    query = query_select_all_grafo(nome_grafo_gruppo)
-    do_query_get(sparql_endpoint_locale, query)
+    #query = query_annotazione(nome_grafo_gruppo, annotazione_prova)   #funziona
+    #do_query_post(sparql_endpoint_remoto, query)
+
+    #query = query_select_all_grafo(nome_grafo_gruppo)               #funziona
+    #do_query_get(sparql_endpoint_remoto, query)
     
 main()

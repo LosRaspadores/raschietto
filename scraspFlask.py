@@ -61,12 +61,12 @@ def return_citazioni():
 
 @app.route('/scrapingAutomatico')
 def return_titolo():
-    data = scraping_titolo(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-    #data = scarping_autore(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-    #data = scraping_doi(urlDoc="http://www.dlib.org/dlib/september15/wu/09wu.html")
-    #data = scraping_anno(urlDoc="http://www.dlib.org/dlib/november14/fedoryszak/11fedoryszak.html")
+    urlD = request.args.get('url')
+    data = scraping_titolo(urlD)
+    data= scarping_autore(urlD)
+    data = scraping_doi(urlD)
+    data = scraping_anno(urlD)
     return data
-
 
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
