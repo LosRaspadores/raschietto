@@ -108,7 +108,7 @@ annotazione_prova = """
         oa:hasBody _:doi ;
         oa:hasTarget [ a oa:SpecificResource ;
                 oa:hasSelector [ a oa:FragmentSelector ;
-                        rdf:value "form1_table3_tr1_td1_table5_tr1_td1_table1_tr1_td2_p2"^^xsd:string ;
+                        rdf:value "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"^^xsd:string ;
                         oa:end "355"^^xsd:nonNegativeInteger ;
                         oa:start "328"^^xsd:nonNegativeInteger ] ;
                 oa:hasSource <http://www.dlib.org/dlib/july15/downs/07downs.html> ] .
@@ -197,13 +197,14 @@ def query_select_all_grafo(nome_grafo):
         }""" % (nome_grafo)
     return query
 
+
 # 'SELECT' all dal grafo specificato >>> LIMIT numero
 def query_select_from_tuttigafi(lista_grafi):
     query = """SELECT ?subject ?predicate ?object
             """
     for grafo in lista_grafi:
         query = query + "FROM NAMED <"+grafo+">"
-    query = query + "WHERE {GRAPH ?g {?subject ?predicate ?object} }"
+    query += "WHERE {GRAPH ?g {?subject ?predicate ?object} }"
     return query
 
 

@@ -1,51 +1,19 @@
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
-
-    /*
-    function setCookie(key, value) {
-        var expires = new Date();
-        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-        document.cookie = key + '=' + value +';path=/'+ ';expires=' + expires.toUTCString();
-    };
-
-    function getCookie(key) {
-        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-        return keyValue ? keyValue[2] : null;
-    };
-
-    //inizializzazione modalità
-    if(getCookie('nomecognome') == null & getCookie('email') == null){
-        $('#modalitaToggle').prop('checked', false);
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
-        $('#utenteAutenticato').text("Nessun utente autenticato");
-    } else {
-        $('#modalitaToggle').prop('checked', true);
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
-        $('#utenteAutenticato').text("Utente autenticato come: "+getCookie('nomecognome')+", email: "+getCookie('email'));
-    };
-
-    //quando si ritorna a modalità reader
-    //document.cookie = "nomecognome=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    //document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-
-    //al momento dell'autenticazione
-    //setCookie('nomecognome', nomecognome);
-    //setCookie("email", email);
-
-    */
-
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
         $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
         $('[data-toggle="tooltip"]').tooltip();
-        $('#utenteAutenticato').text("Nessun utente autenticato.");
+        $('#utenteAutenticato').text("");
+        $('#bottoniAnnotator').hide();
     };
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
         $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
         $('[data-toggle="tooltip"]').tooltip();
+        $('#bottoniAnnotator').show();
     };
 
     /* Passaggio da modalità reader a modalità annotator e viceversa */
@@ -76,7 +44,7 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text("Utente autenticato: "+sessionStorage.nomecognome+", email: "+sessionStorage.email);
+        $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
     };
 
     /* Validazione autenticazione utente */
@@ -98,23 +66,24 @@ $(document).ready(function() {
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
-            $('#messaggioErrore').text("Il campo email deve essere del tipo user@domin.io.");
+            $('#messaggioErrore').text("Il campo email deve essere del tipo user@dominio.it.");
             $("#email").val("");
             $("#email").focus();
         } else {
+            $('#messaggioErrore').text("");
             $('#modalAutenticazione').modal('hide');
             $("#nomecognome").val("");
             $("#email").val("");
             //I dati dell'utente vengono salvati nella sessionStorage
-            sessionStorage.nomecognome=nomecognome;
-            sessionStorage.email=email;
-            $('#utenteAutenticato').text("Utente autenticato: "+sessionStorage.nomecognome+", email: "+sessionStorage.email);
+            sessionStorage.nomecognome = nomecognome;
+            sessionStorage.email = email;
+            $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
             annotatorMode();
         };
     });
 
-    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalit� reader */
-    $('.close').click(function (){
+    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalità reader */
+    $('#modalAutenticazione button.close').click(function (){
         $("#nomecognome").val("");
         $("#email").val("");
         $('#messaggioErrore').text("");

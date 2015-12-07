@@ -1,46 +1,85 @@
-
 /* funzioni annotazioni */
 
-// query che ritorna tutte le annotazioni di un determinato documento all'interno di un determinato grafo
+// query che restituisce tutte le annotazioni di un determinato documento
 function query_all_annotazioni(nome_grafo, url_documento){
     var query = 'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?fs_value '+
-            '?start ?end '+
-            //'FROM NAMED <' + nome_grafo + '>'+
-            'WHERE {'+
-            'GRAPH ?graph {?a a oa:Annotation. '+
-                'OPTIONAL {?a rdfs:label ?label} '+
-                'OPTIONAL {?a rsch:type ?type} '+
-                '?a oa:annotatedAt ?date; '+
-                'oa:annotatedBy ?provenance. '+
-                'OPTIONAL {?provenance foaf:name ?prov_nome} '+
-                'OPTIONAL {?provenance schema:email ?prov_email} '+
-                'OPTIONAL {?provenance rdfs:label ?prov_label} '+
-                '?a oa:hasBody ?body. '+
-                '?body rdf:subject ?body_s; '+
-                      'rdf:object ?body_o; '+
-                      'rdf:predicate ?body_p; '+
-                'OPTIONAL {?body_o rdfs:label ?body_l} '+
-                '?a oa:hasTarget ?target. '+
-                '?target oa:hasSelector ?fragment_selector. '+
-                '?fragment_selector rdf:value ?fs_value; '+
-                                   'oa:start ?start; '+
-                                   'oa:end ?end. '+
-                '?target oa:hasSource <' + url_documento + '> '+
-                '} } ORDER BY DESC(?date)';
+                '?start ?end '+
+                //'FROM NAMED <' + nome_grafo + '>'+
+                //'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> ' +
+                'WHERE {'+
+                'GRAPH ?graph {?a a oa:Annotation. '+
+                    'OPTIONAL {?a rdfs:label ?label} '+
+                    'OPTIONAL {?a rsch:type ?type} '+
+                    '?a oa:annotatedAt ?date; '+
+                    'oa:annotatedBy ?provenance. '+
+                    'OPTIONAL {?provenance foaf:name ?prov_nome} '+
+                    'OPTIONAL {?provenance schema:email ?prov_email} '+
+                    'OPTIONAL {?provenance rdfs:label ?prov_label} '+
+                    '?a oa:hasBody ?body. '+
+                    '?body rdf:subject ?body_s; '+
+                          'rdf:object ?body_o; '+
+                          'rdf:predicate ?body_p; '+
+                    'OPTIONAL {?body_o rdfs:label ?body_l} '+
+                    '?a oa:hasTarget ?target. '+
+                    '?target oa:hasSelector ?fragment_selector. '+
+                    '?fragment_selector rdf:value ?fs_value; '+
+                                       'oa:start ?start; '+
+                                       'oa:end ?end. '+
+                    '?target oa:hasSource <' + url_documento + '> '+
+                    '} } ORDER BY DESC(?date) ';
     return query;
 };
 
+//chiamata ajax
+function get_annotazioni(query, urlDoc){
+    $.ajax({
+        url: '/getAllAnnotazioni',
+        type: 'GET',
+        data: {data: query},
+        success: function(result) {
+            //convert json string to json object
+            lista_annotazioni = JSON.parse(result);
+            if(lista_annotazioni["results"]["bindings"].length !== 0){
+                for (i = 0; i < lista_annotazioni["results"]["bindings"].length; i++) {
+                    ann = lista_annotazioni["results"]["bindings"][i];
+                    fragmentPath = ann["fs_value"]["value"];
+                    if(fragmentPath === "" || fragmentPath === "document" || fragmentPath === "Document" || fragmentPath==="html/body/" || fragmentPath==="html/body"){
+                        console.log("ANNOTAZIONE SUL DOCUMENTO SENZA FRAGMENT PATH");
+                    } else {
+                        //Vengono evidenziate sul testo solo le annotazioni su frammento (ovviamente)
+                        highligthFragment(fragmentPath, ann, urlDoc);
+                    }
+                }
+                //TODO aggionare numero ann totali per il documento
+                displayAnnotazioni(lista_annotazioni); //modale
+            } else {
+                alert("Non ci sono annotazioni per il documento selezionato.");
+            }
+        },
+        error: function(error) {
+            alert("Error: " + error);
+        }
+    });
+};
+
+
 // modal
 function displayAnnotazioni(anns) {
-    $('#numeroAnnotazioni').text("Numero annotazioni: " + anns["results"]["bindings"].length);
+    var numeroAnnotazioni = 0;
     $('#modalAnnotazioni').modal({backdrop: 'static', keyboard: false});  // before modal show line!
     $('#modalAnnotazioni').modal('show');
     var out = "";
     var i;
     for (i = 0; i < anns["results"]["bindings"].length; i++) {
         ann = anns["results"]["bindings"][i];
-        out += displaySingolaAnnotazione(ann)
+        ann_out = displaySingolaAnnotazione(ann);
+        if(ann_out !== ""){
+            out += ann_out;
+            numeroAnnotazioni += 1;
+        }
     }
+    console.log("Numero totale annotazioni: " + anns["results"]["bindings"].length + ", effettive non scartate: " + numeroAnnotazioni);
+    $('#numeroAnnotazioni').text("Numero totale annotazioni: " + numeroAnnotazioni);
     $('#listaAnnotazioni').html(out);
 };
 
@@ -49,18 +88,24 @@ function displaySingolaAnnotazione(ann){
     //tipo e contenuto
     out = "";
     if(typeof(ann["type"]) !== "undefined"){
-        if(gestioneTipoType(ann["type"]["value"] !== "")){
-            out = '<div>Annotazione di tipo type >>> ' + ann["type"]["value"] + " <<< " + gestioneTipoType(ann["type"]["value"]);
-            if(ann["type"]["value"] == "denotesRhetoric"){
-                out += gestioneRetoriche(ann["body_o"]["value"]) + " >>>" + ann["body_o"]["value"] + '</p>';
+        tipo_ann = gestioneTipoType(ann["type"]["value"]);
+        if(tipo_ann !== ""){
+            out = '<div><span class ="filtri">Annotazione di tipo ' + tipo_ann;
+            if(ann["type"]["value"] === "denotesRhetoric"){
+                ret = gestioneRetoriche(ann["body_o"]["value"]);
+                if(ret !== ""){
+                    out += ret + '</p>';
+                } else {
+                    out += ann["body_o"]["value"];
+                }
             } else {
                 if (typeof(ann["body_l"]) !== "undefined") {
-                    out += ann["body_l"]["value"] + '</p>';
-                } else if (typeof(ann["body_o"]) !== "undefined") {
-                    out += ann["body_o"]["value"] + '</p>';
-                } else {
-                    out += "</p>";
+                    out += ann["body_l"]["value"] + " ";
                 }
+                if (typeof(ann["body_o"]) !== "undefined") {
+                    out += ann["body_o"]["value"];
+                }
+                out += ".</p>";
             }
             // provenance e dataora
             out += '<p>Inserita da: '
@@ -78,107 +123,112 @@ function displaySingolaAnnotazione(ann){
             out += "</div><br>";
         }
     } else if (typeof(ann["label"]) !== "undefined"){
-        out = '<div>Annotazione di tipo label >>> ' + ann["label"]["value"] + " <<< " + gestioneTipoLabel(ann["label"]["value"]);
-        if(ann["label"]["value"] == "Retorica" || ann["label"]["value"] == "Rhetoric"){
-            out += gestioneRetoriche(ann["body_o"]["value"]) + " >>>" + ann["body_o"]["value"] + '</p>';
-        } else {
-            if (typeof(ann["body_l"]) !== "undefined") {
-                out += ann["body_l"]["value"] + '</p>';
-            } else if (typeof(ann["body_o"]) !== "undefined") {
-                out += ann["body_o"]["value"] + '</p>';
+        tipo_ann = gestioneTipoLabel(ann["label"]["value"]);
+        if(tipo_ann !== ""){
+            out = '<div><span class="filtri">Annotazione di tipo ' + tipo_ann;
+            if(ann["label"]["value"] === "Retorica" || ann["label"]["value"] === "Rhetoric"){
+                ret = gestioneRetoriche(ann["body_o"]["value"]);
+                if(ret !== ""){
+                    out += ret + '</p>';
+                } else {
+                    out += ann["body_o"]["value"];
+                }
             } else {
-                out += "</p>";
+                if (typeof(ann["body_l"]) !== "undefined") {
+                    out += ann["body_l"]["value"] + " ";
+                }
+                if (typeof(ann["body_o"]) !== "undefined") {
+                    out += ann["body_o"]["value"];
+                }
+                out += ".</p>";
             }
+            // provenance e dataora
+            out += '<p>Inserita da: '
+            if(typeof(ann["prov_label"]) !== "undefined"){
+                out += ann["prov_label"]["value"] + " "
+            } else if(typeof(ann["prov_nome"]) !== "undefined"){
+                out += ann["prov_nome"]["value"] + " "
+            } else if(typeof(ann["provenance"]) !== "undefined"){
+                out += ann["provenance"]["value"] + " "
+            }
+            if(typeof(ann["prov_email"]) !== "undefined"){
+                out += ann["prov_email"]["value"] + " "
+            }
+            out += parseDatetime(ann["date"]["value"]) + "</p>";
+            out += "</div><br>";
         }
-        // provenance e dataora
-        out += '<p>Inserita da: '
-        if(typeof(ann["prov_label"]) !== "undefined"){
-            out += ann["prov_label"]["value"] + " "
-        } else if(typeof(ann["prov_nome"]) !== "undefined"){
-            out += ann["prov_nome"]["value"] + " "
-        } else if(typeof(ann["provenance"]) !== "undefined"){
-            out += ann["provenance"]["value"] + " "
-        }
-        if(typeof(ann["prov_email"]) !== "undefined"){
-            out += ann["prov_email"]["value"] + " "
-        }
-        out += parseDatetime(ann["date"]["value"]) + "</p>";
-        out += "</div><br>";
     }
     return out;
 }
 
-function get_annotazioni(query, urlDoc){
-    $.ajax({
-        url: '/getAllAnnotazioni',
-        type: 'GET',
-        data: {data: query},
-        success: function(result) {
-            //convert json string to json object
-            lista_annotazioni = JSON.parse(result);
-            if(lista_annotazioni["results"]["bindings"].length==0){
-                //TODO aggionare numero ann di ogni gruppo
-                $("#numAnn").text("0");
-            } else {
-                var init = parseInt($("#numAnn").text());
-                var numero = parseInt(lista_annotazioni["results"]["bindings"].length);
-                $("#numAnn").text( init + numero );
-                displayAnnotazioni(lista_annotazioni); //modale
-                highligthFragments(lista_annotazioni, urlDoc); //frammenti evidenziati
-            }
-        },
-        error: function(error) {
-            alert("Error: " + error);
+
+
+function highligthFragment(fragmentPath, ann, urlDoc) {
+
+    start = ann["start"]["value"];
+    end = ann["end"]["value"];
+
+    if(typeof(ann["type"]) !== "undefined"){
+        classCSS = getClassNameType(ann["type"]["value"]);
+    } else if (typeof(ann["label"]) !== "undefined"){
+        classCSS = getClassNameLabel(ann["label"]["value"]);
+    } else {
+        //se il tipo di annotazione non c'è nè nel campo type nè in label l'annotazione viene scartata
+        classCSS = "";
+    }
+    if(classCSS !== ""){
+        //fragmentPath trasformato in xPath (del documento originale)
+        path = getDomXPath(fragmentPath);
+
+        //xPath (del documento originale) trasformato in xPath locale
+        var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
+
+        //if dilib
+        if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
+            path = path.replace(/\/tr/g, '/tbody[1]/tr[1]');
         }
-    });
-};
+        path = path.replace("form[1]/table[3]/tbody[1]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form[1]/table[3]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form[1]/table[3]/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tbody[1]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tbody[1]/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tbody[1]/tr[1]/td/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tbody[1]/tr/td/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tbody/tr[1]/td/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tbody/tr/td/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tr[1]/td/table[5]", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form/table[3]/tr/td/table[5]", ".//*[@id='" + id +"']//table/");
 
+        //if rivista statistica
+        path = path.replace("div/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
 
-function highligthFragments(anns, urlDoc){
-    for (i = 0; i < anns["results"]["bindings"].length; i++) {
-        ann = anns["results"]["bindings"][i];
-        fragmentPath = ann["fs_value"]["value"];
-        start = ann["start"]["value"];
-        end = ann["end"]["value"];
+        //if antropologia e teatro
+        path = path.replace("div/div/div/div/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div/div[3]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
 
-        if(typeof(ann["type"]) !== "undefined"){
-            classCSS = getClassNameType(ann["type"]["value"]);
-        } else if (typeof(ann["label"]) !== "undefined"){
-            classCSS = getClassNameLabel(ann["label"]["value"]);
-        } else {
-            //se il tipo di annotazione non c'è nè nel campo type nè in label
-            classCSS = "";
-        }
-        if(classCSS !== ""){
-            //fragmentPath trasformato in xPath (del documento originale)
-            path = getDomXPath(fragmentPath);
+        //if rivista statistica o if antropologia e teatro
+        path = path.replace("div/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
-            //xPath (del documento originale) trasformato in xPath locale
-            var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
-            //if dilib
-            path = path.replace("html/body/form/table[3]/tbody/tr/td/table[5]", ".//*[@id='" + id +"']//table/");
-            //if rivista statistica
-            path = path.replace("html/body/div/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
-
-            if(path !== "html/body/"){
-                nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                findCorrectNodo(nodo, start, end, classCSS, ann);
-            }
-        }
+        nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        findCorrectNodo(nodo, start, end, classCSS, ann);
     }
 }
 
 function findCorrectNodo(nodo, start, end, classCSS, ann){
     var out;
     if (nodo !== null){
-    if (nodo.nodeType == 3){
-        //è un nodo di testo
-        out = check(nodo, start, end, classCSS, ann);
-    } else {
-        //scorro tutti i nodi figli del nodo iniziale
-        var elementChildren = nodo.childNodes;
-        var i = 0;
-        while(i < elementChildren.length){
+        if (nodo.nodeType == 3){
+            //è un nodo di testo
+            out = check(nodo, start, end, classCSS, ann);
+        } else {
+            //scorro tutti i nodi figli del nodo iniziale
+            var elementChildren = nodo.childNodes;
+            var i = 0;
+            while(i < elementChildren.length){
                 var result = findCorrectNodo(elementChildren[i], start, end, classCSS, ann);
                 if (result.exit) {
                     return result;
@@ -190,9 +240,10 @@ function findCorrectNodo(nodo, start, end, classCSS, ann){
                     end = result.fine;
                     i++;
                 }
+            }
+            out = {inizio: start, fine:end}
         }
-        out = {inizio: start, fine:end}
-    }}
+    }
     return out;
 }
 
@@ -218,10 +269,11 @@ function check(nodo, start, end, classCSS, ann){
         nuovoNodo.onclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
-            out = displaySingolaAnnotazione(ann);
-            $('#infoAnnotazione').html(out);
+            out_ann = displaySingolaAnnotazione(ann);
+            $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
+
         output = {exit: true}
     }
     if(start < lunghezza && end > lunghezza){
@@ -234,13 +286,12 @@ function check(nodo, start, end, classCSS, ann){
         nuovoNodo.onclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
-            out = displaySingolaAnnotazione(ann);
-            $('#infoAnnotazione').html(out);
-
+            out_ann = displaySingolaAnnotazione(ann);
+            $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
-        output={inizio: 0, fine: end-lunghezza, altroNodo: true}
 
+        output={inizio: 0, fine: end-lunghezza, altroNodo: true}
     }
     return output;
 }
@@ -249,23 +300,14 @@ function check(nodo, start, end, classCSS, ann){
 //trasformazione del fragment path (scritto nel corpo dell'annotazione) in un espressione xPath valida
 function getDomXPath(x){
     x = x.toLowerCase();
-    if(x.endsWith('_text()')){
-        x = x.substring(0, x.length - 7)
-    }
     if(x.substring(0, 1) == "/"){
        x = x.substr(1);
     }
     x = x.replace(/\_/g, '/');
-    x = x.replace(/\/tr/g, '/tbody/tr');
     x = x.replace(/\[/g, '');
     x = x.replace(/\]/g, '');
-    x = x.replace(/0/g, '');
-    x = x.replace(/1/g, '');
     if(x.substring(0, 10) == "html/body/"){
        x = x.substr(10);
-    }
-    if(x.substring(0, 10) !== "html/body/"){
-        x = "html/body/" + x;
     }
     var array = x.split("/");
     for (var i = 0; i < array.length; i++) {
@@ -302,33 +344,38 @@ function getDomXPath(x){
             }
         }
     }
-    array.join('/');
-    x = array.join('/');
-    return x;
+    return array.join('/');
 }
 
 function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
         case "sro:Abstract":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Abstract":
             out = "Abstract.";
             break;
         case "deo:Introduction":
+        case "http://purl.org/spar/deo/Introduction":
             out = "Introduction.";
             break;
         case "deo:Materials":
+        case "http://purl.org/spar/deo/Materials":
             out = "Materials.";
             break;
         case "deo:Methods":
+        case "http://purl.org/spar/deo/Methods":
             out = "Methods.";
             break;
         case "deo:Results":
+        case "http://purl.org/spar/deo/Results":
             out = "Results.";
             break;
         case "sro:Discussion":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Discussion":
             out = "Discussion.";
             break;
         case "sro:Conclusion":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Conclusion":
             out = "Conclusion.";
             break;
     }
@@ -336,7 +383,7 @@ function gestioneRetoriche(retorica){
 };
 
 function getClassNameType(type){
-    var classCSS = ""
+    var classCSS = "";
     switch(type){
         case "hasUrl":
         case "hasURL":
@@ -361,7 +408,10 @@ function getClassNameType(type){
         case "denotesRhetoric":
             classCSS = "highlightDenotesRhetoric";
             break;
+        case "Cites":
         case "cites":
+        //case "refecences":
+        //case "Reference":
             classCSS = "highlightCites";
             break;
     }
@@ -369,7 +419,7 @@ function getClassNameType(type){
 };
 
 function getClassNameLabel(label){
-    var classCSS = ""
+    var classCSS = "";
     switch(label){
         case "URL":
         case "Url":
@@ -380,6 +430,7 @@ function getClassNameLabel(label){
             classCSS = "highlightTitle";
             break;
         case "Publication Year":
+        case "PublicationYear":
         case "Anno di pubblicazione":
             classCSS = "highlightPublicationYear";
             break;
@@ -400,79 +451,87 @@ function getClassNameLabel(label){
             break;
         case "Citation":
         case "Citazione":
+        //case "refecences":
+        //case "Reference":
             classCSS = "highlightCites";
             break;
     }
     return classCSS;
 };
 
-//
+
 function gestioneTipoType(type){
-    out = '<span class="filtri, ';
+    out = "";
     switch(type){
         case "hasURL":
         case "hasUrl":
-            out += 'labelURL"> URL </span> <p>L\'URL di questo documento è ';
+            out = '<span class="filtri labelURL"> URL </span> </span> <p>L\'URL di questo documento è ';
             break;
         case "hasTitle":
-            out += 'labelTitle"> Title </span> <p>Il titolo di questo documento è ';
+            out = '<span class="filtri labelTitle"> Title </span> </span> <p>Il titolo di questo documento è ';
             break;
         case "hasPublicationYear":
-            out += 'labelPublicationYear"> PublicationYear </span> <p> L\'anno di pubblicazione di questo documento è il ';
+            out = '<span class="filtri labelPublicationYear"> PublicationYear </span> </span> <p> L\'anno di pubblicazione di questo documento è il ';
             break;
         case "hasDoi":
         case "hasDOI":
-            out += 'labelDOI"> DOI </span> <p> Il DOI di questo documento è ';
+            out = '<span class="filtri labelDOI"> DOI </span> </span> <p> Il DOI di questo documento è ';
             break;
         case "hasAuthor":
-            out += 'labelAuthor"> Author </span> <p> Un autore di questo documento è ';
+            out = '<span class="filtri labelAuthor"> Author </span> </span> <p> Un autore di questo documento è ';
             break;
         case "hasComment":
-            out += 'labelComment"> Commento </span> <p> Un commento a questo documento è ';
+            out = '<span class="filtri labelComment"> Commento </span> </span> <p> Un commento a questo documento è ';
             break;
         case "denotesRhetoric":
-            out += 'labelDenotesRhetoric"> DenotesRhetoric </span> </p> <span> Una retorica di questo documento è ';
+            out = '<span class="filtri labelDenotesRhetoric"> DenotesRhetoric </span> </span> </p> <span> Una retorica di questo documento è ';
             break;
+        case "Cites":
         case "cites":
-            out += 'labelCites"> Cites </span> <p> Questo documento cita ';
+        //case "references":
+        //case "Reference":
+            out = '<span class="filtri labelCites"> Cites </span> </span> <p> Questo documento cita ';
             break;
     }
     return out;
 };
 
 function gestioneTipoLabel(label){
-    out = '<span class="filtri, ';
+    out = "";
     switch(label){
         case "URL":
         case "Url":
-            out += 'labelURL"> URL </span> <p> L\'URL di questo documento è ';
+            out = '<span class="filtri labelURL"> URL </span> </span> <p> L\'URL di questo documento è ';
             break;
         case "Titolo":
         case "Title":
-            out += 'labelTitle"> Title </span> <p> Il titolo di questo documento è ';
+            out = '<span class="filtri labelTitle"> Title </span> </span> <p> Il titolo di questo documento è ';
             break;
+        case "PublicationYear":
         case "Publication Year":
         case "Anno di pubblicazione":
-            out += 'labelPublicationYear"> PublicationYear </span> <p> L\'anno di pubblicazione di questo documento è il ';
+            out = '<span class="filtri labelPublicationYear"> PublicationYear </span> </span> <p> L\'anno di pubblicazione di questo documento è il ';
             break;
         case "DOI":
         case "Doi":
-            out += 'labelDOI"> DOI </span> <p> Il DOI di questo documento è ';
+            out = '<span class="filtri labelDOI"> DOI </span> </span> <p> Il DOI di questo documento è ';
             break;
         case "Autore":
         case "Author":
-            out += 'labelAuthor"> Author </span> <p> Un autore di questo documento è ';
+            out = '<span class="filtri labelAuthor"> Author </span> </span> <p> Un autore di questo documento è ';
             break;
         case "Commento":
-            out += 'labelComment"> Commento </span> <p> Un commento a questo documento è ';
+            out = '<span class="filtri labelComment"> Commento </span> </span> <p> Un commento a questo documento è ';
             break;
         case "Retorica":
         case "Rhetoric":
-            out += 'labelDenotesRhetoric"> DenotesRhetoric </span> <p> Una retorica di questo documento è ';
+            out = '<span class="filtri labelDenotesRhetoric"> DenotesRhetoric </span> </span> <p> Una retorica di questo documento è ';
             break;
         case "Citation":
         case "Citazione":
-            out += 'labelCites"> Cites </span> <p> Questo documento cita ';
+        //case "refecences":
+        //case "Reference":
+            out = '<span class="filtri labelCites"> Cites </span> </span> <p> Questo documento cita ';
             break;
     }
     return out;
@@ -481,4 +540,4 @@ function gestioneTipoLabel(label){
 /* parse formato data e ora YYYY-MM-DDTHH:mm */
 function parseDatetime(dataAnn){
     return dataAnn = " in data " + dataAnn.replace("T", " alle ") + ".";
-};
+}
