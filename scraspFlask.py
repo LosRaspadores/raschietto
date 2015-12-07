@@ -71,12 +71,13 @@ def return_singolo_documento():
     data = scraping_singolo_documento(url)
     return data
 
-
+"""NON PIU USATO. COMPITO FATTO LATO CLIENT
 @app.route('/getAllAnnotazioni')
 def return_all_annotazioni():
     query = request.args.get('data')
     results = do_query_get(sparql_endpoint_remoto, prefissi+query)
     return json.dumps(results)  #dict to json
+"""
 
 
 # launch app

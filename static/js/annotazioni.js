@@ -2,7 +2,25 @@
 
 // query che restituisce tutte le annotazioni di un determinato documento
 function query_all_annotazioni(nome_grafo, url_documento){
-    var query = 'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?fs_value '+
+    var query =
+                'PREFIX foaf:  <http://xmlns.com/foaf/0.1/> '+
+                'PREFIX frbr:  <http://purl.org/vocab/frbr/core#> '+
+                'PREFIX cito:  <http://purl.org/spar/cito/> '+
+                'PREFIX fabio: <http://purl.org/spar/fabio/> '+
+                'PREFIX sro:   <http://salt.semanticauthoring.org/ontologies/sro#> '+
+                'PREFIX dcterms: <http://purl.org/dc/terms/> '+
+                'PREFIX schema: <http://schema.org/> '+
+                'PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> '+
+                'PREFIX oa:    <http://www.w3.org/ns/oa#> '+
+                'PREFIX rsch:  <http://vitali.web.cs.unibo.it/raschietto/> '+
+                'PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> '+
+                'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> '+
+                'PREFIX sem:   <http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#> '+
+                'PREFIX skos:  <http://www.w3.org/2009/08/skos-reference/skos.html> '+
+                'PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/> '+
+                'PREFIX deo:   <http://purl.org/spar/deo/> '+
+                'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
+                'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?fs_value '+
                 '?start ?end '+
                 //'FROM NAMED <' + nome_grafo + '>'+
                 //'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> ' +
@@ -32,16 +50,14 @@ function query_all_annotazioni(nome_grafo, url_documento){
 
 //chiamata ajax
 function get_annotazioni(query, urlDoc){
+    urlQuery = encodeURIComponent(query), // rende la query parte dell'uri
     $.ajax({
-        url: '/getAllAnnotazioni',
-        type: 'GET',
-        data: {data: query},
+        url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json",
         success: function(result) {
-            //convert json string to json object
-            lista_annotazioni = JSON.parse(result);
-            if(lista_annotazioni["results"]["bindings"].length !== 0){
-                for (i = 0; i < lista_annotazioni["results"]["bindings"].length; i++) {
-                    ann = lista_annotazioni["results"]["bindings"][i];
+            lista_annotazioni = result["results"]["bindings"];
+            if(lista_annotazioni.length !== 0){
+                for (i = 0; i < lista_annotazioni.length; i++) {
+                    ann = lista_annotazioni[i];
                     fragmentPath = ann["fs_value"]["value"];
                     if(fragmentPath === "" || fragmentPath === "document" || fragmentPath === "Document" || fragmentPath==="html/body/" || fragmentPath==="html/body"){
                         console.log("ANNOTAZIONE SUL DOCUMENTO SENZA FRAGMENT PATH");
@@ -70,15 +86,15 @@ function displayAnnotazioni(anns) {
     $('#modalAnnotazioni').modal('show');
     var out = "";
     var i;
-    for (i = 0; i < anns["results"]["bindings"].length; i++) {
-        ann = anns["results"]["bindings"][i];
+    for (i = 0; i < anns.length; i++) {
+        ann = anns[i];
         ann_out = displaySingolaAnnotazione(ann);
         if(ann_out !== ""){
             out += ann_out;
             numeroAnnotazioni += 1;
         }
     }
-    console.log("Numero totale annotazioni: " + anns["results"]["bindings"].length + ", effettive non scartate: " + numeroAnnotazioni);
+    console.log("Numero totale annotazioni: " + anns.length + ", effettive non scartate: " + numeroAnnotazioni);
     $('#numeroAnnotazioni').text("Numero totale annotazioni: " + numeroAnnotazioni);
     $('#listaAnnotazioni').html(out);
 };
@@ -102,7 +118,7 @@ function displaySingolaAnnotazione(ann){
                 if (typeof(ann["body_l"]) !== "undefined") {
                     out += ann["body_l"]["value"] + " ";
                 }
-                if (typeof(ann["body_o"]) !== "undefined") {
+                else if (typeof(ann["body_o"]) !== "undefined") {
                     out += ann["body_o"]["value"];
                 }
                 out += ".</p>";
@@ -137,7 +153,7 @@ function displaySingolaAnnotazione(ann){
                 if (typeof(ann["body_l"]) !== "undefined") {
                     out += ann["body_l"]["value"] + " ";
                 }
-                if (typeof(ann["body_o"]) !== "undefined") {
+                else if (typeof(ann["body_o"]) !== "undefined") {
                     out += ann["body_o"]["value"];
                 }
                 out += ".</p>";
