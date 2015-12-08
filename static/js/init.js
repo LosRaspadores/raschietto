@@ -336,7 +336,7 @@ $( document ).ready(function() {
                             get_annotazioni(query, urlNuovoDoc);
                         },
                         error: function(error) {
-                            alert("Error: " + error);
+                            alert("L'url inserito non è corretto.1");
                         }
                     });
                 }else{
@@ -344,7 +344,7 @@ $( document ).ready(function() {
                 }
             }
         } else {
-            alert("L'url inserito non è corretto");
+            alert("L'url inserito non è corretto.2 vuoto");
         }
     });
 

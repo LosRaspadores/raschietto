@@ -23,7 +23,7 @@ function query_all_annotazioni(nome_grafo, url_documento){
         'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?fs_value '+
         '?start ?end '+
         //'FROM NAMED <' + nome_grafo + '>'+
-        //'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> ' +
+        ///'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1508> ' +
         'WHERE {'+
             'GRAPH ?graph {?a a oa:Annotation. '+
             'OPTIONAL {?a rdfs:label ?label} '+
@@ -52,7 +52,7 @@ function get_annotazioni(query, urlDoc){
     uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
     $.ajax({
         url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
-        dataType: "jsonp",
+        dataType: "jsonp", //cors cross
         success: function(result) {
             lista_annotazioni = result["results"]["bindings"];
             if(lista_annotazioni.length != 0){
@@ -191,42 +191,35 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         classCSS = "";
     }
     if(classCSS != ""){
-        //fragmentPath trasformato in xPath (del documento originale)
-        path = getDomXPath(fragmentPath);
+        //fragmentPath trasformato in XPath (del documento originale)
+        path = getXPath(fragmentPath);
+        console.log("getXPath " + path);
 
-        //xPath (del documento originale) trasformato in xPath locale
+        //XPath (del documento originale) trasformato in xPath locale
         var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
 
         //if dilib
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
-            path = path.replace(/\/tr/g, '/tbody[1]/tr[1]');
+            path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
-        path = path.replace("form[1]/table[3]/tbody[1]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form[1]/table[3]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form[1]/table[3]/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tbody[1]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tbody[1]/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tbody[1]/tr[1]/td/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tbody[1]/tr/td/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tbody/tr[1]/td[1]/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tbody/tr[1]/td/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tbody/tr/td/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tr[1]/td/table[5]", ".//*[@id='" + id +"']//table/");
-        path = path.replace("form/table[3]/tr/td/table[5]", ".//*[@id='" + id +"']//table/");
+        console.log("getXPath after dlib tbody replace " + path);
+        //TODO perchè //table/ e non /table/
+        path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
-        path = path.replace("div/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
-        path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
         path = path.replace("div[1]/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
 
         //if antropologia e teatro
-        path = path.replace("div/div/div/div/", ".//*[@id='" + id +"']/div/div/");
-        path = path.replace("div/div[3]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[1]/div[1]/div[1]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[3]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
 
-        //if rivista statistica o if antropologia e teatro
-        path = path.replace("div/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
+        //if rivista statistica or if antropologia e teatro
+        path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
+        console.log(path);
+
+        //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo (di qualsiasi tipo?//TODO controlla)
+        //rappresentato dal XPath passato come parametro
         nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
         findCorrectNodo(nodo, start, end, classCSS, ann);
     }
@@ -236,10 +229,10 @@ function findCorrectNodo(nodo, start, end, classCSS, ann){
     var out;
     if (nodo != null){
         if (nodo.nodeType == 3){
-            //è un nodo di testo
+            //se è un text node
             out = check(nodo, start, end, classCSS, ann);
         } else {
-            //scorro tutti i nodi figli del nodo iniziale
+            //scorro tutti i nodi figli del nodo iniziale (di qualsiasi tipo?//TODO controlla)
             var elementChildren = nodo.childNodes;
             var i = 0;
             while(i < elementChildren.length){
@@ -280,13 +273,14 @@ function check(nodo, start, end, classCSS, ann){
         fragment.setEnd(nodo, parseInt(end));
         nuovoNodo = document.createElement('span');
         nuovoNodo.className=classCSS;
-        nuovoNodo.onclick = function () {
+        nuovoNodo.ondblclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
             out_ann = displaySingolaAnnotazione(ann);
             $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
+        console.log("fatto " + classCSS);
         output = {exit: true}
     }
     if(start < lunghezza && end > lunghezza){
@@ -296,21 +290,22 @@ function check(nodo, start, end, classCSS, ann){
         fragment.setEnd(nodo, parseInt(lunghezza));
         nuovoNodo = document.createElement('span');
         nuovoNodo.className=classCSS;
-        nuovoNodo.onclick = function () {
+        nuovoNodo.ondblclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
             out_ann = displaySingolaAnnotazione(ann);
             $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
+        console.log("fatto " + classCSS);
         output={inizio: 0, fine: end-lunghezza, altroNodo: true}
     }
     return output;
 }
 
 
-//trasformazione del fragment path (scritto nel corpo dell'annotazione) in un espressione xPath valida
-function getDomXPath(x){
+//trasformazione del fragment path (scritto nel corpo dell'annotazione) in un XPath expression
+function getXPath(x){
     x = x.toLowerCase();
     if(x.substring(0, 1) == "/"){
        x = x.substr(1);
@@ -354,6 +349,8 @@ function getDomXPath(x){
                 }
                 array[i] += ']';
             }
+        } else {
+            array[i] += '[1]';
         }
     }
     return array.join('/');
