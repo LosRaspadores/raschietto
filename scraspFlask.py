@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
+import json
 
 __author__ = 'Los Raspadores'
 
@@ -17,8 +18,8 @@ from flask import Flask, render_template, request
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
-from scrapingCitazioni import scraping_citazioni
-from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno
+#from scrapingCitazioni import scraping_citazioni
+from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno, scraping_citazioni
 
 
 # initializzazione applicazione
@@ -52,20 +53,37 @@ def return_gruppi():
     data = scraping_gruppi()
     return data
 
-
 @app.route('/scrapingCitazioni')
 def return_citazioni():
     urlD = request.args.get('url')
     data = scraping_citazioni(urlD)
     return data
 
-@app.route('/scrapingAutomatico')
+@app.route('/scrapingTitolo')
 def return_titolo():
-    data = scraping_titolo(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-    #data = scarping_autore(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-    #data = scraping_doi(urlDoc="http://www.dlib.org/dlib/september15/wu/09wu.html")
-    #data = scraping_anno(urlDoc="http://www.dlib.org/dlib/november14/fedoryszak/11fedoryszak.html")
+    url = request.args.get('url')
+    item_list = json.loads(url)
+
+    read_file = open('cacheDoc.json', 'r')
+    result = read_file.read()
+    read_file.close()
+    if (result):
+        data = result
+    else:
+        data = scraping_titolo(item_list)
+        out_file = open('cacheDoc.json', 'w')
+        out_file.write(data)
+        out_file.close()
+
     return data
+
+# @app.route('/scrapingAutomatico')
+# def return_titolo():
+#     data = scraping_titolo(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
+#     #data = scarping_autore(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
+#     #data = scraping_doi(urlDoc="http://www.dlib.org/dlib/september15/wu/09wu.html")
+#     #data = scraping_anno(urlDoc="http://www.dlib.org/dlib/november14/fedoryszak/11fedoryszak.html")
+#     return data
 
 
 @app.route('/scrapingSingoloDocumento')

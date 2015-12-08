@@ -1,7 +1,13 @@
 $( document ).ready(function() {
 
     getGruppi();
-    //getDocumenti();
+
+    $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
+        docS = JSON.parse(r1[0]);
+        docA = r2[0].results.bindings;
+
+        getDocumenti(docA, docS);
+    });
 
     $('[data-toggle="tooltip"]').tooltip();
     $('[data-tooltip="tooltip"]').tooltip();
@@ -44,56 +50,6 @@ $( document ).ready(function() {
     $(window).scroll(function() {
         stickyNav();
     });
-
-//    $.ajax({
-//        url: '/scrapingGruppi',
-//        type: 'GET',
-//        success: function(result) {
-//            //convert json string to json object
-//            lista_gruppi = JSON.parse(result);
-//            listaGruppi(lista_gruppi);
-//        },
-//        error: function(error) {
-//            alert("Error: " + error);
-//        }
-//    });
-//
-//    function listaGruppi(arr) {
-//        var out = "";
-//        var i;
-//        for(i = 0; i < arr.length; i++) {
-//            //out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
-//            out += '<a class="list-group-item" value="' + arr[i].id + '" onclick="mostraAnnotGruppo(this)">' +arr[i].nome + '</a><br>';
-//        }
-//        $('div#lista_gruppi').html(out);
-//        $('#numGru').html(arr.length);
-//    }
-//
-//    $.ajax({
-//        url: '/scrapingDocumenti',
-//        type: 'GET',
-//        success: function(result) {
-//            //convert json string to json object
-//            lista_doc = JSON.parse(result);
-//            listaDocumenti(lista_doc);
-//        },
-//        error: function(error) {
-//            alert("Error: " + error);
-//        }
-//    });
-//
-//
-//
-//    function listaDocumenti(arr) {
-//        //var out="";
-//        var i;
-//        for(i = 0; i < arr.length; i++) {
-//            //out += '<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
-//            $('div#lista_doc').append('<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>');
-//        }
-//       //$('div#lista_doc').html(out);
-//       $('#numDoc').html(arr.length);
-//    }
 
     /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
     function addZero(i) {
@@ -260,7 +216,6 @@ $( document ).ready(function() {
         }
     });
 
-        //var s = window.getSelection().toString();
 
     /* Chiamata ajax per ottenere il documento selezionato */
     $(document).on("click", "a.list-group-item", function(){
@@ -329,7 +284,7 @@ function isOpen(url){
 function addTab(text, urlP, title){
     $('.active').removeClass('active');
     var url = urlP.replace(/([/|_.|_:|_-])/g, '');
-    $("ul.nav.nav-tabs").append("<li class='active'><a data-toggle='tab' href='#"+url+"' id="+urlP+"><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
+    $("ul.nav.nav-tabs").append("<li class='active'><a data-toggle='tab' href='#"+url+"' id='"+urlP+"'><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
     $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
     $("#"+url+"t").html(text);
 }

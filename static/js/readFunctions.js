@@ -1,11 +1,11 @@
 function getGruppi(){
-    var listaGruppiCompleta = [];
-    var gruppiSPARQL;
-    var gruppiScraping;
+    listaGruppiCompleta = [];
+//    gruppiSPARQL;
+//    gruppiScraping;
 
-    var query = "SELECT (COUNT(?a) as ?tot) ?g WHERE { graph ?g{ ?a a <http://www.w3.org/ns/oa#Annotation> . }} GROUP BY ?g ";
-    var urlQuery = encodeURIComponent(query); // rende la query parte dell'uri
-    var urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
+    query = "SELECT (COUNT(?a) as ?tot) ?g WHERE { graph ?g{ ?a a <http://www.w3.org/ns/oa#Annotation> . }} GROUP BY ?g ";
+    urlQuery = encodeURIComponent(query); // rende la query parte dell'uri
+    urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
     $.ajax({
         url: urlG,
         dataType: "jsonp",
@@ -21,6 +21,7 @@ function getGruppi(){
                     //non prende il gruppo 1529 non so perche'!!!
                     for(i = 0; i < gruppiSPARQL.length; i++){
                         for(j = 0; j < gruppiScraping.length; j++){
+                            //se il nome del grafo contiene l'id preso dallo scraping
                             if(gruppiSPARQL[i].g.value.indexOf(gruppiScraping[j].id) >= 0){
                                 data = {}
                                 data['id'] = gruppiScraping[j].id;
@@ -56,45 +57,51 @@ function listaGruppi(arr) {
     $('#numGru').html(arr.length);
 }
 
-//function getDocumenti(){
-//    var listaDocCompleta;
-//    var docAnnotati;
-//    var docScraping;
-//    var query = "PREFIX fabio: <http://purl.org/spar/fabio/> . SELECT DISTINCT ?doc WHERE { ?doc fabio:Item . FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'cited')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'Reference')}}";
-//    var urlQuery = encodeURIComponent(query); // rende la query parte dell'uri
-//    var urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
-//    $.ajax({
-//        url: urlG,
-//        dataType: 'jsonp',
-//        success: function(data){
-//            docAnnotati = = data.results.bindings;
-//
-//            $.ajax({
-//                url: '/scrapingDocumenti',
-//                type: 'GET',
-//                success: function(result) {
-//                    //convert json string to json object
-//                    docScraping = JSON.parse(result);
-//                    listaDocumenti(docScraping);
-//                    //for('')
-//                },
-//                error: function(error) {
-//                    alert("Errore nel caricamento dei documenti!");
-//                }
-//            });
-//        },
-//        error: function(){
-//            alert("Errore nel caricamento dei documenti!");
-//        }
-//    });
-//}
-//
-//function listaDocumenti(arr) {
-//        var i;
-//        for(i = 0; i < arr.length; i++) {
-//            //out += '<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
-//            $('div#lista_doc').append('<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>');
-//        }
-//       //$('div#lista_doc').html(out);
-//       $('#numDoc').html(arr.length);
-//    }
+function getDocFromSparql(){
+    query = "PREFIX fabio: <http://purl.org/spar/fabio/> SELECT DISTINCT ?doc WHERE { ?doc a fabio:Item . FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'cited')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'Reference')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), '_ver')}}";
+    urlQuery = encodeURIComponent(query); // rende la query parte dell'uri
+    urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
+    return $.ajax({
+                url: urlG,
+                dataType: 'jsonp'
+            });
+}
+
+function getDocFromScraping(){
+    return $.ajax({
+                url: '/scrapingDocumenti',
+                type: 'GET'
+            });
+}
+
+function getDocumenti(docAnnotati, docScraping){
+    docTemp = [];
+
+    for(i = 0; i < docAnnotati.length; i++){
+        docTemp.push(docAnnotati[i].doc.value);
+    }
+
+    for(i = 0; i < docScraping.length; i++){
+        if(!($.inArray(docScraping[i].url, docAnnotati))){
+            docTemp.push(docScraping[i].url);
+        }
+    }
+
+    urlDoc = JSON.stringify(docTemp);
+    $.ajax({
+        url: '/scrapingTitolo',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result){
+            res = JSON.parse(result);
+            $('#numDoc').html(res.length);
+            for(j = 0; j < res.length; j++){
+                $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
+
+            }
+        },
+        error: function(){
+            alert("Errore nel caricamento dei documenti!");
+        }
+    });
+}

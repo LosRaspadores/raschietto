@@ -18,6 +18,9 @@ import mechanize
 
 # Browser mechanize
 br = mechanize.Browser()
+br.set_handle_robots(False)
+br.set_handle_refresh(False)
+br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
 
 def main():
@@ -27,10 +30,9 @@ def main():
 def scraping_singolo_documento(url):
     print("url " + url)
     parsed_uri = urlparse(url)
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     doc_html = br.open(url).read()
     soup = BeautifulSoup(doc_html, 'html.parser')
-    html = domain_manager(domain, soup)
+    html = domain_manager(parsed_uri[1], parsed_uri[2], soup)
 
     for a in soup.findAll('a', href=True):
         del a['href']
@@ -45,12 +47,11 @@ def scraping_singolo_documento(url):
         absolute = urljoin(url, relative)
         i["src"] = absolute
 
-    # print(html)
     return str(html)
 
 
-def domain_manager(domain, soup):
-    if domain == 'http://www.dlib.org/':
+def domain_manager(domain, path, soup):
+    if domain == 'www.dlib.org' or domain == 'dlib.org':
         html = soup.find("table", {
             "width": "100%",
             "border": "0",
@@ -60,9 +61,15 @@ def domain_manager(domain, soup):
         })
         return html
 
-    elif domain == 'http://rivista-statistica.unibo.it/' \
-            or 'http://almatourism.unibo.it/' or 'http://antropologiaeteatro.unibo.it/':
-        html = soup.find("div", {"id": "content"})
+    elif domain == 'antropologiaeteatro.unibo.it' or domain == 'almatourism.unibo.it' or domain == 'rivista-statistica.unibo.it' or domain.find('unibo.it') != -1:
+        if len(path) > 2 and path.find("article") != -1:
+            html = soup.find("div", {"id": "content"})
+            return html
+        else:
+            html = soup.find("body")
+            return html
+    else:
+        html = soup.find("body")
         return html
 
 if __name__ == "__main__":

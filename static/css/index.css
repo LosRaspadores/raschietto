@@ -345,6 +345,7 @@ button.button-lg:active {
     width:100%;
     margin-bottom: -20px;
     background-color: white;
+    word-wrap: break-word;
 }
 
 .panel>.panel-collapse>.list-group a.list-group-item.active{
