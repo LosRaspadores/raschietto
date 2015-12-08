@@ -1,9 +1,6 @@
 /* funzioni annotazioni */
 
-// query che restituisce tutte le annotazioni di un determinato documento
-function query_all_annotazioni(nome_grafo, url_documento){
-    return query =
-        'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
+var prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
         'PREFIX frbr: <http://purl.org/vocab/frbr/core#> '+
         'PREFIX cito: <http://purl.org/spar/cito/> '+
         'PREFIX fabio: <http://purl.org/spar/fabio/> '+
@@ -19,7 +16,11 @@ function query_all_annotazioni(nome_grafo, url_documento){
         'PREFIX skos: <http://www.w3.org/2009/08/skos-reference/skos.html> '+
         'PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/> '+
         'PREFIX deo: <http://purl.org/spar/deo/> '+
-        'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
+        'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ';
+
+// query che restituisce tutte le annotazioni di un determinato documento
+function query_all_annotazioni(nome_grafo, url_documento){
+    return query = prefissi +
         'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?fs_value '+
         '?start ?end '+
         //'FROM NAMED <' + nome_grafo + '>'+

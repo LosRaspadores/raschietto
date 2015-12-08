@@ -257,6 +257,8 @@ def main():
     query = query_clear_graph(nome_grafo_gruppo)
     do_query_post(sparql_endpoint_remoto, query)
 
+    #query = query_delete_annotazioni_documento(url_doc)
+
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
     do_query_post(sparql_endpoint_remoto, query)
 
