@@ -21,9 +21,11 @@
 
         <!-- riferimenti css -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
-        <!--<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>-->
 
+        <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+        <!-- <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script> -->
+
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
         <link rel="stylesheet" href="/static/css/index.css">
         <link href="https://fonts.googleapis.com/css?family=Exo:400,900" rel="stylesheet" type="text/css">
         <link href='https://fonts.googleapis.com/css?family=Roboto:400,900' rel='stylesheet' type='text/css'>
@@ -84,7 +86,8 @@
                         </form>
                     </li>
                     <li>
-                        <p id="utenteAutenticato" class="navbar-text">bla bla</p></li>
+                        <p id="utenteAutenticato" class="navbar-text"></p>
+                    </li>
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
@@ -145,7 +148,6 @@
                                     </div>
                               </div>
                         </div>
-
                         <div class="panel panel-default">
                               <div class="panel-heading">
                                     <h4 class="sidebar-brand">
@@ -183,10 +185,10 @@
                     <!--&lt;!&ndash; Keep all page content within the page-content inset div! &ndash;&gt;-->
                     <!--<div class="page-content inset">-->
                     <!--<div class="row">-->
-                <div class="col-sm-9" >
+                <div class="col-sm-9" id="tabs">
 
                                 <ul class="nav nav-tabs">
-                                    <li class="active"><a data-toggle="tab" href="#home" id="homeTab">Home</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#home"><b>Home</b></a></li>
                                 </ul>
 
                                 <div class="tab-content" >
@@ -194,7 +196,7 @@
                                         <div>
                                             <h4>ANTANI</h4>
                                             <h5>Lista documenti</h5>
-                                            <div id="prova"></div>
+                                            <div id="listaDocumenti"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -364,7 +366,6 @@
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
         <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
         <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
         <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
         <script src="/static/js/readFunctions.js" type="text/javascript" charset="utf-8"></script>

@@ -3,13 +3,11 @@
 /* tutti gli elementi */
 * {
    box-sizing: border-box;
-
 }
 
 body {
     overflow: auto;
     font-family: Arial, Helvetica, 'Exo' sans-serif;
-
 }
 
 
@@ -381,6 +379,55 @@ button.button-lg:active {
 #singoloDocumento{
     font-family: "Trebuchet MS", Helvetica, sans-serif;
     font-size: 14px;
+}
+
+.tabList{
+    max-width: 100px;
+    max-height: 70px;
+}
+
+a.box{
+    width: 200px;
+    border: 1px solid #000000;
+    color: #555;
+}
+
+ul.nav.nav-tabs label{
+    width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+span.glyphicon.glyphicon-remove::before{
+    cursor: pointer;
+    cursor: hand;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color: #0D670B;
+    background: transparent url(../uiTabsArrow.png) no-repeat bottom center;
+    border: none;
+    height: 40px;
+}
+.nav-tabs>li>a:hover {
+    border-color: #eee #eee #ddd;
+    height: 40px;
+}
+
+.nav-tabs>li>a{
+    color: #555;
+}
+.nav-tabs>li{
+    height: 40px;
+}
+.nav-tabs {
+    border-bottom: 1px solid #ddd;
+    height: 40px;
+}
+span.glyphicon.glyphicon-remove{
+    top: -8px;
+    height: 5px;
 }
 
 #alertDoc .alert{

@@ -208,14 +208,14 @@ def query_annotazione(nome_grafo, annotazione):
 
 def main():
 
-    query = query_insert_file(nome_grafo_gruppo, "travel.owl")
-    do_query_post(sparql_endpoint_locale, query)
-
-    query = query_clear_graph(nome_grafo_gruppo)
-    do_query_post(sparql_endpoint_locale, query)
-
-    query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
-    do_query_post(sparql_endpoint_locale, query)
+    # query = query_insert_file(nome_grafo_gruppo, "travel.owl")
+    # do_query_post(sparql_endpoint_locale, query)
+    #
+    # query = query_clear_graph(nome_grafo_gruppo)
+    # do_query_post(sparql_endpoint_locale, query)
+    #
+    # query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
+    # do_query_post(sparql_endpoint_locale, query)
 
     query = query_select_all_grafo(nome_grafo_gruppo)
     do_query_get(sparql_endpoint_locale, query)

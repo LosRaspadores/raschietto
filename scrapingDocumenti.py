@@ -18,7 +18,7 @@ __author__ = 'Los Raspadores'
         -http://rivista-statistica.unibo.it/issue/view/467
 
         tutti gli articoli di una issue a scelta su dilib
-        -http://www.dlib.org/dlib/september15/09contents.html
+        -http://www.dlib.org/dlib/july15/07contents.html
 
         -tutti gli articoli di questa issue
         http://almatourism.unibo.it/issue/view/512
@@ -113,11 +113,11 @@ def scraping_documenti():
 
     """
         tutti gli articoli di una issue a scelta su dilib
-        -http://www.dlib.org/dlib/september15/09contents.html
+        -http://www.dlib.org/dlib/july15/07contents.html
     """
 
-    url_base = "http://www.dlib.org/dlib/september15/09contents.html"
-    resp = br.open("http://www.dlib.org/dlib/september15/09contents.html")
+    url_base = "http://www.dlib.org/dlib/july15/07contents.html"
+    resp = br.open(url_base)
     raw_html = resp.read()  # raw html source code
     soup = BeautifulSoup(raw_html)
     results = soup.select("p.contents a")
@@ -157,7 +157,7 @@ def scraping_documenti():
     """
 
     url_base = "http://antropologiaeteatro.unibo.it/issue/view/513"
-    resp = br.open("http://antropologiaeteatro.unibo.it/issue/view/513")
+    resp = br.open(url_base)
     raw_html = resp.read()  # raw html source code
     soup = BeautifulSoup(raw_html)
     results = soup.select("div.tocTitle a")

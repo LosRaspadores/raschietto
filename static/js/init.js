@@ -45,6 +45,56 @@ $( document ).ready(function() {
         stickyNav();
     });
 
+//    $.ajax({
+//        url: '/scrapingGruppi',
+//        type: 'GET',
+//        success: function(result) {
+//            //convert json string to json object
+//            lista_gruppi = JSON.parse(result);
+//            listaGruppi(lista_gruppi);
+//        },
+//        error: function(error) {
+//            alert("Error: " + error);
+//        }
+//    });
+//
+//    function listaGruppi(arr) {
+//        var out = "";
+//        var i;
+//        for(i = 0; i < arr.length; i++) {
+//            //out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
+//            out += '<a class="list-group-item" value="' + arr[i].id + '" onclick="mostraAnnotGruppo(this)">' +arr[i].nome + '</a><br>';
+//        }
+//        $('div#lista_gruppi').html(out);
+//        $('#numGru').html(arr.length);
+//    }
+//
+//    $.ajax({
+//        url: '/scrapingDocumenti',
+//        type: 'GET',
+//        success: function(result) {
+//            //convert json string to json object
+//            lista_doc = JSON.parse(result);
+//            listaDocumenti(lista_doc);
+//        },
+//        error: function(error) {
+//            alert("Error: " + error);
+//        }
+//    });
+//
+//
+//
+//    function listaDocumenti(arr) {
+//        //var out="";
+//        var i;
+//        for(i = 0; i < arr.length; i++) {
+//            //out += '<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>';
+//            $('div#lista_doc').append('<a class="list-group-item" value="' + arr[i].url + '" onclick="mostraDocumento(this)">' +arr[i].title + '</a><br>');
+//        }
+//       //$('div#lista_doc').html(out);
+//       $('#numDoc').html(arr.length);
+//    }
+
     /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
     function addZero(i) {
         if (i < 10) {
@@ -59,16 +109,6 @@ $( document ).ready(function() {
                     + currentdate.getDay() + "T"
                     + currentdate.getHours() + ":"
                     + addZero(currentdate.getMinutes());
-
-
-    $(function() {
-      addTab = function(text, urlP){
-            var url = urlP.replace(/([/|_.|_:|_-])/g, '');
-            $("ul.nav.nav-tabs").append("<li><a data-toggle='tab' href='#"+url+"' id="+urlP+" >Doc<button class='close closeTab' type='button' onclick='closeTab(this)'>x</button></a></li>");
-            $("div.tab-content").append("<div class='tab-pane fade' id='"+url+"'><div id='"+url+"t'></div></div>");
-            $("#"+url+"t").html(text);
-       }
-    });
 
     $('#modalAnnotCit').draggable({
         handle: ".modal-content"
@@ -221,40 +261,86 @@ $( document ).ready(function() {
     });
 
         //var s = window.getSelection().toString();
-});
 
+    /* Chiamata ajax per ottenere il documento selezionato */
+    $(document).on("click", "a.list-group-item", function(){
+        var urlDoc = $(this).attr('value');
 
-function mostraDocumento(element){
-    var urlDoc = $(element).attr('value');
-    // aggiunge lo stile al div selezionato e deseleziona quello precedente
-    $(element).addClass("active").siblings().removeClass("active");
-    $.ajax({
-        url: '/scrapingSingoloDocumento',
-        type: 'GET',
-        data: {url: urlDoc},
-        success: function(result) {
-            singoloDocumento(result, urlDoc);
-        },
-        error: function(error) {
-            alert("Error: " + error);
+        if(isOpen(urlDoc)){
+            $("ul.nav.nav-tabs a[id='" + urlDoc + "']").tab("show");
+        }else{
+            var numTabs = $("ul.nav.nav-tabs").children().length;
+            if(numTabs <= 4){
+                var title = $(this).text()
+                $(this).addClass("active").siblings().removeClass("active");
+                $.ajax({
+                    url: '/scrapingSingoloDocumento',
+                    type: 'GET',
+                    data: {url: urlDoc},
+                    success: function(result) {
+                        addTab(result, urlDoc, title);
+                    },
+                    error: function(error) {
+                        alert("Error: " + error);
+                    }
+                });
+            }else{
+                alert("Puoi aprire 4 documenti contemporaneamente.")
+            }
         }
     });
-}
+    
+    function lanciaScraper() {
+        alert("ciao");
+        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
+        $.ajax({
+            url: '/scrapingAutomatico',
+            type: 'GET',
+            data: {url: urlDoc},
+            success: function(result) {
+                alert(result,urlDoc);
+            },
+            error: function(error) {
+                alert("Error2222: " + error);
+            }
+        });
 
-function singoloDocumento(str, url){
-    //$("#singoloDocumento").html(str);
-    addTab(str, url);
-}
-
-function mostraAnnotGruppo(element){
-        $(element).addClass("active").siblings().removeClass("active");
+        return "";
     }
 
+    $('#buttonScraper').click(function(){
+        var href = $("ul.nav.nav-tabs li.active a").attr("id");
+        lanciaScraper(href);
+    });
+    
+});
+
+/* Funzioni per la gestione delle tab in cui visualizzare i documenti */
+function isOpen(url){
+    var res = false;
+    $("ul.nav.nav-tabs").children().each(function() {
+        if(url == $(this).children().attr("id")){
+            res = true;
+            return res;
+        }
+    });
+    return res;
+}
+function addTab(text, urlP, title){
+    $('.active').removeClass('active');
+    var url = urlP.replace(/([/|_.|_:|_-])/g, '');
+    $("ul.nav.nav-tabs").append("<li class='active'><a data-toggle='tab' href='#"+url+"' id="+urlP+"><label>"+title+"</label><span class='glyphicon glyphicon-remove' title='Chiudi' onclick='closeTab(this)'></span></a></li>");
+    $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
+    $("#"+url+"t").html(text);
+}
 function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
     $(element).parent().parent().remove(); //remove li of tab
-    $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
-//    $('ul.nav.nav-tabs li:last').addClass('active');
-//    $('div.tab-content div.tab-pane.fade:last').addClass('active');
     $(tabContentId).remove(); //remove respective tab content
+    $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
+}
+
+
+function mostraAnnotGruppo(element){
+    $(element).addClass("active").siblings().removeClass("active");
 }
