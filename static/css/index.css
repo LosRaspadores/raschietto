@@ -29,6 +29,7 @@ body {
     font-size: 40px;
     font-family: 'Playball', sans-serif;
 }
+
 .navbar .navbar-brand:hover, .navbar .navbar-brand:focus {
     color: white;
 }
@@ -45,7 +46,7 @@ body {
 }
 
 .navbar .navbar-nav>li>a:focus, .navbar .navbar-nav>li>a:hover{
-    color:  #44b78b;
+    color: #e8eef2;
     text-decoration: underline;
 }
 
@@ -63,6 +64,7 @@ body {
     margin-left: 0px;
 }
 
+/* per versioni mobile*/
 @media (min-width:768px){
     .navbar-form .input-group{
         width: 600px;
@@ -116,6 +118,7 @@ body {
     user-select: none;
     margin: 0px;
 }
+
 input.cmn-toggle-yes-no + label {
     width: 210px;
     height: 50px;
@@ -172,48 +175,49 @@ input.cmn-toggle-yes-no + label:after {
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleAutoreLabel:after {
-    background-color: #FFFF00;
+    background-color: #ffd700;
     color:white;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleAnnoPLabel:after {
-    background-color: #7FFF00;
+    background-color: #ff934d;
     color:white;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleCitLabel:after {
-   background-color: #ff0000;
+   background-color: #d29aaf;
     color:white;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleCommLabel:after {
-    background-color: #00b33c;
+    background-color: #ffdd99;
     color:white;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleDOILabel:after {
-    background-color: #007fff;
+    background-color: #DC143C;
     color:white;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleFunzRetLabel:after {
-     background-color: #ff9900;
+    background-color: #bfff80;
     color:white;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleTitoloLabel:after{
-    background-color: #ff0080;
+    background-color: #48D1CC;
     color:white;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label#toggleURLLabel:after {
-    background-color: #66ccff;
+    background-color: #008080;
     color:white;
 }
 
 input.cmn-toggle-yes-no:checked + label:before {
     transform: rotateY(180deg);
 }
+
 input.cmn-toggle-yes-no:checked + label:after {
     transform: rotateY(0);
 }
@@ -259,8 +263,9 @@ button.button-lg:active {
     overflow-y: auto;
 }
 
-/* filtri */
-.filtri{
+/* filtri tipo di annotazioni */
+.filtri {
+    font-size: 16px;
     font-weight: bold;
     padding: 10px;
     border: 2px solid #003366;
@@ -268,44 +273,78 @@ button.button-lg:active {
     border-radius: 25px;
 }
 
-#labelURL{
-    color: FireBrick;
+/* label tipo annotazione e colore highlight */
+.labelURL {
+    color: #008080;
 }
 
-#labelTitolo{
-    color: DarkOrange;
+.highlightURL{
+    color: black;
+    background-color: #008080;
 }
 
-#labelAutore{
-    color: Gold;
+.labelTitle{
+    color: #48D1CC;
 }
 
-#labelAnnoDiPubblicazione{
-    color: RosyBrown;
+.highlightTitle{
+    background-color: #48D1CC;
 }
 
-#labelDOI{
-    color: MediumSpringGreen;
+.labelAuthor{
+    color: #ffd700;
 }
 
-#labelRetorica{
-    color: Turquoise;
+.highlightAuthor{
+    background-color: #ffd700;
 }
 
-#labelCommento{
-    color: SlateBlue;
+.labelPublicationYear{
+    color: #ff934d;
 }
 
-#labelCitazione{
-    color: Salmon;
+.highlightPublicationYear{
+    background-color: #ff934d;
 }
 
+.labelDOI{
+    color: #DC143C;
+}
+
+.highlightDOI{
+    color: black;
+    background-color: #DC143C;
+}
+
+.labelDenotesRhetoric{
+    color: #bfff80;
+}
+
+.highlightDenotesRhetoric{
+    background-color: #bfff80;
+}
+
+.labelComment{
+    color: #ffdd99;
+}
+
+.highlightComment{
+    background-color: #ffdd99;
+}
+
+.labelCites{
+    color: #d29aaf;
+}
+
+.highlightCites{
+    background-color: #d29aaf;
+}
 
 .panel-default>.panel-heading .badge {
     color: #FFFFFF;
     background-color: #44B78B;
     margin-left: 20px;
-    }
+}
 
 /*Stile menu laterale*/
 .panel-group .panel{
@@ -314,7 +353,7 @@ button.button-lg:active {
 
 .panel-default > .panel-heading{
     /*#f5f5f5*/
-    background-color: #0C3C26;
+    background-color: #e8eef2;
     font-variant: small-caps;
     font-size: 19px;
     height: 40px;
@@ -324,8 +363,8 @@ button.button-lg:active {
 }
 
 .panel-default > .panel-heading a {
-    color: white;
-    background-color: #0C3C26;
+    color: #0C3C26;
+    background-color: #e8eef2;
 
 }
 .row{
@@ -406,7 +445,7 @@ span.glyphicon.glyphicon-remove::before{
 }
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
-    color: #0D670B;
+    color: #0C3C26;
     background: transparent url(../uiTabsArrow.png) no-repeat bottom center;
     border: none;
     height: 40px;

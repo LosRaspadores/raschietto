@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
-import json
 
 __author__ = 'Los Raspadores'
 
@@ -18,25 +17,21 @@ from flask import Flask, render_template, request
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
-#from scrapingCitazioni import scraping_citazioni
+from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto
+import json
 from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno, scraping_citazioni
 
 
-# initializzazione applicazione
+# inizializzazione applicazione
 app = Flask(__name__)
 
-# valori di configurazione
+# valori di configurazione TODO DEBUG=True >>> eliminare dopo la migrazione sul server!!
 app.config.update(
     DEBUG=True,
 )
 
 
 # controllers
-@app.route("/hello")
-def hello():
-    return "Hello from Python!"
-
-
 @app.route('/')
 def index(name=None):
     return render_template('index.html', name=name)
@@ -91,6 +86,14 @@ def return_singolo_documento():
     url = request.args.get('url')
     data = scraping_singolo_documento(url)
     return data
+
+"""NON PIU USATO. COMPITO FATTO LATO CLIENT
+@app.route('/getAllAnnotazioni')
+def return_all_annotazioni():
+    query = request.args.get('data')
+    results = do_query_get(sparql_endpoint_remoto, prefissi+query)
+    return json.dumps(results)  #dict to json
+"""
 
 
 # launch app

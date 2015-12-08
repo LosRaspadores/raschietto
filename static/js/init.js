@@ -9,8 +9,12 @@ $( document ).ready(function() {
         getDocumenti(docA, docS);
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
     $('[data-tooltip="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $("#uriNuovoDoc").val("");
+    $('#bottoniAnnotator').hide();
+    filtriAttivi();
 
     $('#insertAutore').css('display', 'none');
     $('#insertAnnoPub').css('display', 'none');
@@ -33,7 +37,8 @@ $( document ).ready(function() {
     for(i = year; i >=  1800; i--){
         $('select#anno').append('<option value="'+i+'">'+i+'</option>');
     }
-
+     
+    // seconda nav fissa dopo lo scrolling della pagina
     var stickyNavTop = $('#secondnav').offset().top;
 
     var stickyNav = function(){
@@ -51,6 +56,8 @@ $( document ).ready(function() {
         stickyNav();
     });
 
+    
+
     /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
     function addZero(i) {
         if (i < 10) {
@@ -59,12 +66,6 @@ $( document ).ready(function() {
         return i;
     };
 
-    var currentdate = new Date();
-    var datetime = currentdate.getFullYear() + "-"
-                    + (currentdate.getMonth())  + "-"
-                    + currentdate.getDay() + "T"
-                    + currentdate.getHours() + ":"
-                    + addZero(currentdate.getMinutes());
 
     $('#modalAnnotCit').draggable({
         handle: ".modal-content"
@@ -201,7 +202,6 @@ $( document ).ready(function() {
                               +'<strong>Attenzione!</strong> Nessuna citazione presente.'
                             +'</div>');
                 }
-//                alert(result);
             },
             error: function(error) {
                 alert("Error: " + error);
@@ -234,6 +234,28 @@ $( document ).ready(function() {
                     data: {url: urlDoc},
                     success: function(result) {
                         addTab(result, urlDoc, title);
+                        var grafi = ["http://vitali.web.cs.unibo.it/raschietto/graph/ltw1508", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1510",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1511", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1512",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1513", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1514",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1516", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1517",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1519", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1520",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1521", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1525",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1529", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1531",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1532", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1535",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1536", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1538", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1539",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1540", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1549",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1543", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1544",
+                                     "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1545", "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1547"];
+                        var i;
+                        for (i=0; i<grafi.length; i++){
+                            //query = query_all_annotazioni(grafi[i], urlDoc);
+                            //chiamata ajax
+                            //get_annotazioni(query, urlDoc, grafi[i]);
+                        }
+                        query = query_all_annotazioni("", urlDoc);
+                        get_annotazioni(query, urlDoc);
+                        filtriAttivi();
                     },
                     error: function(error) {
                         alert("Error: " + error);
@@ -243,6 +265,7 @@ $( document ).ready(function() {
                 alert("Puoi aprire 4 documenti contemporaneamente.")
             }
         }
+
     });
     
     function lanciaScraper() {
@@ -256,7 +279,7 @@ $( document ).ready(function() {
                 alert(result,urlDoc);
             },
             error: function(error) {
-                alert("Error2222: " + error);
+                alert("Error: " + error);
             }
         });
 
@@ -267,7 +290,50 @@ $( document ).ready(function() {
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
         lanciaScraper(href);
     });
-    
+
+
+
+    //Quando il modal per vedere le annotazioni di un frammento viene chiuso allora viene svuotato
+    $('#modalAnnotazioneSingola').on('hide.bs.modal', function(e){
+        $('#infoAnnotazione').html("");
+    });
+
+
+    //quando viene premuto il bottone per caricare un nuovo url
+    $("#nuovoDoc").click(function(){
+        urlNuovoDoc = $("#uriNuovoDoc").val();
+        console.log(urlNuovoDoc);
+        if(urlNuovoDoc !== ""){
+            if(isOpen(urlNuovoDoc)){
+                $("ul.nav.nav-tabs a[id='" + urlNuovoDoc + "']").tab("show");
+            }else{
+                var numTabs = $("ul.nav.nav-tabs").children().length;
+                if(numTabs <= 4){
+                    var title = urlNuovoDoc;
+                    $.ajax({
+                        url: '/scrapingSingoloDocumento',
+                        type: 'GET',
+                        data: {url: urlNuovoDoc},
+                        success: function(result) {
+                            addTab(result, urlNuovoDoc, urlNuovoDoc);
+                            query = query_all_annotazioni("", urlNuovoDoc);
+                            get_annotazioni(query, urlNuovoDoc);
+                        },
+                        error: function(error) {
+                            alert("L'url inserito non è corretto.1");
+                        }
+                    });
+                }else{
+                    alert("Puoi aprire 4 documenti contemporaneamente.")
+                }
+            }
+        } else {
+            alert("L'url inserito non è corretto.2 vuoto");
+        }
+    });
+
+
+
 });
 
 /* Funzioni per la gestione delle tab in cui visualizzare i documenti */
@@ -299,3 +365,32 @@ function closeTab(element){
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");
 }
+
+
+/* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
+function addZero(i) {
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+};
+
+var currentdate = new Date();
+var datetime = currentdate.getFullYear() + "-"
+                + (currentdate.getMonth())  + "-"
+                + currentdate.getDay() + "T"
+                + currentdate.getHours() + ":"
+                + addZero(currentdate.getMinutes());
+
+function filtriAttivi(){
+    $('#toggleTitolo').prop('checked', true);
+    $('#toggleURL').prop('checked', true);
+    $('#toggleAutore').prop('checked', true);
+    $('#toggleAnnoP').prop('checked', true);
+    $('#toggleDOI').prop('checked', true);
+    $('#toggleFunzRet').prop('checked', true);
+    $('#toggleCit').prop('checked', true);
+    $('#toggleComm').prop('checked', true);
+}
+
+
