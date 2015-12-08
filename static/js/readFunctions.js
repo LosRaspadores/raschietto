@@ -36,12 +36,14 @@ function getGruppi(){
                     listaGruppi(listaGruppiCompleta);
                 },
                 error: function() {
-                    alert("Errore nel caricamento dei grafi!");
+                    $('#alertMessage').text("Errore nel caricamento dei grafi!");
+                    $('#alertDoc').modal('show');
                 }
             });
         },
         error: function(){
-            alert("Errore nel caricamento dei grafi!");
+            $('#alertMessage').text("Errore nel caricamento dei grafi!");
+            $('#alertDoc').modal('show');
         }
     });
 }
@@ -101,7 +103,8 @@ function getDocumenti(docAnnotati, docScraping){
             }
         },
         error: function(){
-            alert("Errore nel caricamento dei documenti!");
+            $('#alertMessage').text("Errore nel caricamento dei documenti!");
+            $('#alertDoc').modal('show');
         }
     });
 }

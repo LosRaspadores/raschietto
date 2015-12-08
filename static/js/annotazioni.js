@@ -53,7 +53,7 @@ function get_annotazioni(query, urlDoc){
     uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
     $.ajax({
         url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
-        dataType: "jsonp", //cors cross
+        dataType: "jsonp",
         success: function(result) {
             lista_annotazioni = result["results"]["bindings"];
             if(lista_annotazioni.length != 0){
@@ -70,11 +70,13 @@ function get_annotazioni(query, urlDoc){
                 //TODO aggionare numero ann totali per il documento
                 displayAnnotazioni(lista_annotazioni); //modale
             } else {
-                alert("Non ci sono annotazioni per il documento selezionato.");
+                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+                $('#alertDoc').modal('show');
             }
         },
         error: function(error) {
-            alert("Error: " + error);
+            $('#alertMessage').text("Errore nel caricamento delle annotazioni.");
+            $('#alertDoc').modal('show');
         }
     });
 };
