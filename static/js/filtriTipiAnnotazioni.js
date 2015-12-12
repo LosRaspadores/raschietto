@@ -57,9 +57,11 @@ $(document).ready(function() {
     $('#toggleCit').change(function() {
         if ($("#toggleCit").prop('checked')) {
             $(".highlightCites").css("background-color", "#d29aaf");
+            $(".highlightMultiple").css("background-color", "#dae0e6");
         }else{
             $('#toggleCit').prop('checked', false);
             $(".highlightCites").css("background-color", "White");
+            $(".highlightMultiple").css("background-color", "White");
         }
     });
 
@@ -72,4 +74,19 @@ $(document).ready(function() {
         }
     });
 
+});
+
+function filtriAttivi(){
+    $('#toggleTitolo').prop('checked', true);
+    $('#toggleURL').prop('checked', true);
+    $('#toggleAutore').prop('checked', true);
+    $('#toggleAnnoP').prop('checked', true);
+    $('#toggleDOI').prop('checked', true);
+    $('#toggleFunzRet').prop('checked', true);
+    $('#toggleCit').prop('checked', true);
+    $('#toggleComm').prop('checked', true);
+}
+
+$( document ).ready(function() {
+    filtriAttivi();
 });

@@ -332,6 +332,11 @@ button.button-lg:active {
     background-color: #d29aaf;
 }
 
+.highlightMultiple{
+    background-color: #dae0e6;
+}
+
+
 .panel-default>.panel-heading .badge {
     color: #FFFFFF;
     background-color: #44B78B;

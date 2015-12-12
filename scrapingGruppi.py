@@ -41,10 +41,6 @@ def scraping_gruppi():
         data['id'] = list[0].text
         data['nome'] = list[1].text
         lista.append(data)
-
-    with open('listagrafi.json', 'w') as fp:
-        json.dump(lista, fp)
-
     return json.dumps(lista)
 
 if __name__ == "__main__":

@@ -1,5 +1,8 @@
+//globale
+listaGruppiCompleta = [];
+
 function getGruppi(){
-    listaGruppiCompleta = [];
+
 //    gruppiSPARQL;
 //    gruppiScraping;
 
@@ -36,13 +39,13 @@ function getGruppi(){
                     listaGruppi(listaGruppiCompleta);
                 },
                 error: function() {
-                    $('#alertMessage').text("Errore nel caricamento dei grafi!");
+                    $('#alertMessage').text("Errore nel caricamento della lista dei grafi!");
                     $('#alertDoc').modal('show');
                 }
             });
         },
         error: function(){
-            $('#alertMessage').text("Errore nel caricamento dei grafi!");
+            $('#alertMessage').text("Errore nel caricamento della lista dei grafi!");
             $('#alertDoc').modal('show');
         }
     });

@@ -99,7 +99,7 @@ prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
                 PREFIX deo:   <http://purl.org/spar/deo/>
                 PREFIX foaf: <http://xmlns.com/foaf/0.1/> """
 
-annotazione_prova = """
+annotazione_prova_doi = """
     [] a oa:Annotation ;
         rdfs:label "DOI"^^xsd:string ;
         rsch:type "hasDOI"^^xsd:string ;
@@ -126,17 +126,89 @@ annotazione_prova = """
 
     <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression . """
 
-def get_lista_grafi():
-    lista_grafi = list()
-    with open('listagrafi.json') as data_file:
-        data = json.load(data_file)
 
-    for dato in data:
-        id = dato['id'].strip()
-        nome_grafo = base_name + id
-        lista_grafi.append(nome_grafo)
+annotazione_prova_url = """
+    [] a oa:Annotation ;
+        rdfs:label "URl"^^xsd:string ;
+        rsch:type "hasURL"^^xsd:string ;
+        oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
+        oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
+        oa:hasBody _:url ;
+        oa:hasTarget [ a oa:SpecificResource ;
+                oa:hasSelector [ a oa:FragmentSelector ;
+                        rdf:value ""^^xsd:string ;
+                        oa:end "0"^^xsd:nonNegativeInteger ;
+                        oa:start "0"^^xsd:nonNegativeInteger ] ;
+                oa:hasSource <http://www.dlib.org/dlib/july15/downs/07downs.html> ] .
 
-    return lista_grafi
+    <mailto:los.raspadores@gmail.com> a foaf:mbox ;
+        schema:email "los.raspadores@gmail.com" ;
+        foaf:name "LosRaspadores"^^xsd:string ;
+        rdfs:label "LosRaspadores"^^xsd:string .
+
+    _:url a rdf:Statement;
+        rdfs:label "Il documento ha come URL http://www.dlib.org/dlib/july15/downs/07downs.html"^^xsd:string ;
+        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
+        rdf:predicate fabio:hasURL ;
+        rdf:object "http://www.dlib.org/dlib/july15/downs/07downs.html"^^xsd:string .
+
+    <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression . """
+
+
+# http://www.dlib.org/dlib/march15/moulaison/03moulaison.html
+
+
+annotazione_prova_multipla = """
+    [] a oa:Annotation ;
+        rdfs:label "Citazione"^^xsd:string ;
+        rsch:type "cites"^^xsd:string ;
+        oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
+        oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
+        oa:hasBody _:cite ;
+        oa:hasTarget [ a oa:SpecificResource ;
+                oa:hasSelector [ a oa:FragmentSelector ;
+                        rdf:value "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td2_p38"^^xsd:string ;
+                        oa:end "0"^^xsd:nonNegativeInteger ;
+                        oa:start "0"^^xsd:nonNegativeInteger
+                        ] ;
+                oa:hasSource <http://www.dlib.org/dlib/march15/moulaison/03moulaison.html> ] .
+
+    <mailto:los.raspadores@gmail.com> a foaf:mbox ;
+        schema:email "los.raspadores@gmail.com" ;
+        foaf:name "LosRaspadores"^^xsd:string ;
+        rdfs:label "LosRaspadores"^^xsd:string .
+
+    _:cite a rdf:Statement;
+        rdfs:label "Il documento cita http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited3"^^xsd:string ;
+        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
+        rdf:predicate cito:cites ;
+        rdf:object <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited3>.
+
+    <http://www.dlib.org/dlib/march15/moulaison/03moulaison_ver1> a fabio:Expression .
+
+    <http://www.dlib.org/dlib/march15/moulaison/03moulaison_ver1_cited3> rdfs:label "Cullen, R., & Chawner, B. (2011). Institutional repositories, open access, and scholarly communication.."^^xsd:string .
+
+    [] a oa:Annotation ;
+        rdfs:label "Titolo"^^xsd:string ;
+        rsch:type "hasTitle"^^xsd:string ;
+        oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
+        oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
+        oa:hasBody _:titolo;
+        oa:hasTarget [ a oa:SpecificResource ;
+                oa:hasSelector [ a oa:FragmentSelector ;
+                        rdf:value "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td2_p38"^^xsd:string ;
+                        oa:end "0"^^xsd:nonNegativeInteger ;
+                        oa:start "0"^^xsd:nonNegativeInteger
+                        ] ;
+                oa:hasSource <http://www.dlib.org/dlib/march15/moulaison/03moulaison.html> ] .
+
+        _:titolo a rdf:Statement ;
+            rdf:subject <http://www.dlib.org/dlib/march15/moulaison/03moulaison_ver1_cited3> ;
+            rdf:predicate dcterms:title ;
+            rdf:object "Institutional repositories, open access, and scholarly communi.."^^xsd:string .
+
+
+    """
 
 
 # funzione per visualizzare le triple presenti in un grafo RDF
@@ -175,6 +247,13 @@ def query_delete_file(nome_grafo, file):
 # 'CLEAR GRAPH' per rimuovere le triple da un grafo
 def query_clear_graph(nome_grafo):
     query = """CLEAR GRAPH <%s>""" % nome_grafo
+    return query
+
+
+def query_delete_annotazioni_documento(url_doc):
+    query = prefissi + " WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537>" \
+                       " DELETE { ?a ?p ?o } WHERE { ?a oa:hasTarget ?target. " \
+                       " ?target oa:hasSource <" + url_doc + ">.} "
     return query
 
 
@@ -235,12 +314,6 @@ def query_annotazione(nome_grafo, annotazione):
 
 def main():
 
-    lista = get_lista_grafi()
-    lista2 = list()
-    lista2.append("http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537")
-    lista2.append("http://vitali.web.cs.unibo.it/raschietto/graph/ltw1538")
-    lista2.append("http://vitali.web.cs.unibo.it/raschietto/graph/ltw1539")
-
     """
     query = query_insert_file(nome_grafo_gruppo, "travel.owl")
     do_query_post(sparql_endpoint_locale, query)
@@ -255,12 +328,27 @@ def main():
 
 """
     query = query_clear_graph(nome_grafo_gruppo)
-    do_query_post(sparql_endpoint_remoto, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
-    #query = query_delete_annotazioni_documento(url_doc)
+    url_doc = "http://www.dlib.org/dlib/july15/downs/07downs.html"   # Data Stewardship in the Earth Sciences
+    query = query_delete_annotazioni_documento(url_doc)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
-    query = query_annotazione(nome_grafo_gruppo, annotazione_prova)
-    do_query_post(sparql_endpoint_remoto, query)
+    query = query_annotazione(nome_grafo_gruppo, annotazione_prova_doi)  # DOI 07DOWNS.HMTL
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
+
+    query = query_annotazione(nome_grafo_gruppo, annotazione_prova_url)  # URL 07DOWNS.HTML
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
+
+    # http://www.dlib.org/dlib/march15/moulaison/03moulaison.html  # OpenDOAR Repositories and Metadata Practices
+    query = query_annotazione(nome_grafo_gruppo, annotazione_prova_multipla)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
+
 
 """
     query = query_select_from_tuttigafi(lista)

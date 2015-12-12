@@ -1,7 +1,6 @@
 $( document ).ready(function() {
 
-    getGruppi();
-
+    //documenti
     $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
         docS = JSON.parse(r1[0]);
         docA = r2[0].results.bindings;
@@ -9,13 +8,17 @@ $( document ).ready(function() {
         getDocumenti(docA, docS);
     });
 
+
+    //gruppi
+    getGruppi();
+
+
+    //inizializzazione elementi layout
     $('[data-tooltip="tooltip"]').tooltip();
     $('[data-toggle="tooltip"]').tooltip();
-
     $("#uriNuovoDoc").val("");
-    $('#bottoniAnnotator').hide();
-    filtriAttivi();
 
+    $('#bottoniAnnotator').hide();
     $('#insertAutore').css('display', 'none');
     $('#insertAnnoPub').css('display', 'none');
     $('#insertTitolo').css('display', 'none');
@@ -23,25 +26,11 @@ $( document ).ready(function() {
     $('#insertDOI').css('display', 'none');
     $('#insertComm').css('display', 'none');
     $('#insertfunzRet').css('display', 'none');
-
     $('#salvaInsert').attr('disabled', 'disabled');
 
-    $('ul#bottoniAnnotator button').click(function(e){
-        if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
-            $('#alertMessage').text("Nessun documento selezionato.");
-            $('#alertDoc').modal('show');
-            e.stopPropagation();
-        }
-    });
 
-    var year = new Date().getFullYear();
-    for(i = year; i >=  1800; i--){
-        $('select#anno').append('<option value="'+i+'">'+i+'</option>');
-    }
-     
     // seconda nav fissa dopo lo scrolling della pagina
     var stickyNavTop = $('#secondnav').offset().top;
-
     var stickyNav = function(){
         var scrollTop = $(window).scrollTop();
         if (scrollTop > stickyNavTop) {
@@ -50,27 +39,11 @@ $( document ).ready(function() {
             $('#secondnav').removeClass('sticky');
         }
     };
-
-    stickyNav();
-
+    //stickyNav();
     $(window).scroll(function() {
         stickyNav();
     });
 
-    
-
-    /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
-    function addZero(i) {
-        if (i < 10) {
-            i = "0" + i;
-        }
-        return i;
-    };
-
-
-    $('#modalAnnotCit').draggable({
-        handle: ".modal-content"
-    });
 
     $('#modalAnnotDoc').on('hide.bs.modal', function(e){
         $('#selectTipoAnnot').val('');
@@ -86,6 +59,24 @@ $( document ).ready(function() {
     $('#modalAnnotDoc').draggable({
         handle: ".modal-content"
     });
+
+     $('#modalAnnotCit').draggable({
+        handle: ".modal-content"
+    });
+
+    var year = new Date().getFullYear();
+    for(i = year; i >=  1800; i--){
+        $('select#anno').append('<option value="'+i+'">'+i+'</option>');
+    }
+
+    $('ul#bottoniAnnotator button').click(function(e){
+        if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
+            $('#alertMessage').text("Nessun documento selezionato.");
+            $('#alertDoc').modal('show');
+            e.stopPropagation();
+        }
+    });
+
 
     $('#selectTipoAnnot').change(function(){
         var annot = $(this).val();
@@ -174,18 +165,17 @@ $( document ).ready(function() {
    });
 
    function citazioniWidget(lista_cit){
-
         var cit = '';
         $('#modalAnnotCit div.modal-body').html('<form><div class="form-group" id="insertCit"><label for="selectCit">Scegli un riferimento bibliografico</label>'
                                    + '<select class="form-control" id="selectCit"><option value=""></option></select></div></form>');
-         for(i = 0; i < lista_cit.length; i++){
-         if(lista_cit[i].cit.length > 50){
+        for(i = 0; i < lista_cit.length; i++){
+            if(lista_cit[i].cit.length > 50){
             cit = lista_cit[i].cit.substring(0, 50)+'...';
-         } else {
+            } else {
             cit = lista_cit[i].cit;
-         }
+            }
             $('#selectCit').append('<option value="">'+cit+'</option>');
-         }
+        }
    };
 
     function getCitazioni(urlDoc){
@@ -235,7 +225,7 @@ $( document ).ready(function() {
                     data: {url: urlDoc},
                     success: function(result) {
                         addTab(result, urlDoc, title);
-                        query = query_all_annotazioni("", urlDoc);
+                        query = query_all_annotazioni(urlDoc);
                         get_annotazioni(query, urlDoc);
                         filtriAttivi();
                     },
@@ -274,14 +264,6 @@ $( document ).ready(function() {
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
         lanciaScraper(href);
     });
-
-
-
-    //Quando il modal per vedere le annotazioni di un frammento viene chiuso allora viene svuotato
-    $('#modalAnnotazioneSingola').on('hide.bs.modal', function(e){
-        $('#infoAnnotazione').html("");
-    });
-
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
@@ -348,36 +330,8 @@ function closeTab(element){
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
 }
 
-
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");
+    $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
+    $("#modalAnnotazioneSingola").modal('show');
 }
-
-
-/* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
-function addZero(i) {
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
-};
-
-var currentdate = new Date();
-var datetime = currentdate.getFullYear() + "-"
-                + (currentdate.getMonth())  + "-"
-                + currentdate.getDay() + "T"
-                + currentdate.getHours() + ":"
-                + addZero(currentdate.getMinutes());
-
-function filtriAttivi(){
-    $('#toggleTitolo').prop('checked', true);
-    $('#toggleURL').prop('checked', true);
-    $('#toggleAutore').prop('checked', true);
-    $('#toggleAnnoP').prop('checked', true);
-    $('#toggleDOI').prop('checked', true);
-    $('#toggleFunzRet').prop('checked', true);
-    $('#toggleCit').prop('checked', true);
-    $('#toggleComm').prop('checked', true);
-}
-
-
