@@ -268,22 +268,22 @@ $( document ).ready(function() {
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
         urlNuovoDoc = $("#uriNuovoDoc").val();
-        console.log(urlNuovoDoc);
+        $("#uriNuovoDoc").val("");
         if(urlNuovoDoc !== ""){
             if(isOpen(urlNuovoDoc)){
                 $("ul.nav.nav-tabs a[id='" + urlNuovoDoc + "']").tab("show");
             }else{
                 var numTabs = $("ul.nav.nav-tabs").children().length;
                 if(numTabs <= 4){
-                    var title = urlNuovoDoc;
                     $.ajax({
                         url: '/scrapingSingoloDocumento',
                         type: 'GET',
                         data: {url: urlNuovoDoc},
                         success: function(result) {
                             addTab(result, urlNuovoDoc, urlNuovoDoc);
-                            query = query_all_annotazioni("", urlNuovoDoc);
+                            query = query_all_annotazioni(urlNuovoDoc);
                             get_annotazioni(query, urlNuovoDoc);
+                            filtriAttivi();
                         },
                         error: function(error) {
                             $('#alertMessage').text("L'URI inserito non è valido.");

@@ -23,13 +23,13 @@ prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
 // query che restituisce tutte le annotazioni di un determinato documento
 function query_all_annotazioni(url_documento){
     var query = prefissi +
-        'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?fs_value '+
+        'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?body_ol ?fs_value '+
         '?start ?end ';
     var i;
     for (i=0; i<listaGruppiCompleta.length; i++){
         query += 'FROM NAMED <' + listaGruppiCompleta[i].url + '> ';
     }
-    //'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1538> ' +
+    //query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
     query += 'WHERE {'+
             'GRAPH ?graph {?a a oa:Annotation. '+
             'OPTIONAL {?a rdfs:label ?label} '+
@@ -42,8 +42,9 @@ function query_all_annotazioni(url_documento){
             '?a oa:hasBody ?body. '+
             '?body rdf:subject ?body_s; '+
                   'rdf:object ?body_o; '+
-                  'rdf:predicate ?body_p; '+
-            'OPTIONAL {?body_o rdfs:label ?body_l} '+
+                  'rdf:predicate ?body_p. '+
+            'OPTIONAL {?body rdfs:label ?body_l} '+
+            'OPTIONAL {?body_o rdfs:label ?body_ol} '+
             '?a oa:hasTarget ?target. '+
             '?target oa:hasSelector ?fragment_selector. '+
             '?fragment_selector rdf:value ?fs_value; '+
@@ -138,11 +139,12 @@ function displaySingolaAnnotazione(str, ann){
                     out += ann["body_o"]["value"];
                 }
             } else {
-                if (typeof(ann["body_l"]) != "undefined") {
-                    out += ann["body_l"]["value"] + " ";
-                }
-                else if (typeof(ann["body_o"]) != "undefined") {
+                if (typeof(ann["body_ol"]) != "undefined") {
+                    out += ann["body_ol"]["value"];
+                } else if (typeof(ann["body_o"]) != "undefined") {
                     out += ann["body_o"]["value"];
+                } else if (typeof(ann["body_l"]) != "undefined") {
+                    out += ann["body_l"]["value"];
                 }
                 out += ".</p>";
             }
@@ -153,17 +155,17 @@ function displaySingolaAnnotazione(str, ann){
             } else if(typeof(ann["prov_nome"]) != "undefined"){
                 out += ann["prov_nome"]["value"] + " "
             } else if(typeof(ann["provenance"]) != "undefined"){
-                out += ann["provenance"]["value"] + " "
+                out += ann["provenance"]["value"];
             }
             if(typeof(ann["prov_email"]) != "undefined"){
-                out += ann["prov_email"]["value"] + " "
+                out += ann["prov_email"]["value"];
             }
             out += parseDatetime(ann["date"]["value"]) + "</p>";
             out += "</div><br>";
         }
     }
 
-    /*else if (typeof(ann["label"]) != "undefined"){
+    else if (typeof(ann["label"]) != "undefined"){
         var tipo_ann = gestioneTipoLabel(ann["label"]["value"]);
         if(tipo_ann != ""){
             var out = '<div><span class="filtri">Annotazione di tipo ' + tipo_ann;
@@ -175,11 +177,12 @@ function displaySingolaAnnotazione(str, ann){
                     out += ann["body_o"]["value"];
                 }
             } else {
-                if (typeof(ann["body_l"]) != "undefined") {
-                    out += ann["body_l"]["value"] + " ";
-                }
-                else if (typeof(ann["body_o"]) != "undefined") {
+                if (typeof(ann["body_ol"]) != "undefined") {
+                    out += ann["body_ol"]["value"];
+                } else if (typeof(ann["body_o"]) != "undefined") {
                     out += ann["body_o"]["value"];
+                } else if (typeof(ann["body_l"]) != "undefined") {
+                    out += ann["body_l"]["value"];
                 }
                 out += ".</p>";
             }
@@ -198,7 +201,7 @@ function displaySingolaAnnotazione(str, ann){
             out += parseDatetime(ann["date"]["value"]) + "</p>";
             out += "</div><br>";
         }
-    }*/
+    }
     return out;
 }
 
@@ -210,10 +213,10 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
     }
-    /*else if (typeof(ann["label"]) != "undefined"){
+    else if (typeof(ann["label"]) != "undefined"){
         var classCSS = getClassNameLabel(ann["label"]["value"]);
     }
-    */
+
     else {
         //se il tipo di annotazione non c'è nè nel campo type nè in label l'annotazione viene scartata
         var classCSS = "";
@@ -221,7 +224,6 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     if(classCSS != ""){
         //fragmentPath trasformato in XPath (del documento originale)
         var path = getXPath(fragmentPath);
-        console.log("getXPath " + path);
 
         //XPath (del documento originale) trasformato in xPath locale
         var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
@@ -230,7 +232,6 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
-        console.log("getXPath after dlib tbody replace " + path);
         //TODO perchè //table/ e non /table/
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
@@ -243,8 +244,6 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
 
         //if rivista statistica or if antropologia e teatro
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
-
-        console.log(path);
 
         //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo (di qualsiasi tipo?//TODO controlla)
         //rappresentato dal XPath passato come parametro
@@ -324,7 +323,6 @@ function check(nodo, start, end, classCSS, ann){
             $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
-        console.log("fatto " + classCSS);
         output = {exit: true}
     }
     if(start < lunghezza && end > lunghezza){
@@ -339,20 +337,17 @@ function check(nodo, start, end, classCSS, ann){
         } else {
             nuovoNodo.className = classCSS;
         }
-
         nuovoNodo.ondblclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
             if(subject.indexOf("cited") != -1) {
-                var out_ann = displaySingolaAnnotazione(ann);
+                var out_ann = displaySingolaAnnotazione("Annotazione su citazione di tipo", ann);
             } else {
-                var out_ann  = displaySingolaAnnotazione(ann);
+                var out_ann  = displaySingolaAnnotazione("Annotazione di tipo", ann);
             }
-
             $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
-        console.log("fatto " + classCSS);
         output={inizio: 0, fine: end-lunghezza, altroNodo: true}
     }
     return output;
@@ -562,7 +557,7 @@ function gestioneTipoType(type){
             out = '<span class="filtri labelComment"> COMMENTO </span> </span> <p> Un commento a questo documento è ';
             break;
         case "denotesRhetoric":
-            out = '<span class="filtri labelDenotesRhetoric"> RETORICA </span> </span> </p> <span> Una retorica di questo documento è ';
+            out = '<span class="filtri labelDenotesRhetoric"> RETORICA </span> </span> <p> Una retorica di questo documento è ';
             break;
         case "Cites":
         case "cites":
