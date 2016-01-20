@@ -1,5 +1,5 @@
+
 function getGruppi(){
-    listaGruppiCompleta = [];
 //    gruppiSPARQL;
 //    gruppiScraping;
 
@@ -49,8 +49,8 @@ function getGruppi(){
 function listaGruppi(arr) {
     var output = "";
     var i;
+    output+= '<a class="list-group-item" value="all" onclick="mostraAnnotGruppo(this)"> Tutti </a><br>';
     for(i = 0; i < arr.length; i++) {
-        //out += '<input type="checkbox"/><label>' + arr[i].id + ' - ' +arr[i].nome + '</label><br>';
         output += '<a class="list-group-item" value="' + arr[i]['url'] + '" onclick="mostraAnnotGruppo(this)">' +arr[i]['nome'] + '</a><br>';
     }
     $('div#lista_gruppi').html(output);

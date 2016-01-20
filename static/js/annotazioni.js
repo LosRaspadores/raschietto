@@ -55,7 +55,9 @@ function get_annotazioni(query, urlDoc){
         dataType: "jsonp", //cors cross
         success: function(result) {
             lista_annotazioni = result["results"]["bindings"];
+
             if(lista_annotazioni.length != 0){
+                salvaAnnotazioniJSON(urlDoc, lista_annotazioni);
                 for (i = 0; i < lista_annotazioni.length; i++) {
                     ann = lista_annotazioni[i];
                     fragmentPath = ann["fs_value"]["value"];
@@ -68,6 +70,7 @@ function get_annotazioni(query, urlDoc){
                 }
                 //TODO aggionare numero ann totali per il documento
                 displayAnnotazioni(lista_annotazioni); //modale
+                //annotDaGestire(urlDoc);
             } else {
                 alert("Non ci sono annotazioni per il documento selezionato.");
             }
@@ -243,6 +246,7 @@ function findCorrectNodo(nodo, start, end, classCSS, ann){
                     if (result.altroNodo){
                         i++;
                     }
+
                     start = result.inizio;
                     end = result.fine;
                     i++;

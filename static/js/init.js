@@ -1,5 +1,8 @@
 $( document ).ready(function() {
 
+    localStorage.clear();
+
+    listaGruppiCompleta = [];
     getGruppi();
 
     $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
@@ -55,16 +58,6 @@ $( document ).ready(function() {
     $(window).scroll(function() {
         stickyNav();
     });
-
-    
-
-    /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
-    function addZero(i) {
-        if (i < 10) {
-            i = "0" + i;
-        }
-        return i;
-    };
 
 
     $('#modalAnnotCit').draggable({
@@ -216,9 +209,28 @@ $( document ).ready(function() {
         }
     });
 
+    $('#buttonGest').click(function(){
+        var id = $("ul.nav.nav-tabs li.active a").attr("id");
+        if(id != 'homeTab'){
+            annot_gest = annotDaGestire(id, 'http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537');
+            $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').html("");
+            for(i = 0; i < annot_gest.length; i++){
+                if(typeof(annot_gest[i].type) != "undefined"){
+                    classCSS = getClassNameType(annot_gest[i].type.value);
+                } else if (typeof(annot_gest[i].label) != "undefined"){
+                    classCSS = getClassNameLabel(annot_gest[i].label.value);
+                }
+                col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>'; //<td>'+ parseDatetime(annot_gest[i].date.value)+'</td>
+                tr = '<tr><td>'+col+'</td><td>'+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit"></span><span class="glyphicon glyphicon-trash"></span></td></tr>';
+
+                $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').append(tr);
+            }
+        }
+    });
+
 
     /* Chiamata ajax per ottenere il documento selezionato */
-    $(document).on("click", "a.list-group-item", function(){
+    $(document).on("click", "#lista_doc a.list-group-item", function(){
         var urlDoc = $(this).attr('value');
 
         if(isOpen(urlDoc)){
@@ -332,10 +344,7 @@ $( document ).ready(function() {
         }
     });
 
-
-
 });
-
 /* Funzioni per la gestione delle tab in cui visualizzare i documenti */
 function isOpen(url){
     var res = false;
@@ -361,26 +370,12 @@ function closeTab(element){
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
 }
 
-
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");
+    urlGruppo = $(element).attr('value');
+    urlD = $("ul.nav.nav-tabs li.active a").attr("id");
+    filtriGruppo(urlGruppo, urlD);
 }
-
-
-/* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
-function addZero(i) {
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
-};
-
-var currentdate = new Date();
-var datetime = currentdate.getFullYear() + "-"
-                + (currentdate.getMonth())  + "-"
-                + currentdate.getDay() + "T"
-                + currentdate.getHours() + ":"
-                + addZero(currentdate.getMinutes());
 
 function filtriAttivi(){
     $('#toggleTitolo').prop('checked', true);

@@ -470,3 +470,33 @@ span.glyphicon.glyphicon-remove{
     margin-bottom: 0px;
 }
 
+.tableAnnot{
+    margin: auto;
+}
+
+.tableAnnot td, .tableAnnot th{
+    width: 173px;
+    font-weight: normal;
+    font-size: medium;
+}
+
+.tableAnnot td{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
+    width: 66px;
+}
+
+#modalGestAnnotazioni h4{
+    font-size: 20px;
+}
+
+#modalGestAnnotazioni thead{
+    border-bottom: 5px solid #44B78B;
+}
+
+#modalGestAnnotazioni table span.glyphicon {
+    padding-left: 15px;
+}

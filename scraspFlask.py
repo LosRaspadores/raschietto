@@ -58,10 +58,10 @@ def return_citazioni():
 def return_titolo():
     url = request.args.get('url')
     item_list = json.loads(url)
-
     read_file = open('cacheDoc.json', 'r')
     result = read_file.read()
     read_file.close()
+
     if (result):
         data = result
     else:
