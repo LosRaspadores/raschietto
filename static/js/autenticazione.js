@@ -1,35 +1,6 @@
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
-    function readerMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#utenteAutenticato').text("");
-        $('#bottoniAnnotator').hide();
-    };
-
-    function annotatorMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#bottoniAnnotator').show();
-    };
-
-    /* Passaggio da modalità reader a modalità annotator e viceversa */
-    $('#modalitaToggle').change(function() {
-        if ($("#modalitaToggle").prop('checked')) {
-            $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
-            $('#modalAutenticazione').modal('show');
-            annotatorMode();
-        }else{
-            $('#modalitaToggle').prop('checked', false);
-            readerMode();
-            sessionStorage.removeItem("nomecognome");
-            sessionStorage.removeItem("email");
-        };
-    });
-
     /*
         Verifica della presenza di un utente già autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
@@ -45,7 +16,36 @@ $(document).ready(function() {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
         $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
-    };
+    }
+
+    /* Passaggio da modalità reader a modalità annotator e viceversa */
+    $('#modalitaToggle').change(function() {
+        if ($("#modalitaToggle").prop('checked')) {
+            $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
+            $('#modalAutenticazione').modal('show');
+            annotatorMode();
+        }else{
+            $('#modalitaToggle').prop('checked', false);
+            readerMode();
+            sessionStorage.removeItem("nomecognome");
+            sessionStorage.removeItem("email");
+        }
+    });
+
+    function readerMode(){
+        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#utenteAutenticato').text("");
+        $('#bottoniAnnotator').hide();
+    }
+
+    function annotatorMode(){
+        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#bottoniAnnotator').show();
+    }
 
     /* Validazione autenticazione utente */
     $("#autenticati").click(function(){

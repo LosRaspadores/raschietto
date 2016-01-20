@@ -30,7 +30,7 @@ br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1
 
 
 def main():
-     scraping_titolo('http://www.sportmediaset.mediaset.it/')
+     scraping_titolo()
     # scarping_autore()
     # scraping_doi()
     # scraping_anno()
@@ -207,9 +207,10 @@ def scraping_anno(urlDoc):
 
 def scraping_citazioni(url):
     lista = []
-    # url = 'http://www.dlib.org/dlib/november14/brook/11brook.html'
-    # url ="http://almatourism.unibo.it/article/view/5290?acceptCookies=1"
-    page = br.open(url)
+    try:
+        resp = br.open(url)
+    except:
+        print "Connection failed with "+url
     html = page.read()
     soup = BeautifulSoup(html, 'html.parser')
 

@@ -6,7 +6,7 @@ $(document).ready(function() {
         }else{
             $('#toggleTitolo').prop('checked', false);
             $(".highlightTitle").css("background-color", "White");
-        };
+        }
     });
 
       $('#toggleURL').change(function() {
@@ -15,7 +15,7 @@ $(document).ready(function() {
         }else{
             $('#toggleURL').prop('checked', false);
             $(".highlightURL").css("background-color", "White");
-        };
+        }
     });
 
     $('#toggleAutore').change(function() {
@@ -24,7 +24,7 @@ $(document).ready(function() {
         }else{
             $('#toggleAutore').prop('checked', false);
             $(".highlightAuthor").css("background-color", "White");
-        };
+        }
     });
 
     $('#toggleAnnoP').change(function() {
@@ -33,7 +33,7 @@ $(document).ready(function() {
         }else{
             $('#toggleAnnoP').prop('checked', false);
             $(".highlightPublicationYear").css("background-color", "White");
-        };
+        }
     });
 
     $('#toggleDOI').change(function() {
@@ -42,7 +42,7 @@ $(document).ready(function() {
         }else{
             $('#toggleDOI').prop('checked', false);
             $(".highlightDOI").css("background-color", "White");
-        };
+        }
     });
 
     $('#toggleFunzRet').change(function() {
@@ -51,16 +51,18 @@ $(document).ready(function() {
         }else{
             $('#toggleFunzRet').prop('checked', false);
             $(".highlightDenotesRhetoric").css("background-color", "White");
-        };
+        }
     });
 
     $('#toggleCit').change(function() {
         if ($("#toggleCit").prop('checked')) {
             $(".highlightCites").css("background-color", "#d29aaf");
+            $(".highlightMultiple").css("background-color", "#dae0e6");
         }else{
             $('#toggleCit').prop('checked', false);
             $(".highlightCites").css("background-color", "White");
-        };
+            $(".highlightMultiple").css("background-color", "White");
+        }
     });
 
     $('#toggleComm').change(function() {
@@ -69,7 +71,22 @@ $(document).ready(function() {
         }else{
             $('#toggleComm').prop('checked', false);
             $(".highlightComment").css("background-color", "White");
-        };
+        }
     });
 
+});
+
+function filtriAttivi(){
+    $('#toggleTitolo').prop('checked', true);
+    $('#toggleURL').prop('checked', true);
+    $('#toggleAutore').prop('checked', true);
+    $('#toggleAnnoP').prop('checked', true);
+    $('#toggleDOI').prop('checked', true);
+    $('#toggleFunzRet').prop('checked', true);
+    $('#toggleCit').prop('checked', true);
+    $('#toggleComm').prop('checked', true);
+}
+
+$( document ).ready(function() {
+    filtriAttivi();
 });

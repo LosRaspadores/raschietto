@@ -124,10 +124,6 @@ input.cmn-toggle-yes-no + label {
     height: 50px;
 }
 
-div#lista_annot.panel-body label#toggleURLLabel{
-    margin-bottom: 0px;
-}
-
 #lista_annot input.cmn-toggle-yes-no + label{
     height: 35px;
     width: 190px;
@@ -335,6 +331,11 @@ button.button-lg:active {
 .highlightCites{
     background-color: #d29aaf;
 }
+
+.highlightMultiple{
+    background-color: #dae0e6;
+}
+
 
 .panel-default>.panel-heading .badge {
     color: #FFFFFF;
