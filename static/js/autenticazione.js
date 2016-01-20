@@ -110,7 +110,7 @@ $(document).ready(function() {
             //I dati dell'utente vengono salvati nella sessionStorage
             sessionStorage.nomecognome=nomecognome;
             sessionStorage.email=email;
-            $('#utenteAutenticato').text("Utente autenticato: "+sessionStorage.nomecognome+", email: "+sessionStorage.email);
+            $('#utenteAutenticato').html("<p>Utente: "+sessionStorage.nomecognome+"<br>email: "+sessionStorage.email+"</p>");
             annotatorMode();
         };
     });

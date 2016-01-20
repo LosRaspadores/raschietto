@@ -92,13 +92,17 @@
 
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
                         <li>
-                              <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
 
-                              <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>  <!--data-toggle="modal" data-target="#modalAnnotDoc" -->
+                            <!--<button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>  &lt;!&ndash;data-toggle="modal" data-target="#modalAnnotDoc" &ndash;&gt;-->
 
-                              <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
+                            <!--<button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalTipoAnnotazione"><span class="glyphicon glyphicon-pencil"></span></button>-->
 
-                              <button type="button" class="btn btn-default navbar-btn" id="bott" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione" onclick="verificaTab()"><span class="glyphicon glyphicon-pencil"></span></button>
+
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
+
+                            <button type="button" class="btn btn-default navbar-btn" id="bott" data-tooltip="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create" data-toggle="modal" data-target="#modalGestioneAnnotazioni"><span class="glyphicon glyphicon-floppy-disk"></span></button>
 
                         </li>
                       </ul>
@@ -239,6 +243,27 @@
             </div>
             </div>
 
+        <!--Modal di scelta del tipo di annotazione (documento - frammento)-->
+        <div class="modal fade" id="modalTipoAnnotazione" role="dialog">
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Nessun frammento selezionato</h3>
+                    </div>
+                        <div class="modal-body">
+                            <div>
+                                <label id="didascaliaModal">Prosegui per inserire un'annotazione sul documento, altrimenti seleziona un frammento di testo da annotare.</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="chiudi" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="prosegui" type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAnnotDoc" data-dismiss="modal">Prosegui</button>
+                        </div>
+                 </div>
+            </div>
+        </div>
+
 
         <!--Modal creazione annotazioni sul documento-->
         <div class="modal fade" id="modalAnnotDoc" role="dialog">
@@ -246,11 +271,11 @@
                  <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="text-center">Inserisci annotazione sul documento</h3>
+                        <h3 class="text-center">Inserisci annotazione</h3>
                     </div>
-                    <form>
+                    <form id="formAnnotazione">
                         <div class="modal-body">
-
+                            <textarea class="form-control" rows="3" id="selezione" readonly></textarea>
                                 <div class="form-group" id="divInsert">
                                     <label for="selectTipoAnnot">Seleziona il tipo di annotazione</label>
                                     <div>
@@ -258,12 +283,11 @@
                                             <option value=""></option>
                                             <option value="autore">Autore</option>
                                             <option value="anno">Anno pubblicazione</option>
-                                            <!--<option value="citazione">Citazione</option>-->
-                                            <option value="commento">Commento</option>
                                             <option value="doi">DOI</option>
-                                            <option value="funzione">Funzione retorica</option>
                                             <option value="titolo">Titolo</option>
                                             <option value="url">URL</option>
+                                            <option value="commento" id="commento">Commento</option>
+                                            <option value="funzione" id="funzione">Funzione retorica</option>
                                         </select>
                                     </div>
                                 </div>
@@ -297,30 +321,24 @@
                                         <input type="text" class="form-control" placeholder="" id="doi">
                                 </div>
 
-                                <!--<div class="form-group" id="insertCit">-->
-                                    <!--<label for="cit">Inserisci un DOI</label>-->
-                                        <!--<input type="text" class="form-control" placeholder="" id="cit">-->
-                                <!--</div>-->
+                            <div class="form-group" id="insertComm">
+                                <label for="comm">Inserisci un commento</label>
+                                    <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
+                            </div>
 
-                                <div class="form-group" id="insertComm">
-                                    <label for="comm">Inserisci un commento</label>
-                                        <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
-                                </div>
-
-                                <div class="form-group" id="insertfunzRet">
-                                    <label for="funcRet">Scegli una funzione retorica</label>
-                                        <select class="form-control" id="funcRet">
-                                            <option value=""></option>
-                                            <option value="abstract">Abstract</option>
-                                            <option value="introduction">Introduction</option>
-                                            <option value="materials">Materials</option>
-                                            <option value="methods">Methods</option>
-                                            <option value="results">Results</option>
-                                            <option value="discussion">Discussion</option>
-                                            <option value="conclusion">Conclusion</option>
-                                        </select>
-                                </div>
-
+                            <div class="form-group" id="insertfunzRet">
+                                <label for="funcRet">Scegli una funzione retorica</label>
+                                    <select class="form-control" id="funcRet">
+                                        <option value=""></option>
+                                        <option value="abstract">Abstract</option>
+                                        <option value="introduction">Introduction</option>
+                                        <option value="materials">Materials</option>
+                                        <option value="methods">Methods</option>
+                                        <option value="results">Results</option>
+                                        <option value="discussion">Discussion</option>
+                                        <option value="conclusion">Conclusion</option>
+                                    </select>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsert" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
@@ -354,12 +372,63 @@
                 </div>
 
             </div>
+
+        <!--Modal gestione annotazioni-->
+        <!--<div class="modal fade" id="modalGestioneAnnotazioni" role="dialog">-->
+            <!--<div class="modal-dialog modal-md">-->
+                 <!--<div class="modal-content">-->
+                    <!--<div class="modal-header">-->
+                        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+                        <!--<h3 class="text-center">Gestisci annotazioni</h3>-->
+                    <!--</div>-->
+                        <!--<div class="modal-body">-->
+                            <!--<table class="table">-->
+                                <!--<thead>-->
+                                  <!--<tr>-->
+                                    <!--<th>Tipo</th>-->
+                                    <!--<th>Annotazione</th>-->
+                                    <!--<th>Autore</th>-->
+                                    <!--<th>Azioni</th>-->
+                                  <!--</tr>-->
+                                <!--</thead>-->
+                                <!--<tbody>-->
+                                  <!--<tr>-->
+                                    <!--<td>#</td>-->
+                                    <!--<td>#</td>-->
+                                    <!--<td>#</td>-->
+                                    <!--<td>-->
+                                        <!--<span class="glyphicon glyphicon-pencil" id="modificaAnnotazione" title="Modifica"></span>-->
+                                    <!--</td>-->
+                                  <!--</tr>-->
+                                  <!--<tr>-->
+                                    <!--<td>#</td>-->
+                                    <!--<td>#</td>-->
+                                    <!--<td>#</td>-->
+                                    <!--<td>-->
+                                        <!--<span class="glyphicon glyphicon-pencil" id="modificaAnnotazione" title="Modifica"></span>-->
+                                    <!--</td>-->
+                                  <!--</tr>-->
+                                <!--</tbody>-->
+                              <!--</table>-->
+                        <!--</div>-->
+                        <!--<div class="modal-footer">-->
+                            <!--<button id="chiudiGestione" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>-->
+                            <!--<button id="salva" type="button" class="btn btn-success" data-dismiss="modal">Salva</button>-->
+                        <!--</div>-->
+                 <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
         <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-classapplier.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-highlighter.min.js"></script>
         <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/js/gestioneFrammenti.js" type="text/javascript" charset="utf-8"></script>
         <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
 
     </body>

@@ -72,7 +72,14 @@ body {
 #navbar-collapse-due{
     border: 0px none;
 }
-
+/*
+.modal-open {
+  padding-right: 0 !important;
+}
+html {
+  overflow-y: scroll !important;
+}
+*/
 #utenteAutenticato{
     color: white;
 }
@@ -428,4 +435,19 @@ span.glyphicon.glyphicon-remove::before{
 span.glyphicon.glyphicon-remove{
     top: -8px;
     height: 5px;
+}
+div.tab-content{
+    font-family: "Candara";
+}
+
+#selezione {
+   resize: none;
+}
+
+#didascaliaModal{
+    text-align: center;
+}
+
+#modificaAnnotazione{
+    cursor: pointer;
 }

@@ -14,8 +14,6 @@ $( document ).ready(function() {
     $('#salvaInsert').attr('disabled', 'disabled');
 
 
-
-
     var year = new Date().getFullYear();
     for(i = year; i >=  1800; i--){
         $('select#anno').append('<option value="'+i+'">'+i+'</option>');
@@ -126,16 +124,18 @@ $( document ).ready(function() {
         var annot = $(this).val();
         switch (annot) {
             case "autore":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
-                $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
+                $('#insertDOI').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
+//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "anno":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'block');
                 $('#insertTitolo').css('display', 'none');
@@ -143,9 +143,10 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
+//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "titolo":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'block');
@@ -153,9 +154,10 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
+//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "url":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -163,50 +165,59 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
+//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "doi":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
-                $('#insertDOI').css('display', 'block');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
+                $('#insertDOI').css('display', 'block');
+//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "commento":
-                $('#insertAutore').css('display', 'none');
+                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#insertComm').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
-                $('#insertComm').css('display', 'block');
+                $('#insertAutore').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
+//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "funzione":
-                $('#insertAutore').css('display', 'none');
+                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#insertComm').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
-                $('#insertComm').css('display', 'none');
+                $('#insertAutore').css('display', 'none');
                 $('#insertfunzRet').css('display', 'block');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
+//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
-                $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
+                $('#insertDOI').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').attr('disabled', 'disabled');
+//                $('#salvaInsert').attr('disabled', 'disabled');
                 break;
         }
    });
+
+    $('#modalGestioneAnnotazioni').draggable({
+        handle: ".modal-content"
+    });
+
 
    function citazioniWidget(lista_cit){
 
@@ -251,10 +262,10 @@ $( document ).ready(function() {
         getCitazioni(href);
     });
 
-    $('#bott').click(function() {
-        //var s = window.getSelection().toString();
-        window.alert(selection());
-    });
+//    $('#bott').click(function() {
+//        //var s = window.getSelection().toString();
+//        window.alert(selection());
+//    });
 
     /* Chiamata ajax per ottenere il documento selezionato */
     $(document).on("click", "a.list-group-item", function(){
