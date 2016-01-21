@@ -284,9 +284,31 @@ $( document ).ready(function() {
 
     });
 
-    function lanciaScraper() {
-        alert("ciao");
-        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
+    function lanciaScraper(urlDoc) {
+    alert("ciaooooo11111");
+
+   // for (i = 0; i < anns["results"]["bindings"].length; i++) {
+    //    ann = anns["results"]["bindings"][i];
+        //ann_out = displaySingolaAnnotazione(ann);
+        //if(ann_out !== ""){
+        //    out += ann_out;
+        //    numeroAnnotazioni += 1;
+       // }
+   // }
+    //alert('sono io:::'+out);
+
+
+     //   ann_out = displaySingolaAnnotazione(ann);
+//        if(ann_out !== ""){
+//            out += ann_out;
+//            numeroAnnotazioni += 1;
+//    alert("ann_out="+ann_out);
+
+//        tipo_ann = gestioneTipoType(ann["type"]["value"]);
+//        alert("tipo_ann"+tipo_ann);
+//        ret = gestioneRetoriche(ann["body_o"]["value"]);
+//        alert("ret"+ret);
+        //var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
         $.ajax({
             url: '/scrapingAutomatico',
             type: 'GET',
@@ -302,10 +324,10 @@ $( document ).ready(function() {
         return "";
     }
 
-    $('#buttonScraper').click(function(){
-        var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lanciaScraper(href);
-    });
+  //  $('#buttonScraper').click(function(){
+  //      var href = $("ul.nav.nav-tabs li.active a").attr("id");
+  //      lanciaScraper(href);
+  //  });
 
 
 

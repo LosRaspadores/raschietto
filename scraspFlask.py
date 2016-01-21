@@ -56,14 +56,41 @@ def return_citazioni():
     data = scraping_citazioni(urlD)
     return data
 
-@app.route('/scrapingAutomatico')
+@app.route('/scrapingAutomaticoAutore')
+def return_autore():
+     urlD = request.args.get('url')
+     data = scarping_autore(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoDoi')
+def return_doi():
+     urlD = request.args.get('url')
+     data = scraping_doi(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoYears')
+def return_years():
+     urlD = request.args.get('url')
+     data = scraping_anno(urlD)
+     return data
+
+
+
+@app.route('/scrapingAutomaticoTitolo')
 def return_titolo():
+    #lista = []
     urlD = request.args.get('url')
     data = scraping_titolo(urlD)
-    data= scarping_autore(urlD)
-    data = scraping_doi(urlD)
-    data = scraping_anno(urlD)
     return data
+    #lista.append(data)
+    #data= scarping_autore(urlD)
+    #lista.append(data)
+    #data = scraping_doi(urlD)
+    #lista.append(data)
+    #data = scraping_anno(urlD)
+    #lista.append(data)
+    #print(lista)
+
 
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():

@@ -27,13 +27,16 @@ br = mechanize.Browser()
 
 
 def main():
-     #scraping_titolo()
-     #scarping_autore()
-     #scraping_doi()
-     #scraping_anno()
-     c=1
+     lista = []
+     #print("sono nel main")
+     #lista.append(scraping_titolo())
+     #lista.append(scarping_autore())
+     #lista.append(scraping_doi())
+     #lista.append(scraping_anno())
+     #print("lista"+lista)
 
 def scraping_titolo(url):
+    print("url " + url)
     lista = []
     resp = br.open(url)
     raw_html = resp.read()
@@ -178,7 +181,7 @@ def scraping_anno(url):
                 for ele in elements:
                    if (len(ele) ==  4):
                        currele = ele
-                       print "ele=" + ele
+                       #print "ele=" + ele
                 data = {}
                 data["anno"] = currele
                 lista.append(data)

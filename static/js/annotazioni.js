@@ -55,12 +55,254 @@ function get_annotazioni(query, urlDoc){
             } else {
                 alert("Non ci sono annotazioni per il documento selezionato.");
             }
+             scraper(lista_annotazioni,urlDoc);
         },
         error: function(error) {
             alert("Error: " + error);
         }
     });
+
 };
+
+function scraper(anns,urlDoc){
+    alert('ciao222...'+urlDoc);
+    $findTitle = false;
+    $findAuthor = false;
+    $findDoi = false;
+    $findYears = false;
+
+    for (i = 0; i < anns["results"]["bindings"].length; i++) {
+        ann = anns["results"]["bindings"][i];
+        ann_out = displaySingolaAnnotazione(ann);
+        if(typeof(ann["type"]) !== "undefined"){
+           tipo_ann = gestioneTipoType(ann["type"]["value"]);
+           //console.log("tipo ann="+ann["type"]["value"]);
+
+           if(ann["type"]["value"]=="hasTitle"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                console.log("annot titolo="+ann_out);
+                $findTitle = true;
+               }
+             }
+           }
+           if(ann["type"]["value"]== "hasAuthor"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annot autore="+ann_out);
+                    $findAuthor = true;
+               }
+             }
+           }
+           if(ann["type"]["value"]== "hasDOI"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annotazione doi="+ann_out);
+                    $findDoi = true;
+               }
+             }
+           }
+           if(ann["type"]["value"]== "hasPublicationYear"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annotazione anno="+ann_out);
+                    $findYears = true;
+               }
+             }
+           }
+
+
+        }
+    }
+
+    if($findTitle == false){
+        console.log($findTitle);
+        console.log("chiamare scraper titolo");
+
+        $.ajax({
+             url: '/scrapingAutomaticoTitolo',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping titolo="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+     if($findAuthor == false){
+        console.log($findTitle);
+        console.log("chiamare scraper autore");
+
+        $.ajax({
+             url: '/scrapingAutomaticoAutore',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping autore="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+    if ($findDoi ==false) {
+       console.log($findDoi);
+       console.log("chiamare scraper doi");
+
+       $.ajax({
+             url: '/scrapingAutomaticoDoi',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping Doi="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+    }
+
+    if($findYears == false){
+        console.log($findYears);
+        console.log("chiamare scraper anno");
+
+        $.ajax({
+             url: '/scrapingAutomaticoYears',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping anno="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+}
+
+
+
+           /*
+            if(tipo_ann !== "") {
+            //alert("tipo="+ tipo_ann);  //tipi_ann == definisce i tipi delle annotazioni
+            out = '<div><span class ="filtri">Annotazione di tipo ' + tipo_ann;
+            if(ann["type"]["value"] === "denotesRhetoric"){
+                ret = gestioneRetoriche(ann["body_o"]["value"]);
+                if(ret !== ""){
+                    out += ret + '</p>';
+                } else {
+                    out += ann["body_o"]["value"];
+                }
+            } else {
+                if (typeof(ann["body_l"]) !== "undefined") {
+                    out += ann["body_l"]["value"] + " ";
+                    //alert("body_l "+out);
+                }
+                if (typeof(ann["body_o"]) !== "undefined") {
+                    out += ann["body_o"]["value"];
+                    //alert("body_o "+ out);
+                }
+                out += ".</p>";   // ottengo l'annotazione completa di tipo
+                //alert("out111="+ out);
+                }
+                //console.log("111="+out);
+                // provenance e dataora
+                out += '<p>Inserita da: '
+                if(typeof(ann["prov_label"]) !== "undefined"){
+                    out += ann["prov_label"]["value"] + " "
+                } else if(typeof(ann["prov_nome"]) !== "undefined"){
+                    out += ann["prov_nome"]["value"] + " "
+                } else if(typeof(ann["provenance"]) !== "undefined"){
+                    out += ann["provenance"]["value"] + " "
+                }
+                if(typeof(ann["prov_email"]) !== "undefined"){
+                    out += ann["prov_email"]["value"] + " "
+                }
+                out += parseDatetime(ann["date"]["value"]) + "</p>";
+                out += "</div><br>";
+            }    //console.log("222="+out);
+        } else if (typeof(ann["label"]) !== "undefined"){
+            tipo_ann = gestioneTipoLabel(ann["label"]["value"]);
+            if(tipo_ann !== ""){
+                 out = '<div><span class="filtri">Annotazione di tipo ' + tipo_ann;
+            if(ann["label"]["value"] === "Retorica" || ann["label"]["value"] === "Rhetoric"){
+                ret = gestioneRetoriche(ann["body_o"]["value"]);
+                if(ret !== ""){
+                    out += ret + '</p>';
+                } else {
+                    out += ann["body_o"]["value"];
+                }
+            } else {
+                if (typeof(ann["body_l"]) !== "undefined") {
+                    out += ann["body_l"]["value"] + " ";
+                }
+                if (typeof(ann["body_o"]) !== "undefined") {
+                    out += ann["body_o"]["value"];
+                }
+                out += ".</p>";
+            }
+            // provenance e dataora
+            out += '<p>Inserita da: '
+            if(typeof(ann["prov_label"]) !== "undefined"){
+                out += ann["prov_label"]["value"] + " "
+            } else if(typeof(ann["prov_nome"]) !== "undefined"){
+                out += ann["prov_nome"]["value"] + " "
+            } else if(typeof(ann["provenance"]) !== "undefined"){
+                out += ann["provenance"]["value"] + " "
+            }
+            if(typeof(ann["prov_email"]) !== "undefined"){
+                out += ann["prov_email"]["value"] + " "
+            }
+            out += parseDatetime(ann["date"]["value"]) + "</p>";
+            out += "</div><br>";
+            }
+        } console.log("elenco delle annotazioni complete"+out); // mi stampo sulla console l'elenco delle annotazioni completete
+   */
+
+
+
+
+
+
+         // if((ann["type"]["value"]) == "hasTitle") {
+          //   console.log("trovato il titolo="+ out);
+          //    //console.log("prevenance="+ann["prov_label"]["value"]);
+          // }
+
+
+       /* if((ann["type"]["value"]) == "hasDOI") {
+          console.log("trovato il DOI="+ out);
+        }
+
+        if((ann["type"]["value"]) == "hasAuthor") {
+        console.log("trovato l'autore="+ out);
+        }
+
+        if((ann["type"]["value"]) == "hasPublicationYear") {
+        console.log("trovato l'anno="+ out);
+        }
+
+
+       */
+
+
+
+
+    //console.log("fine="+out);
+    //return out;
+
+    $('#buttonScraper').click(function(){
+        var href = $("ul.nav.nav-tabs li.active a").attr("id");
+        scraper();
+    });
 
 
 // modal
@@ -89,7 +331,8 @@ function displaySingolaAnnotazione(ann){
     out = "";
     if(typeof(ann["type"]) !== "undefined"){
         tipo_ann = gestioneTipoType(ann["type"]["value"]);
-        if(tipo_ann !== ""){
+        if(tipo_ann !== "") {
+            //alert("tipo="+ tipo_ann);  //tipi_ann == definisce i tipi delle annotazioni
             out = '<div><span class ="filtri">Annotazione di tipo ' + tipo_ann;
             if(ann["type"]["value"] === "denotesRhetoric"){
                 ret = gestioneRetoriche(ann["body_o"]["value"]);
@@ -101,11 +344,14 @@ function displaySingolaAnnotazione(ann){
             } else {
                 if (typeof(ann["body_l"]) !== "undefined") {
                     out += ann["body_l"]["value"] + " ";
+                    //alert("body_l "+out);
                 }
                 if (typeof(ann["body_o"]) !== "undefined") {
                     out += ann["body_o"]["value"];
+                    //alert("body_o "+ out);
                 }
-                out += ".</p>";
+                out += ".</p>";   // ottengo l'annotazione completa di tipo
+                //alert("out111="+ out);
             }
             // provenance e dataora
             out += '<p>Inserita da: '
@@ -169,7 +415,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     end = ann["end"]["value"];
 
     if(typeof(ann["type"]) !== "undefined"){
-        classCSS = getClassNameType(ann["type"]["value"]);
+        classCSS = getClassNameType(ann["type"]["value"]);      //collega tipo del fragment alla classe definita per tipo
     } else if (typeof(ann["label"]) !== "undefined"){
         classCSS = getClassNameLabel(ann["label"]["value"]);
     } else {
@@ -260,16 +506,25 @@ function check(nodo, start, end, classCSS, ann){
         output = {inizio: start-lunghezza, fine:end-lunghezza}
     }
     if(start < lunghezza && end <= lunghezza){
-        //OK
+        //OK nodo corretto
         fragment = document.createRange();
         fragment.setStart(nodo, parseInt(start));
-        fragment.setEnd(nodo, parseInt(end));
+        fragment.setEnd(nodo, parseInt(end));        //sezioni del documento
+        //alert("fragment="+fragment);
         nuovoNodo = document.createElement('span');
-        nuovoNodo.className=classCSS;
+        nuovoNodo.className=classCSS;     //ottiene le sezioni del documento divise per classe-tipo
+
+        //alert("nuovoNodo"+ nuovoNodo.className)
+
         nuovoNodo.onclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
             out_ann = displaySingolaAnnotazione(ann);
+
+            ////
+            //alert("out_ann1"+out_ann);
+            //alert("tipo="+gestioneTipoType(ann["type"]["value"]));
+            ////
             $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
@@ -287,6 +542,7 @@ function check(nodo, start, end, classCSS, ann){
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
             out_ann = displaySingolaAnnotazione(ann);
+            alert("out_ann2"+out_ann);
             $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
