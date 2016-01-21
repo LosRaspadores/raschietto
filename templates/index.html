@@ -5,7 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!-- nome applicazione e icona -->
+        <meta name="keywords" content="semantic web, annotazioni, web scraping, progetto raschietto, tecnologie web">
+        <meta name="description" content="Progetto Raschietto - Applicazione web per annotazione semantica di documenti">
+
+        <!-- nome app web e icona -->
         <title>Raschietto</title>
         <link rel="shortcut icon" href="/static/ico/favicon.ico">
 
@@ -16,19 +19,13 @@
         <meta name="author" content="Silvia Borgiani">
         <meta name="author" content="Edoardo Viale">
 
-        <meta name="keywords" content="semantic web, annotazioni, web scraping, progetto raschietto, tecnologie web">
-        <meta name="description" content="Progetto Raschietto - Applicazione web per annotazione semantica di documenti">
-
         <!-- riferimenti css -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
-
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
         <link rel="stylesheet" href="/static/css/index.css">
-        <link href="https://fonts.googleapis.com/css?family=Exo:400,900" rel="stylesheet" type="text/css">
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,900' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Playball' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Exo:400,900">
+        <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Roboto:400,900'>
+        <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Playball'>
     </head>
     <body>
         <!-- prima navbar -->
@@ -50,13 +47,14 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso" title="Info sul progetto Raschietto"><span class="glyphicon glyphicon-info-sign"></span> Info progetto</a></li>
-                        <li><a href="#home" title="Ti serve aiuto?"><span class="glyphicon glyphicon-screenshot"></span> Help</a></li>
+                        <li><a href="#home" title="Ti serve aiuto?"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
 
-        <!-- barra per autenticazione e caricamento documento -->
+        <!-- seconda navbar -->
+        <!-- barra per passaggio mod reader e mod annotator + caricamento documento -->
         <nav class="navbar navbar-default" id="secondnav">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -77,9 +75,9 @@
                         <!-- caricamento nuovo documento -->
                         <form class="navbar-form" role="search">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" data-placement="bottom" title="Carica un nuovo documento su cui aggiungere annotazioni">
+                                <input type="text" class="form-control" id="uriNuovoDoc" placeholder="URI nuovo documento" name="nuovoDocumento" data-toggle="tooltip" data-placement="bottom" title="Carica un nuovo documento su cui aggiungere annotazioni">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                    <button class="btn btn-default" type="button" id="nuovoDoc"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                                 </div>
                             </div>
                         </form>
@@ -91,14 +89,10 @@
 
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
                         <li>
-                              <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
-
-                              <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>  <!--data-toggle="modal" data-target="#modalAnnotDoc" -->
-
-                              <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
-
-                              <button type="button" class="btn btn-default navbar-btn" id="bott" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
-
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="bott" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
                         </li>
                       </ul>
                 </div>
@@ -111,6 +105,7 @@
             <!-- Sidebar -->
                 <div class="col-sm-3">
                     <div class="panel-group">
+
                         <div class="panel panel-default">
                               <div class="panel-heading">
                                     <h4 class="sidebar-brand">
@@ -130,82 +125,66 @@
                                     </h4>
                               </div>
                               <div id="gruppi" class="panel-collapse collapse">
-                                    <div class="list-group" id="lista_gruppi">
-                                        <!--<div class="btn-group" data-toggle="buttons">-->
-                                            <!--<label class="btn btn-primary">-->
-                                                <!--<input type="checkbox" autocomplete="off">-->
-                                                <!--<span class="glyphicon glyphicon-ok"></span>-->
-                                            <!--</label><br>-->
-                                            <!--<label class="btn btn-primary">-->
-                                                <!--<input type="checkbox" autocomplete="off">-->
-                                                <!--<span class="glyphicon glyphicon-ok"></span>-->
-                                            <!--</label><br>-->
-                                            <!--<label class="btn btn-primary">-->
-                                                <!--<input type="checkbox" autocomplete="off">-->
-                                                <!--<span class="glyphicon glyphicon-ok"></span>-->
-                                            <!--</label><br>-->
-                                        <!--</div>-->
-                                    </div>
+                                    <div class="list-group" id="lista_gruppi"></div>
                               </div>
                         </div>
+
                         <div class="panel panel-default">
-                              <div class="panel-heading">
-                                    <h4 class="sidebar-brand">
-                                      <a data-toggle="collapse" href="#annotazioni">Filtri</a>
-                                    </h4>
-                              </div>
-                              <div id="annotazioni" class="panel-collapse collapse">
-                                    <div class="panel-body" id="lista_annot">
-                                        <input type="checkbox" id="toggleAutore" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleAutoreLabel" for="toggleAutore" data-on="Autore" data-off="Autore"></label>
-                                        <input type="checkbox" id="toggleAnnoP" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleAnnoPLabel" for="toggleAnnoP" data-on="Anno Pubblicazione" data-off="Anno Pubblicazione"></label>
-                                        <input type="checkbox" id="toggleCit" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleCitLabel" for="toggleCit" data-on="Citazioni" data-off="Citazioni"></label>
-                                        <input type="checkbox" id="toggleComm" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleCommLabel" for="toggleComm" data-on="Commenti" data-off="Commenti"></label>
-                                        <input type="checkbox" id="toggleDOI" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleDOILabel" for="toggleDOI" data-on="DOI" data-off="DOI"></label>
-                                        <input type="checkbox" id="toggleFunzRet" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleFunzRetLabel" for="toggleFunzRet" data-on="Funzioni Retoriche" data-off="Funzioni Retoriche"></label>
-                                        <input type="checkbox" id="toggleTitolo" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleTitoloLabel" for="toggleTitolo" data-on="Titolo" data-off="Titolo"></label>
-                                        <input type="checkbox" id="toggleURL" class="cmn-toggle cmn-toggle-yes-no" >
-                                        <label id="toggleURLLabel" for="toggleURL" data-on="URL" data-off="URL"></label>
-                                    </div>
-                              </div>
+                            <div class="panel-heading">
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#filtriAnnotazioni">Tipi di annotazioni</a></h4>
+                            </div>
+                            <div id="filtriAnnotazioni" class="panel-collapse collapse">
+                                <div class="panel-body" id="lista_annot">
+                                    <input type="checkbox" id="toggleTitolo" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleTitoloLabel" for="toggleTitolo" data-on="Titolo" data-off="Titolo"></label>
+                                    <input type="checkbox" id="toggleURL" class="cmn-toggle cmn-toggle-yes-no" checked >
+                                    <label id="toggleURLLabel" for="toggleURL" data-on="URL" data-off="URL"></label>
+                                    <input type="checkbox" id="toggleAutore" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleAutoreLabel" for="toggleAutore" data-on="Autore" data-off="Autore"></label>
+                                    <input type="checkbox" id="toggleAnnoP" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleAnnoPLabel" for="toggleAnnoP" data-on="Anno Pubblicazione" data-off="Anno Pubblicazione"></label>
+                                    <input type="checkbox" id="toggleDOI" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleDOILabel" for="toggleDOI" data-on="DOI" data-off="DOI"></label>
+                                    <input type="checkbox" id="toggleFunzRet" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleFunzRetLabel" for="toggleFunzRet" data-on="Funzioni Retoriche" data-off="Funzioni Retoriche"></label>
+                                    <input type="checkbox" id="toggleCit" class="cmn-toggle cmn-toggle-yes-no" checked>
+                                    <label id="toggleCitLabel" for="toggleCit" data-on="Citazioni" data-off="Citazioni"></label>
+                                    <input type="checkbox" id="toggleComm" class="cmn-toggle cmn-toggle-yes-no" checked >
+                                    <label id="toggleCommLabel" for="toggleComm" data-on="Commenti" data-off="Commenti"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default" id="panelAnnot" >
+                            <div class="panel-heading">
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#listaAnnotazioni">Annotazioni<span class="badge" id="numAnn">0</span></a></h4>
+                            </div>
+                            <div id="#listaAnnotazioni" class="panel-collapse collapse">
+                                <div class="panel-body">
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-9" id="tabs">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#home"><b>Home</b></a></li>
+                    </ul>
+
+                    <div class="tab-content" >
+                        <div class="tab-pane fade in active" id="home">
+                            <div>
+                                <div id="listaDocumenti"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-
-
-                    <!-- Page content -->
-                    <!--<div id="page-content-wrapper" class="col-sm-8">-->
-                    <!--&lt;!&ndash; Keep all page content within the page-content inset div! &ndash;&gt;-->
-                    <!--<div class="page-content inset">-->
-                    <!--<div class="row">-->
-                <div class="col-sm-9" id="tabs">
-
-                                <ul class="nav nav-tabs">
-                                    <li class="active"><a data-toggle="tab" href="#home"><b>Home</b></a></li>
-                                </ul>
-
-                                <div class="tab-content" >
-                                    <div class="tab-pane fade in active" id="home">
-                                        <div>
-                                            <h4>ANTANI</h4>
-                                            <h5>Lista documenti</h5>
-                                            <div id="listaDocumenti"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
             </div>
         </div>
-
-
 
         <!-- Modal-->
         <!-- Modal autenticazione-->
@@ -236,8 +215,42 @@
                     </div>
                  </div>
             </div>
-            </div>
+        </div>
 
+
+        <!-- Modal annotazioni -->
+        <div class="modal fade" id="modalAnnotazioni" role="dialog">
+            <div class="modal-dialog modal-lg">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center" id="numeroAnnotazioni"></h3>
+                    </div>
+                    <div class="modal-body col-md-12">
+                        <div id="listaAnnotazioni"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="modalAnnotazioneSingola" role="dialog">
+            <div class="modal-dialog modal-lg">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Annotazione</h3>
+                    </div>
+                    <div class="modal-body col-md-12">
+                        <div id="infoAnnotazione"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                 </div>
+            </div>
+        </div>
 
         <!--Modal creazione annotazioni sul documento-->
         <div class="modal fade" id="modalAnnotDoc" role="dialog">
@@ -295,12 +308,6 @@
                                     <label for="doi">Inserisci un DOI</label>
                                         <input type="text" class="form-control" placeholder="" id="doi">
                                 </div>
-
-                                <!--<div class="form-group" id="insertCit">-->
-                                    <!--<label for="cit">Inserisci un DOI</label>-->
-                                        <!--<input type="text" class="form-control" placeholder="" id="cit">-->
-                                <!--</div>-->
-
                                 <div class="form-group" id="insertComm">
                                     <label for="comm">Inserisci un commento</label>
                                         <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
@@ -330,37 +337,37 @@
                 </div>
             </div>
 
-        <!--Modal inserimento e gestione delle citazioni-->
+            <!--Modal inserimento e gestione delle citazioni-->
             <div class="modal fade" id="modalAnnotCit" role="dialog">
-            <div class="modal-dialog modal-md">
-                 <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="text-center">Inserisci citazione</h3>
-                    </div>
-                    <form>
-                        <div class="modal-body">
-
-
-
+                <div class="modal-dialog modal-md">
+                     <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3 class="text-center">Inserisci citazione</h3>
                         </div>
-                        <div class="modal-footer">
-                            <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
-                            <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
-                        </div>
-                    </form>
-                 </div>
+                        <form>
+                            <div class="modal-body">
+                            </div>
+                            <div class="modal-footer">
+                                <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                                <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
+                            </div>
+                        </form>
+                     </div>
                 </div>
-
             </div>
+
         <!-- riferimenti javascript -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
-        <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
-        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" charset="utf-8" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+
+        <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/utils.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/filtriTipiAnnotazioni.js"></script>
 
     </body>
 </html>
-

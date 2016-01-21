@@ -1,56 +1,22 @@
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
-
-    /*
-    function setCookie(key, value) {
-        var expires = new Date();
-        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-        document.cookie = key + '=' + value +';path=/'+ ';expires=' + expires.toUTCString();
-    };
-
-    function getCookie(key) {
-        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-        return keyValue ? keyValue[2] : null;
-    };
-
-    //inizializzazione modalit�
-    if(getCookie('nomecognome') == null & getCookie('email') == null){
-        $('#modalitaToggle').prop('checked', false);
-        $("#modalitaToggleLabel").prop('title','Passa a modalit� annotator');
-        $('#utenteAutenticato').text("Nessun utente autenticato");
-    } else {
-        $('#modalitaToggle').prop('checked', true);
-        $("#modalitaToggleLabel").prop('title','Passa a modalit� reader');
-        $('#utenteAutenticato').text("Utente autenticato come: "+getCookie('nomecognome')+", email: "+getCookie('email'));
-    };
-
-    //quando si ritorna a modalit� reader
-    //document.cookie = "nomecognome=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    //document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-
-    //al momento dell'autenticazione
-    //setCookie('nomecognome', nomecognome);
-    //setCookie("email", email);
-
-    */
-
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit� annotator');
+        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
         $('[data-toggle="tooltip"]').tooltip();
-        $('#utenteAutenticato').text("Nessun utente autenticato.");
+        $('#utenteAutenticato').text("");
         $('#bottoniAnnotator').hide();
     };
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit� reader');
+        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
         $('[data-toggle="tooltip"]').tooltip();
         $('#bottoniAnnotator').show();
     };
 
-    /* Passaggio da modalit� reader a modalit� annotator e viceversa */
+    /* Passaggio da modalità reader a modalità annotator e viceversa */
     $('#modalitaToggle').change(function() {
         if ($("#modalitaToggle").prop('checked')) {
             $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
@@ -65,10 +31,10 @@ $(document).ready(function() {
     });
 
     /*
-        Verifica della presenza di un utente gi� autenticato come annotator.
+        Verifica della presenza di un utente già autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
         I dati in sessionStorage vengono ripuliti ogniqualvolta la sessione della pagine termina.
-        La sessione della pagina dura fino a quando il browser � aperto e sopravvive alla ricarica della pagina e al
+        La sessione della pagina dura fino a quando il browser è aperto e sopravvive alla ricarica della pagina e al
         ripristino. L'apertuta di una nuova un un nuovo tab o nuova finestra implica l'apertura di una nuova sessione,
         il che differisce da come funzionano i cookie di sessione.
     */
@@ -78,7 +44,7 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text(sessionStorage.nomecognome+", email: "+sessionStorage.email);
+        $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
     };
 
     /* Validazione autenticazione utente */
@@ -88,34 +54,35 @@ $(document).ready(function() {
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
         if(nomecognome==""){
-            $('#messaggioErrore').text("Il campo nome e cognome � obbligatorio.");
+            $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(email==""){
-            $('#messaggioErrore').text("Il campo email � obbligatorio.");
+            $('#messaggioErrore').text("Il campo email è obbligatorio.");
             $("#email").val("");
             $("#email").focus();
         } else if(!regexNomecognome.test(nomecognome)){
-            $('#messaggioErrore').text("Il campo nome e cognome pu� contenere solo caratteri alfabetici.");
+            $('#messaggioErrore').text("Il campo nome e cognome può contenere solo caratteri alfabetici.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
-            $('#messaggioErrore').text("Il campo email deve essere del tipo user@domin.io.");
+            $('#messaggioErrore').text("Il campo email deve essere del tipo user@dominio.it.");
             $("#email").val("");
             $("#email").focus();
         } else {
+            $('#messaggioErrore').text("");
             $('#modalAutenticazione').modal('hide');
             $("#nomecognome").val("");
             $("#email").val("");
             //I dati dell'utente vengono salvati nella sessionStorage
-            sessionStorage.nomecognome=nomecognome;
-            sessionStorage.email=email;
-            $('#utenteAutenticato').text("Utente autenticato: "+sessionStorage.nomecognome+", email: "+sessionStorage.email);
+            sessionStorage.nomecognome = nomecognome;
+            sessionStorage.email = email;
+            $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
             annotatorMode();
         };
     });
 
-    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalit� reader */
+    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalità reader */
     $('#modalAutenticazione button.close').click(function (){
         $("#nomecognome").val("");
         $("#email").val("");

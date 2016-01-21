@@ -17,7 +17,6 @@ __author__ = 'Los Raspadores'
 # moduli importati
 from bs4 import BeautifulSoup
 import mechanize
-import requests
 import json
 from urlparse import urlparse
 
