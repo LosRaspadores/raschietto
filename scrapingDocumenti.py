@@ -6,7 +6,7 @@
 __author__ = 'Los Raspadores'
 
 """
-    pip install BeautifulSoup4
+    pip install beautifulsoup4
 
     Beautiful Soup automatically converts incoming documents to Unicode and outgoing documents to UTF-8
 
@@ -44,7 +44,7 @@ def get_contenuto_articolo_statistica(url_articolo):
 
     resp = br.open(url_articolo)
     raw_html = resp.read()  # raw html source code
-    soup = BeautifulSoup(raw_html)
+    soup = BeautifulSoup(raw_html, "html5lib")
     text_html = soup.get_text().encode("utf-8")  # html no tags
     soup.find(id="content").get_text()
     soup.title.string  # contenuto del title tag

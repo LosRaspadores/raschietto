@@ -1,69 +1,6 @@
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
-
-    /*
-    function setCookie(key, value) {
-        var expires = new Date();
-        expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
-        document.cookie = key + '=' + value +';path=/'+ ';expires=' + expires.toUTCString();
-    };
-
-    function getCookie(key) {
-        var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
-        return keyValue ? keyValue[2] : null;
-    };
-
-    //inizializzazione modalità
-    if(getCookie('nomecognome') == null & getCookie('email') == null){
-        $('#modalitaToggle').prop('checked', false);
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
-        $('#utenteAutenticato').text("Nessun utente autenticato");
-    } else {
-        $('#modalitaToggle').prop('checked', true);
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
-        $('#utenteAutenticato').text("Utente autenticato come: "+getCookie('nomecognome')+", email: "+getCookie('email'));
-    };
-
-    //quando si ritorna a modalità reader
-    //document.cookie = "nomecognome=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-    //document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-
-    //al momento dell'autenticazione
-    //setCookie('nomecognome', nomecognome);
-    //setCookie("email", email);
-
-    */
-
-    function readerMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#utenteAutenticato').text("Nessun utente autenticato.");
-        $('#bottoniAnnotator').hide();
-    };
-
-    function annotatorMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#bottoniAnnotator').show();
-    };
-
-    /* Passaggio da modalità reader a modalità annotator e viceversa */
-    $('#modalitaToggle').change(function() {
-        if ($("#modalitaToggle").prop('checked')) {
-            $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
-            $('#modalAutenticazione').modal('show');
-            annotatorMode();
-        }else{
-            $('#modalitaToggle').prop('checked', false);
-            readerMode();
-            sessionStorage.removeItem("nomecognome");
-            sessionStorage.removeItem("email");
-        };
-    });
-
     /*
         Verifica della presenza di un utente già autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
@@ -78,8 +15,37 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text(sessionStorage.nomecognome+", email: "+sessionStorage.email);
-    };
+        $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
+    }
+
+    /* Passaggio da modalità reader a modalità annotator e viceversa */
+    $('#modalitaToggle').change(function() {
+        if ($("#modalitaToggle").prop('checked')) {
+            $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
+            $('#modalAutenticazione').modal('show');
+            annotatorMode();
+        }else{
+            $('#modalitaToggle').prop('checked', false);
+            readerMode();
+            sessionStorage.removeItem("nomecognome");
+            sessionStorage.removeItem("email");
+        }
+    });
+
+    function readerMode(){
+        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#utenteAutenticato').text("");
+        $('#bottoniAnnotator').hide();
+    }
+
+    function annotatorMode(){
+        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#bottoniAnnotator').show();
+    }
 
     /* Validazione autenticazione utente */
     $("#autenticati").click(function(){
@@ -100,17 +66,18 @@ $(document).ready(function() {
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
-            $('#messaggioErrore').text("Il campo email deve essere del tipo user@domin.io.");
+            $('#messaggioErrore').text("Il campo email deve essere del tipo user@dominio.it.");
             $("#email").val("");
             $("#email").focus();
         } else {
+            $('#messaggioErrore').text("");
             $('#modalAutenticazione').modal('hide');
             $("#nomecognome").val("");
             $("#email").val("");
             //I dati dell'utente vengono salvati nella sessionStorage
-            sessionStorage.nomecognome=nomecognome;
-            sessionStorage.email=email;
-            $('#utenteAutenticato').html("<p>Utente: "+sessionStorage.nomecognome+"<br>email: "+sessionStorage.email+"</p>");
+            sessionStorage.nomecognome = nomecognome;
+            sessionStorage.email = email;
+            $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
             annotatorMode();
         };
     });
