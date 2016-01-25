@@ -30,15 +30,60 @@ br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1
 
 
 def main():
-     lista = []
-     #print("sono nel main")
-     #lista.append(scraping_titolo())
-     #lista.append(scarping_autore())
-     #lista.append(scraping_doi())
-     #lista.append(scraping_anno())
-     #print("lista"+lista)
+     scraping_titolo()
+    # scarping_autore()
+    # scraping_doi()
+    # scraping_anno()
 
-def scraping_titolo(url):
+def scraping_titolo(urlDoc):
+    lista = []
+
+    for doc in urlDoc:
+        parsed_uri = urlparse(doc)
+        try:
+            resp = br.open(doc)
+        except:
+            print "Connection failed with "+doc
+            continue
+        raw_html = resp.read()
+        soup = BeautifulSoup(raw_html)
+
+        if parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
+            result = soup.select("h3.blue-space")
+            for res in result:
+                if (res.text != 'D-Lib Magazine'):
+                    data = {}
+                    data['url'] = doc;
+                    data['titolo'] = res.text
+                    lista.append(data)
+        elif parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+            if len(parsed_uri[2]) > 2 and parsed_uri[2].find("article") != -1:
+                result = soup.find('div', {"id": "articleTitle"})
+                res = result.find('h3')
+                data = {}
+                data['url'] = doc
+                data['titolo'] = res.string
+                lista.append(data)
+            else:
+                data={}
+                data['url'] = doc
+                data['titolo'] = soup.find('title').string
+                lista.append(data)
+        else:
+            title = soup.find('title')
+            data={}
+            data['url'] = doc
+            if title is None:
+                data['titolo'] = doc
+            else:
+                data['titolo'] = title.string
+            lista.append(data)
+    print json.dumps(lista)
+    return json.dumps(lista)
+
+
+
+def scraping_automatico_titolo(url):
     print("url " + url)
     lista = []
     resp = br.open(url)
@@ -68,13 +113,13 @@ def scraping_titolo(url):
     print json.dumps(lista)
     return json.dumps(lista)
 
-def scarping_autore(url):
+def scarping_autore(urlDoc):
     lista = []
-    resp = br.open(url)
+    resp = br.open(urlDoc)
     raw_html = resp.read()
     soup = BeautifulSoup(raw_html)
 
-    parsed_uri = urlparse(url)
+    parsed_uri = urlparse(urlDoc)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
 
@@ -100,14 +145,14 @@ def scarping_autore(url):
     return json.dumps(lista)
 
 
-def scraping_doi(url):
+def scraping_doi(urlDoc):
 
     lista = []
-    resp = br.open(url)
+    resp = br.open(urlDoc)
     raw_html = resp.read()
     soup = BeautifulSoup(raw_html)
 
-    parsed_uri = urlparse(url)
+    parsed_uri = urlparse(urlDoc)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
 
@@ -144,13 +189,13 @@ def scraping_doi(url):
     return json.dumps(lista)
 
 
-def scraping_anno(url):
+def scraping_anno(urlDoc):
     lista = []
-    resp = br.open(url)
+    resp = br.open(urlDoc)
     raw_html = resp.read()
     soup = BeautifulSoup(raw_html)
 
-    parsed_uri = urlparse(url)
+    parsed_uri = urlparse(urlDoc)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     print domain
 
@@ -184,7 +229,7 @@ def scraping_anno(url):
                 for ele in elements:
                    if (len(ele) ==  4):
                        currele = ele
-                       #print "ele=" + ele
+                       print "ele=" + ele
                 data = {}
                 data["anno"] = currele
                 lista.append(data)
@@ -198,7 +243,7 @@ def scraping_citazioni(url):
         resp = br.open(url)
     except:
         print "Connection failed with "+url
-    html = page.read()
+    html = resp.read()
     soup = BeautifulSoup(html, 'html.parser')
 
     parsed_uri = urlparse(url)

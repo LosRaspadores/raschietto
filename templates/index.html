@@ -4,21 +4,17 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         <meta name="keywords" content="semantic web, annotazioni, web scraping, progetto raschietto, tecnologie web">
         <meta name="description" content="Progetto Raschietto - Applicazione web per annotazione semantica di documenti">
-
         <!-- nome app web e icona -->
         <title>Raschietto</title>
         <link rel="shortcut icon" href="/static/ico/favicon.ico">
-
         <!-- gruppo e autori -->
         <meta name="author" content="Los Raspadores">
         <meta name="author" content="Alice Graziosi">
         <meta name="author" content="Silvia Perrino">
         <meta name="author" content="Silvia Borgiani">
         <meta name="author" content="Edoardo Viale">
-
         <!-- riferimenti css -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
@@ -27,7 +23,7 @@
         <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Roboto:400,900'>
         <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Playball'>
     </head>
-    <body>
+<body>
         <!-- prima navbar -->
         <nav class="navbar navbar-default">
             <div class="container-fluid">
@@ -52,7 +48,6 @@
                 </div>
             </div>
         </nav>
-
         <!-- seconda navbar -->
         <!-- barra per passaggio mod reader e mod annotator + caricamento documento -->
         <nav class="navbar navbar-default" id="secondnav">
@@ -64,11 +59,10 @@
                      <span class="icon-bar"></span>
                      <span class="icon-bar"></span>
                 </button>
-                    <!-- modalità reader e annotator -->
+                <!-- modalità reader e annotator -->
                 <input type="checkbox" id="modalitaToggle" class="cmn-toggle cmn-toggle-yes-no" >
                 <label id="modalitaToggleLabel" for="modalitaToggle" data-on="Modalità annotator" data-off="Modalità reader" data-toggle="tooltip" data-placement="bottom" title="Passa a modalità annotator"></label>
                 </div>
-
                 <div class="navbar-collapse collapse" id="navbar-collapse-due">
                     <ul class="nav navbar-nav navbar-left">
                     <li>
@@ -86,7 +80,6 @@
                         <p id="utenteAutenticato" class="navbar-text"></p>
                     </li>
                     </ul>
-
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
                         <li>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
@@ -98,14 +91,11 @@
                 </div>
             </div>
         </nav>
-
-
-        <div class="container-fluid">
+<div class="container-fluid">
             <div class="row">
             <!-- Sidebar -->
                 <div class="col-sm-3">
                     <div class="panel-group">
-
                         <div class="panel panel-default">
                               <div class="panel-heading">
                                     <h4 class="sidebar-brand">
@@ -117,7 +107,6 @@
                                     </div>
                               </div>
                         </div>
-
                         <div class="panel panel-default">
                               <div class="panel-heading">
                                     <h4 class="sidebar-brand">
@@ -128,7 +117,6 @@
                                     <div class="list-group" id="lista_gruppi"></div>
                               </div>
                         </div>
-
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="sidebar-brand"><a data-toggle="collapse" href="#filtriAnnotazioni">Tipi di annotazioni</a></h4>
@@ -154,26 +142,21 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="panel panel-default" id="panelAnnot" >
                             <div class="panel-heading">
                                 <h4 class="sidebar-brand"><a data-toggle="collapse" href="#listaAnnotazioni">Annotazioni sul documento</a></h4>
                             </div>
                             <div id="#listaAnnotazioni" class="panel-collapse collapse">
                                 <div class="panel-body">
-
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
                 <div class="col-sm-9" id="tabs">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" href="#home" id="homeTab"><b>Home</b></a></li>
                     </ul>
-
                     <div class="tab-content" >
                         <div class="tab-pane fade in active" id="home">
                             <div>
@@ -182,10 +165,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
         <!-- Modal-->
         <!-- Modal autenticazione-->
         <div class="modal fade" id="modalAutenticazione" role="dialog">
@@ -216,8 +197,6 @@
                  </div>
             </div>
         </div>
-
-
         <!-- Modal annotazioni -->
         <div class="modal fade" id="modalAnnotazioni" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -234,7 +213,6 @@
                  </div>
             </div>
         </div>
-
         <!--Modal di scelta del tipo di annotazione (documento - frammento)-->
         <div class="modal fade" id="modalTipoAnnotazione" role="dialog">
             <div class="modal-dialog modal-md">
@@ -255,8 +233,6 @@
                  </div>
             </div>
         </div>
-
-
         <div class="modal fade" id="modalAnnotazioneSingola" role="dialog">
             <div class="modal-dialog modal-lg">
                  <div class="modal-content">
@@ -272,7 +248,6 @@
                  </div>
             </div>
         </div>
-
         <!-- Modal gestione e cancellazione annotazioni-->
         <div class="modal fade" id="modalGestAnnotazioni" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -296,7 +271,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                 </tbody>
                             </table>
                         </div>
@@ -313,7 +287,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                 </tbody>
                             </table>
                         </div>
@@ -325,8 +298,7 @@
                  </div>
             </div>
         </div>
-
-        <!--Modal creazione annotazioni sul documento-->
+<!--Modal creazione annotazioni sul documento-->
         <div class="modal fade" id="modalAnnotDoc" role="dialog">
             <div class="modal-dialog modal-md">
                  <div class="modal-content">
@@ -354,39 +326,30 @@
                                 </div>
                                 <div class="form-group" id="insertAutore">
                                     <label for="autore">Inserisci il nome dell'autore</label>
-
                                         <input type="text" class="form-control" placeholder="" id="autore">
-
                                 </div>
-
                                 <div class="form-group" id="insertAnnoPub">
                                     <label for="anno">Seleziona l'anno di pubblicazione</label>
                                             <select class="form-control" id="anno">
                                                 <option value=" "></option>
                                             </select>
                                 </div>
-
                                 <div class="form-group" id="insertTitolo">
                                     <label for="titolo">Inserisci il titolo del documento</label>
                                         <textarea class="form-control" placeholder="" id="titolo" rows="2"></textarea>
-
                                 </div>
-
                                 <div class="form-group" id="insertURL">
                                     <label for="url">Inserisci un URL associato al documento</label>
                                         <input type="text" class="form-control" placeholder="" id="url">
                                 </div>
-
                                 <div class="form-group" id="insertDOI">
                                     <label for="doi">Inserisci un DOI</label>
                                         <input type="text" class="form-control" placeholder="" id="doi">
                                 </div>
-
                             <div class="form-group" id="insertComm">
                                 <label for="comm">Inserisci un commento</label>
                                     <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
                             </div>
-
                             <div class="form-group" id="insertfunzRet">
                                 <label for="funcRet">Scegli una funzione retorica</label>
                                     <select class="form-control" id="funcRet">
@@ -409,7 +372,6 @@
                  </div>
                 </div>
             </div>
-
             <!--Modal inserimento e gestione delle citazioni-->
             <div class="modal fade" id="modalAnnotCit" role="dialog">
             <div class="modal-dialog modal-md">
@@ -429,8 +391,6 @@
                  </div>
                 </div>
             </div>
-
-
         <div class="modal fade" id="alertDoc" role="dialog">
             <div class="modal-dialog modal-md">
                  <div class="modal-content">
@@ -439,6 +399,7 @@
                     </div>
                  </div>
             </div>
+        </div>
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -447,17 +408,13 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-classapplier.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-highlighter.min.js"></script>
-        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/static/js/gestioneFrammenti.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
-
         <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/readFunctions.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/utils.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/filtriTipiAnnotazioni.js"></script>
-        
+        <script type="text/javascript" charset="utf-8" src="/static/js/gestioneFrammenti.js"></script>
 
     </body>
 </html>

@@ -319,10 +319,14 @@ $( document ).ready(function() {
         return "";
     }
 
-  //  $('#buttonScraper').click(function(){
-  //      var href = $("ul.nav.nav-tabs li.active a").attr("id");
-  //      lanciaScraper(href);
-  //  });
+    $('#buttonScraper').click(function(){
+
+        var href = $("ul.nav.nav-tabs li.active a").attr("id");
+        alert("ciao"+href);
+        query = query_all_annotazioni(href);
+        get_annotazioni(query, href);
+
+    });
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){

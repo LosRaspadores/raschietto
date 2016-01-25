@@ -66,7 +66,6 @@ function get_annotazioni(query, urlDoc){
         dataType: "jsonp",
         success: function(result) {
             lista_annotazioni = result["results"]["bindings"];
-
             if(lista_annotazioni.length != 0){
                 salvaAnnotazioniJSON(urlDoc, lista_annotazioni);
                 for (i = 0; i < lista_annotazioni.length; i++) {
@@ -86,26 +85,28 @@ function get_annotazioni(query, urlDoc){
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
             }
-             scraper(lista_annotazioni,urlDoc);
+            scraper(lista_annotazioni,urlDoc);
         },
         error: function(error) {
             $('#alertMessage').text("Errore nel caricamento delle annotazioni.");
             $('#alertDoc').modal('show');
         }
     });
-
 };
 
+
 function scraper(anns,urlDoc){
-    alert('ciao222...'+urlDoc);
+    alert('ciao2...'+urlDoc);
     $findTitle = false;
     $findAuthor = false;
     $findDoi = false;
     $findYears = false;
+    $findCitazioni = false;
 
-    for (i = 0; i < anns["results"]["bindings"].length; i++) {
-        ann = anns["results"]["bindings"][i];
-        ann_out = displaySingolaAnnotazione(ann);
+     for (i = 0; i < anns.length; i++) {
+        ann = anns[i];
+        // alert('ann='+ann);
+        ann_out = displaySingolaAnnotazione("",ann);
         if(typeof(ann["type"]) !== "undefined"){
            tipo_ann = gestioneTipoType(ann["type"]["value"]);
            //console.log("tipo ann="+ann["type"]["value"]);
@@ -135,6 +136,15 @@ function scraper(anns,urlDoc){
              }
            }
            if(ann["type"]["value"]== "hasPublicationYear"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annotazione anno="+ann_out);
+                    $findYears = true;
+               }
+             }
+           }
+
+            if(ann["type"]["value"]== "cites"){
              if(typeof(ann["prov_nome"]) !== "undefined"){
                if(ann["prov_nome"]["value"] == "Heisenbergg"){
                     console.log("annotazione anno="+ann_out);
@@ -218,123 +228,31 @@ function scraper(anns,urlDoc){
 
     }
 
+        if($findCitazioni == false){
+        console.log($findCitazioni);
+        console.log("chiamare scraper citazioni");
+
+        $.ajax({
+             url: '/scrapingCitazioni',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping citazioni="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+
 }
 
 
 
-           /*
-            if(tipo_ann !== "") {
-            //alert("tipo="+ tipo_ann);  //tipi_ann == definisce i tipi delle annotazioni
-            out = '<div><span class ="filtri">Annotazione di tipo ' + tipo_ann;
-            if(ann["type"]["value"] === "denotesRhetoric"){
-                ret = gestioneRetoriche(ann["body_o"]["value"]);
-                if(ret !== ""){
-                    out += ret + '</p>';
-                } else {
-                    out += ann["body_o"]["value"];
-                }
-            } else {
-                if (typeof(ann["body_l"]) !== "undefined") {
-                    out += ann["body_l"]["value"] + " ";
-                    //alert("body_l "+out);
-                }
-                if (typeof(ann["body_o"]) !== "undefined") {
-                    out += ann["body_o"]["value"];
-                    //alert("body_o "+ out);
-                }
-                out += ".</p>";   // ottengo l'annotazione completa di tipo
-                //alert("out111="+ out);
-                }
-                //console.log("111="+out);
-                // provenance e dataora
-                out += '<p>Inserita da: '
-                if(typeof(ann["prov_label"]) !== "undefined"){
-                    out += ann["prov_label"]["value"] + " "
-                } else if(typeof(ann["prov_nome"]) !== "undefined"){
-                    out += ann["prov_nome"]["value"] + " "
-                } else if(typeof(ann["provenance"]) !== "undefined"){
-                    out += ann["provenance"]["value"] + " "
-                }
-                if(typeof(ann["prov_email"]) !== "undefined"){
-                    out += ann["prov_email"]["value"] + " "
-                }
-                out += parseDatetime(ann["date"]["value"]) + "</p>";
-                out += "</div><br>";
-            }    //console.log("222="+out);
-        } else if (typeof(ann["label"]) !== "undefined"){
-            tipo_ann = gestioneTipoLabel(ann["label"]["value"]);
-            if(tipo_ann !== ""){
-                 out = '<div><span class="filtri">Annotazione di tipo ' + tipo_ann;
-            if(ann["label"]["value"] === "Retorica" || ann["label"]["value"] === "Rhetoric"){
-                ret = gestioneRetoriche(ann["body_o"]["value"]);
-                if(ret !== ""){
-                    out += ret + '</p>';
-                } else {
-                    out += ann["body_o"]["value"];
-                }
-            } else {
-                if (typeof(ann["body_l"]) !== "undefined") {
-                    out += ann["body_l"]["value"] + " ";
-                }
-                if (typeof(ann["body_o"]) !== "undefined") {
-                    out += ann["body_o"]["value"];
-                }
-                out += ".</p>";
-            }
-            // provenance e dataora
-            out += '<p>Inserita da: '
-            if(typeof(ann["prov_label"]) !== "undefined"){
-                out += ann["prov_label"]["value"] + " "
-            } else if(typeof(ann["prov_nome"]) !== "undefined"){
-                out += ann["prov_nome"]["value"] + " "
-            } else if(typeof(ann["provenance"]) !== "undefined"){
-                out += ann["provenance"]["value"] + " "
-            }
-            if(typeof(ann["prov_email"]) !== "undefined"){
-                out += ann["prov_email"]["value"] + " "
-            }
-            out += parseDatetime(ann["date"]["value"]) + "</p>";
-            out += "</div><br>";
-            }
-        } console.log("elenco delle annotazioni complete"+out); // mi stampo sulla console l'elenco delle annotazioni completete
-   */
 
 
-
-
-
-
-         // if((ann["type"]["value"]) == "hasTitle") {
-          //   console.log("trovato il titolo="+ out);
-          //    //console.log("prevenance="+ann["prov_label"]["value"]);
-          // }
-
-
-       /* if((ann["type"]["value"]) == "hasDOI") {
-          console.log("trovato il DOI="+ out);
-        }
-
-        if((ann["type"]["value"]) == "hasAuthor") {
-        console.log("trovato l'autore="+ out);
-        }
-
-        if((ann["type"]["value"]) == "hasPublicationYear") {
-        console.log("trovato l'anno="+ out);
-        }
-
-
-       */
-
-
-
-
-    //console.log("fine="+out);
-    //return out;
-
-    $('#buttonScraper').click(function(){
-        var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        scraper();
-    });
 
 
 // modal
@@ -372,8 +290,13 @@ function displayAnnotazioni(anns) {
 function displaySingolaAnnotazione(str, ann){
     //tipo e contenuto
     var out = "";
+   // alert("tipe="+ann["type"]);
+    //alert("value="+ann["type"]["value"]);
+    console.log("pima di iffff="+ann["type"]+" str ="+str);
     if(typeof(ann["type"]) != "undefined"){
+        console.log("tipo="+ann["type"]["value"]);
         var tipo_ann = gestioneTipoType(ann["type"]["value"]);
+
         if(tipo_ann != ""){
             out = '<div><span class ="filtri">' + str + " " + tipo_ann;
             if(ann["type"]["value"] == "denotesRhetoric"){
@@ -388,9 +311,10 @@ function displaySingolaAnnotazione(str, ann){
                     out += ann["body_ol"]["value"];
                 } else if (typeof(ann["body_o"]) != "undefined") {
                     out += ann["body_o"]["value"];
+                } else if (typeof(ann["body_l"]) != "undefined") {
+                    out += ann["body_l"]["value"];
                 }
-                out += ".</p>";   // ottengo l'annotazione completa di tipo
-                //alert("out111="+ out);
+                out += ".</p>";
             }
             // provenance e dataora
             out += '<p>Inserita da: '
@@ -407,9 +331,10 @@ function displaySingolaAnnotazione(str, ann){
             out += parseDatetime(ann["date"]["value"]) + "</p>";
             out += "</div><br>";
         }
-    }
+   }
 
-    else if (typeof(ann["label"]) != "undefined"){
+    else
+    // if (typeof(ann["label"]) != "undefined"){
         var tipo_ann = gestioneTipoLabel(ann["label"]["value"]);
         if(tipo_ann != ""){
             var out = '<div><span class="filtri">Annotazione di tipo ' + tipo_ann;
@@ -445,7 +370,7 @@ function displaySingolaAnnotazione(str, ann){
             out += parseDatetime(ann["date"]["value"]) + "</p>";
             out += "</div><br>";
         }
-    }
+    // }
     return out;
 }
 
@@ -565,12 +490,6 @@ function check(nodo, start, end, classCSS, ann){
             } else {
                 var out_ann  = displaySingolaAnnotazione("Annotazione di tipo", ann);
             }
-            out_ann = displaySingolaAnnotazione(ann);
-
-            ////
-            //alert("out_ann1"+out_ann);
-            //alert("tipo="+gestioneTipoType(ann["type"]["value"]));
-            ////
             $('#infoAnnotazione').append(out_ann);
         };
         fragment.surroundContents(nuovoNodo);
