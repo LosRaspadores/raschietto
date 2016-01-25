@@ -24,20 +24,6 @@ import mechanize
 # Browser mechanize
 br = mechanize.Browser()
 
-# url dove si trova l'elenco dei gruppi
-url_grafi = "http://vitali.web.cs.unibo.it/TechWeb15/GrafiGruppi"
-
-# il nome (=l'IRI) di ogni grafo ha struttura: "http://vitali.web.cs.unibo.it/raschietto/graph/[idgruppo]"
-base_name = "http://vitali.web.cs.unibo.it/raschietto/graph/"
-
-# nostri dati
-our_graph = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
-
-our_group_id = "ltw1537"
-
-our_group_name = "Los Raspadores"
-
-
 def main():
     scraping_gruppi()
 
@@ -55,10 +41,6 @@ def scraping_gruppi():
         data['id'] = list[0].text
         data['nome'] = list[1].text
         lista.append(data)
-
-    with open('listagrafi.json', 'w') as fp:
-        json.dump(lista, fp)
-
     return json.dumps(lista)
 
 if __name__ == "__main__":

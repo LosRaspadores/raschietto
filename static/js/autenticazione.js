@@ -1,40 +1,11 @@
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
-    function readerMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit√† annotator');
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#utenteAutenticato').text("");
-        $('#bottoniAnnotator').hide();
-    };
-
-    function annotatorMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit√† reader');
-        $('[data-toggle="tooltip"]').tooltip();
-        $('#bottoniAnnotator').show();
-    };
-
-    /* Passaggio da modalit√† reader a modalit√† annotator e viceversa */
-    $('#modalitaToggle').change(function() {
-        if ($("#modalitaToggle").prop('checked')) {
-            $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
-            $('#modalAutenticazione').modal('show');
-            annotatorMode();
-        }else{
-            $('#modalitaToggle').prop('checked', false);
-            readerMode();
-            sessionStorage.removeItem("nomecognome");
-            sessionStorage.removeItem("email");
-        };
-    });
-
     /*
-        Verifica della presenza di un utente gi√† autenticato come annotator.
+        Verifica della presenza di un utente gi‡ autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
         I dati in sessionStorage vengono ripuliti ogniqualvolta la sessione della pagine termina.
-        La sessione della pagina dura fino a quando il browser √® aperto e sopravvive alla ricarica della pagina e al
+        La sessione della pagina dura fino a quando il browser Ë aperto e sopravvive alla ricarica della pagina e al
         ripristino. L'apertuta di una nuova un un nuovo tab o nuova finestra implica l'apertura di una nuova sessione,
         il che differisce da come funzionano i cookie di sessione.
     */
@@ -45,7 +16,36 @@ $(document).ready(function() {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
         $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
-    };
+    }
+
+    /* Passaggio da modalit‡ reader a modalit‡ annotator e viceversa */
+    $('#modalitaToggle').change(function() {
+        if ($("#modalitaToggle").prop('checked')) {
+            $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
+            $('#modalAutenticazione').modal('show');
+            annotatorMode();
+        }else{
+            $('#modalitaToggle').prop('checked', false);
+            readerMode();
+            sessionStorage.removeItem("nomecognome");
+            sessionStorage.removeItem("email");
+        }
+    });
+
+    function readerMode(){
+        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ annotator');
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#utenteAutenticato').text("");
+        $('#bottoniAnnotator').hide();
+    }
+
+    function annotatorMode(){
+        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ reader');
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#bottoniAnnotator').show();
+    }
 
     /* Validazione autenticazione utente */
     $("#autenticati").click(function(){
@@ -54,15 +54,15 @@ $(document).ready(function() {
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
         if(nomecognome==""){
-            $('#messaggioErrore').text("Il campo nome e cognome √® obbligatorio.");
+            $('#messaggioErrore').text("Il campo nome e cognome Ë obbligatorio.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(email==""){
-            $('#messaggioErrore').text("Il campo email √® obbligatorio.");
+            $('#messaggioErrore').text("Il campo email Ë obbligatorio.");
             $("#email").val("");
             $("#email").focus();
         } else if(!regexNomecognome.test(nomecognome)){
-            $('#messaggioErrore').text("Il campo nome e cognome pu√≤ contenere solo caratteri alfabetici.");
+            $('#messaggioErrore').text("Il campo nome e cognome puÚ contenere solo caratteri alfabetici.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
@@ -82,7 +82,7 @@ $(document).ready(function() {
         };
     });
 
-    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalit√† reader */
+    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalit‡ reader */
     $('#modalAutenticazione button.close').click(function (){
         $("#nomecognome").val("");
         $("#email").val("");

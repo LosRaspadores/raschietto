@@ -24,6 +24,9 @@ from urlparse import urlparse
 
 # Browser mechanize
 br = mechanize.Browser()
+br.set_handle_robots(False) #
+br.set_handle_refresh(False)
+br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
 
 def main():
@@ -187,6 +190,51 @@ def scraping_anno(url):
                 lista.append(data)
 
     print json.dumps(lista)
+    return json.dumps(lista)
+
+def scraping_citazioni(url):
+    lista = []
+    try:
+        resp = br.open(url)
+    except:
+        print "Connection failed with "+url
+    html = page.read()
+    soup = BeautifulSoup(html, 'html.parser')
+
+    parsed_uri = urlparse(url)
+
+    if parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
+        tag = soup.findAll('h3')
+        for t in tag:
+            if 'References' in t.string or 'Bibliography' in t.string:
+                while t.find_next_sibling('p'):
+                    t = t.find_next_sibling('p')
+                    data = {}
+                    data['cit'] = t.get_text()
+                    lista.append(data)
+
+    elif parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+        if len(parsed_uri[2]) > 2 and parsed_uri[2].find("article") != -1:
+            html = soup.find('div', {'id': 'articleCitations'})
+            if html is None:
+                print "citazioni non presenti"
+                # data = {}
+                # data['cit'] = ""
+                # lista.append(data)
+            else:
+                for p in html.findAll('p'):
+                    data = {}
+                    data['cit'] = p.text
+                    lista.append(data)
+        # else:
+        #     data = {}
+        #     data['cit'] = ""
+        #     lista.append(data)
+    # else:
+    #     data = {}
+    #     data['cit'] = ""
+    #     lista.append(data)
+
     return json.dumps(lista)
 
 

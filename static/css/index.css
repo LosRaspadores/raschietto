@@ -332,11 +332,9 @@ button.button-lg:active {
     background-color: #d29aaf;
 }
 
-
-
-
-
-
+.highlightMultiple{
+    background-color: #dae0e6;
+}
 
 
 .panel-default>.panel-heading .badge {
@@ -383,6 +381,7 @@ button.button-lg:active {
     width:100%;
     margin-bottom: -20px;
     background-color: white;
+    word-wrap: break-word;
 }
 
 .panel>.panel-collapse>.list-group a.list-group-item.active{
@@ -466,4 +465,55 @@ span.glyphicon.glyphicon-remove::before{
 span.glyphicon.glyphicon-remove{
     top: -8px;
     height: 5px;
+}
+
+#alertDoc .alert{
+    margin-bottom: 0px;
+}
+
+.tableAnnot{
+    margin: auto;
+}
+
+.tableAnnot td, .tableAnnot th{
+    width: 173px;
+    font-weight: normal;
+    font-size: medium;
+}
+
+.tableAnnot td{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
+    width: 66px;
+}
+
+#modalGestAnnotazioni h4{
+    font-size: 20px;
+}
+
+#modalGestAnnotazioni thead{
+    border-bottom: 5px solid #44B78B;
+}
+
+#modalGestAnnotazioni table span.glyphicon {
+    padding-left: 15px;
+}
+
+div.tab-content{
+    font-family: "Candara";
+}
+
+#selezione {
+   resize: none;
+}
+
+#didascaliaModal{
+    text-align: center;
+}
+
+#modificaAnnotazione{
+    cursor: pointer;
 }

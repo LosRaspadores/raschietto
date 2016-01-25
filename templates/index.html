@@ -90,9 +90,9 @@
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
                         <li>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
-                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" onclick="verificaTab()"><span class="glyphicon glyphicon-pencil"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
-                            <button type="button" class="btn btn-default navbar-btn" id="bott" data-toggle="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonGest" data-tooltip="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create" data-toggle="modal" data-target="#modalGestAnnotazioni"><span class="glyphicon glyphicon-floppy-disk"></span></button>
                         </li>
                       </ul>
                 </div>
@@ -157,7 +157,7 @@
 
                         <div class="panel panel-default" id="panelAnnot" >
                             <div class="panel-heading">
-                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#listaAnnotazioni">Annotazioni<span class="badge" id="numAnn">0</span></a></h4>
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#listaAnnotazioni">Annotazioni sul documento</a></h4>
                             </div>
                             <div id="#listaAnnotazioni" class="panel-collapse collapse">
                                 <div class="panel-body">
@@ -171,7 +171,7 @@
 
                 <div class="col-sm-9" id="tabs">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#home"><b>Home</b></a></li>
+                        <li class="active"><a data-toggle="tab" href="#home" id="homeTab"><b>Home</b></a></li>
                     </ul>
 
                     <div class="tab-content" >
@@ -235,18 +235,92 @@
             </div>
         </div>
 
+        <!--Modal di scelta del tipo di annotazione (documento - frammento)-->
+        <div class="modal fade" id="modalTipoAnnotazione" role="dialog">
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Nessun frammento selezionato</h3>
+                    </div>
+                        <div class="modal-body">
+                            <div>
+                                <label id="didascaliaModal">Prosegui per inserire un'annotazione sul documento, altrimenti seleziona un frammento di testo da annotare.</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="chiudi" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="prosegui" type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAnnotDoc" data-dismiss="modal">Prosegui</button>
+                        </div>
+                 </div>
+            </div>
+        </div>
+
 
         <div class="modal fade" id="modalAnnotazioneSingola" role="dialog">
             <div class="modal-dialog modal-lg">
                  <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="text-center">Annotazione</h3>
+                        <h3 class="text-center">Annotazioni</h3>
                     </div>
                     <div class="modal-body col-md-12">
                         <div id="infoAnnotazione"></div>
                     </div>
                     <div class="modal-footer">
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+        <!-- Modal gestione e cancellazione annotazioni-->
+        <div class="modal fade" id="modalGestAnnotazioni" role="dialog">
+            <div class="modal-dialog modal-lg">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Gestisci le annotazioni</h3>
+                    </div>
+                    <div class="modal-body col-md-12">
+                        <div id="annotazioniInserite">
+                            <h4 class="text-center">Annotazioni inserite</h4>
+                            <table class="tableAnnot">
+                                <thead>
+                                    <tr>
+                                        <th>Colore</th>
+                                        <th>Tipo</th>
+                                        <th>Data</th>
+                                        <th>Target</th>
+                                        <th>Oggetto</th>
+                                        <th>Operazioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="annotazioniPresenti">
+                            <h4 class="text-center">Annotazioni presenti</h4>
+                            <table class="tableAnnot">
+                                <thead>
+                                    <tr>
+                                        <th>Colore</th>
+                                        <th>Tipo</th>
+                                        <th>Target</th>
+                                        <th>Oggetto</th>
+                                        <th>Operazioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="annullaGest" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                        <button id="salvaGest" type="button" class="btn btn-success">Salva</button>
                     </div>
                  </div>
             </div>
@@ -258,11 +332,11 @@
                  <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="text-center">Inserisci annotazione sul documento</h3>
+                        <h3 class="text-center">Inserisci annotazione</h3>
                     </div>
-                    <form>
+                    <form id="formAnnotazione">
                         <div class="modal-body">
-
+                            <textarea class="form-control" rows="3" id="selezione" readonly></textarea>
                                 <div class="form-group" id="divInsert">
                                     <label for="selectTipoAnnot">Seleziona il tipo di annotazione</label>
                                     <div>
@@ -270,12 +344,11 @@
                                             <option value=""></option>
                                             <option value="autore">Autore</option>
                                             <option value="anno">Anno pubblicazione</option>
-                                            <!--<option value="citazione">Citazione</option>-->
-                                            <option value="commento">Commento</option>
                                             <option value="doi">DOI</option>
-                                            <option value="funzione">Funzione retorica</option>
                                             <option value="titolo">Titolo</option>
                                             <option value="url">URL</option>
+                                            <option value="commento" id="commento">Commento</option>
+                                            <option value="funzione" id="funzione">Funzione retorica</option>
                                         </select>
                                     </div>
                                 </div>
@@ -308,25 +381,25 @@
                                     <label for="doi">Inserisci un DOI</label>
                                         <input type="text" class="form-control" placeholder="" id="doi">
                                 </div>
-                                <div class="form-group" id="insertComm">
-                                    <label for="comm">Inserisci un commento</label>
-                                        <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
-                                </div>
 
-                                <div class="form-group" id="insertfunzRet">
-                                    <label for="funcRet">Scegli una funzione retorica</label>
-                                        <select class="form-control" id="funcRet">
-                                            <option value=""></option>
-                                            <option value="abstract">Abstract</option>
-                                            <option value="introduction">Introduction</option>
-                                            <option value="materials">Materials</option>
-                                            <option value="methods">Methods</option>
-                                            <option value="results">Results</option>
-                                            <option value="discussion">Discussion</option>
-                                            <option value="conclusion">Conclusion</option>
-                                        </select>
-                                </div>
+                            <div class="form-group" id="insertComm">
+                                <label for="comm">Inserisci un commento</label>
+                                    <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
+                            </div>
 
+                            <div class="form-group" id="insertfunzRet">
+                                <label for="funcRet">Scegli una funzione retorica</label>
+                                    <select class="form-control" id="funcRet">
+                                        <option value=""></option>
+                                        <option value="abstract">Abstract</option>
+                                        <option value="introduction">Introduction</option>
+                                        <option value="materials">Materials</option>
+                                        <option value="methods">Methods</option>
+                                        <option value="results">Results</option>
+                                        <option value="discussion">Discussion</option>
+                                        <option value="conclusion">Conclusion</option>
+                                    </select>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsert" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
@@ -339,35 +412,52 @@
 
             <!--Modal inserimento e gestione delle citazioni-->
             <div class="modal fade" id="modalAnnotCit" role="dialog">
-                <div class="modal-dialog modal-md">
-                     <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h3 class="text-center">Inserisci citazione</h3>
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Inserisci citazione</h3>
+                    </div>
+                    <form>
+                        <div class="modal-body">
                         </div>
-                        <form>
-                            <div class="modal-body">
-                            </div>
-                            <div class="modal-footer">
-                                <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
-                                <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
-                            </div>
-                        </form>
-                     </div>
+                        <div class="modal-footer">
+                            <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
+                        </div>
+                    </form>
+                 </div>
                 </div>
             </div>
 
+
+        <div class="modal fade" id="alertDoc" role="dialog">
+            <div class="modal-dialog modal-md">
+                 <div class="modal-content">
+                    <div class="alert alert-danger" >
+                        <strong id="alertMessage"></strong>
+                    </div>
+                 </div>
+            </div>
         <!-- riferimenti javascript -->
-        <script type="text/javascript" charset="utf-8" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-classapplier.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-highlighter.min.js"></script>
+        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/js/gestioneFrammenti.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
 
         <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/readFunctions.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/utils.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/filtriTipiAnnotazioni.js"></script>
+        
 
     </body>
 </html>

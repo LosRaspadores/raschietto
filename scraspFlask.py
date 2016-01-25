@@ -19,8 +19,7 @@ from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
 from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto
 import json
-from scrapingCitazioni import scraping_citazioni
-from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno
+from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno,scraping_citazioni
 
 
 # inizializzazione applicazione
