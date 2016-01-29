@@ -411,19 +411,6 @@ function getXPath(x){
 }
 
 
-function mostraAnnotGruppo(element){
-    $(element).addClass("active").siblings().removeClass("active");
-    var numeroAnnotazioniGruppo = 0;
-    if(numeroAnnotazioniGruppo != 0){
-        $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
-        $("#modalAnnotazioneSingola").modal('show');
-    } else {
-        $('#alertMessage').text("Non ci sono annotazioni di questo gruppo per il documento selezionato.");
-        $('#alertDoc').modal('show');
-    }
-}
-
-
 function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
@@ -509,6 +496,7 @@ function getClassNameLabel(label){
         case "Publication Year":
         case "PublicationYear":
         case "Anno di pubblicazione":
+        case "Anno pubblicazione":
             classCSS = "highlightPublicationYear";
             break;
         case "DOI":
@@ -524,6 +512,7 @@ function getClassNameLabel(label){
             break;
         case "Retorica":
         case "Rhetoric":
+        case "Funzione retorica":
             classCSS = "highlightDenotesRhetoric";
             break;
         case "Citation":

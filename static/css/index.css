@@ -443,10 +443,21 @@ span.glyphicon.glyphicon-remove::before{
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
     color: #0C3C26;
-    background: transparent url(../uiTabsArrow.png) no-repeat bottom center;
+    background: transparent;
+    background-image: url(../uiTabsArrow.png);
+    background-position: bottom center;
+    background-repeat : no-repeat;
     border: none;
     height: 40px;
 }
+
+@media only screen and (max-width: 700px) and (min-width: 0px){
+    .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+        background-image: none;
+        background-position: none;
+    }
+}
+
 .nav-tabs>li>a:hover {
     border-color: #eee #eee #ddd;
     height: 40px;
@@ -516,4 +527,25 @@ div.tab-content{
 
 #modificaAnnotazione{
     cursor: pointer;
+}
+
+#modificaSelezione{
+    padding: 5px 5px 5px 5px;
+    text-align: right;
+}
+
+#confermaModificaSelezione{
+    position: relative;
+    float: right;
+}
+
+#confermaModificaSelezione {
+    position: fixed;
+    right: 20px;
+    margin-top: 10px;
+}
+
+.glyphicon-plus:hover, .glyphicon-trash:hover, .glyphicon-edit:hover {
+    cursor: pointer;
+    color: #44B78B;
 }

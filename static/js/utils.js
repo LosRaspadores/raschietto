@@ -76,8 +76,8 @@ console.log(setIRIautore("M[a]riò De Rossi Bianc.;h:i Vèrdi Gialli"));
 function getDateTime(){
     var currentdate = new Date();
     return datetime = currentdate.getFullYear() + "-"
-                    + (currentdate.getMonth())  + "-"
-                    + currentdate.getDay() + "T"
+                    + (currentdate.getMonth()+1)  + "-"
+                    + currentdate.getUTCDate() + "T"
                     + currentdate.getHours() + ":"
                     + addZero(currentdate.getMinutes());
 

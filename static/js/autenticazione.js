@@ -29,6 +29,8 @@ $(document).ready(function() {
             readerMode();
             sessionStorage.removeItem("nomecognome");
             sessionStorage.removeItem("email");
+            sessionStorage.removeItem("annotazioniSessione");
+            sessionStorage.removeItem("citazioniSessione");
         }
     });
 
@@ -53,6 +55,8 @@ $(document).ready(function() {
         var regexEmail = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|it|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
+        var annotazioniSessione = [];
+        var citazioniSessione = [];
         if(nomecognome==""){
             $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
             $("#nomecognome").val("");
@@ -77,6 +81,8 @@ $(document).ready(function() {
             //I dati dell'utente vengono salvati nella sessionStorage
             sessionStorage.nomecognome = nomecognome;
             sessionStorage.email = email;
+            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
+            sessionStorage.citazioniSessione = JSON.stringify(citazioniSessione);
             $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
             annotatorMode();
         };

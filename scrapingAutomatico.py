@@ -211,7 +211,7 @@ def scraping_citazioni(url):
         resp = br.open(url)
     except:
         print "Connection failed with "+url
-    html = page.read()
+    html = resp.read()
     soup = BeautifulSoup(html, 'html.parser')
 
     parsed_uri = urlparse(url)

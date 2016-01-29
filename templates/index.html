@@ -282,41 +282,41 @@
                         <h3 class="text-center">Gestisci le annotazioni</h3>
                     </div>
                     <div class="modal-body col-md-12">
-                        <div id="annotazioniInserite">
-                            <h4 class="text-center">Annotazioni inserite</h4>
-                            <table class="tableAnnot">
-                                <thead>
-                                    <tr>
-                                        <th>Colore</th>
-                                        <th>Tipo</th>
-                                        <th>Data</th>
-                                        <th>Target</th>
-                                        <th>Oggetto</th>
-                                        <th>Operazioni</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <div id="annotazioniInserite" class="table-responsive">
+                                <h4 class="text-center">Annotazioni inserite</h4>
+                                <table class="tableAnnot table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>Colore</th>-->
+                                            <th>Tipo</th>
+                                            <th>Data</th>
+                                            <!--<th>Target</th>-->
+                                            <th>Oggetto</th>
+                                            <th>Operazioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tbody>
-                            </table>
-                        </div>
-                        <div id="annotazioniPresenti">
-                            <h4 class="text-center">Annotazioni presenti</h4>
-                            <table class="tableAnnot">
-                                <thead>
-                                    <tr>
-                                        <th>Colore</th>
-                                        <th>Tipo</th>
-                                        <th>Target</th>
-                                        <th>Oggetto</th>
-                                        <th>Operazioni</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="annotazioniPresenti">
+                                <h4 class="text-center">Annotazioni presenti</h4>
+                                <table class="tableAnnot table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>Colore</th>-->
+                                            <th>Tipo</th>
+                                            <th>Target</th>
+                                            <th>Oggetto</th>
+                                            <th>Operazioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tbody>
-                            </table>
-                        </div>
+                                    </tbody>
+                                </table>
+                            </div>
                     </div>
                     <div class="modal-footer">
                         <button id="annullaGest" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
@@ -325,6 +325,93 @@
                  </div>
             </div>
         </div>
+
+        <!-- Modal conferma elimina annotazione -->
+        <div class="modal fade" id="modalConfermaEliminazione" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                         <h3 class="modal-title" id="modalLabel">Conferma eliminazione</h3>
+                    </div>
+                    <div class="modal-body">
+                         <h4></h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="eliminaAnnotazione">Elimina</button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Annulla</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal modifica annotazioni non ancora salvate -->
+        <div class="modal fade" id="modalModificaAnnot" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Modifica annotazione</h3>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+                            <textarea class="form-control" rows="3" id="frammento" readonly></textarea>
+                            <div id="modificaSelezione"></div>
+                            <div class="form-group">
+                                <label for="selectTipoAnnot">Tipo annotazione: <span id="tipo"></span></label>
+                            </div>
+                            <div class='modificaAnn' id="modAutore">
+                                <label for='autoreMod'>Inserisci il nome dell'autore</label>
+                                <input type='text' class='form-control' id='autoreMod'>
+                            </div>
+                            <div class='modificaAnn' id="modAnno">
+                                <label for="annoMod">Seleziona l'anno di pubblicazione</label>
+                                        <select class="form-control" id="annoMod">
+                                            <option value=" "></option>
+                                        </select>
+                            </div>
+                            <div class='modificaAnn' id="modDoi">
+                                <label for='doiMod'>Inserisci un DOI</label>
+                                <input type='text' class='form-control' id='doiMod'>
+                            </div>
+                            <div class='modificaAnn' id="modTitolo">
+                                <label for='titoloMod'>Inserisci il titolo del documento</label>
+                                <textarea class='form-control' id='titoloMod' rows='2'></textarea>
+                            </div>
+                            <div class='modificaAnn' id="modUrl">
+                                <label for='urlMod'>Inserisci un URL associato al documento</label>
+                                <input type='text' class='form-control' id='urlMod'>
+                            </div>
+                            <div class='modificaAnn' id="modCommento">
+                                <label for='commMod'>Inserisci un commento</label>
+                                <textarea class='form-control' id='commMod' rows='2'></textarea>
+                            </div>
+                            <div class='modificaAnn' id="modFunzioneRetorica">
+                                <label for='funcRet'>Scegli una funzione retorica</label>
+                                <select class='form-control' id='funcRetMod'>
+                                    <option value=''></option>
+                                    <option value='abstract'>Abstract</option>
+                                    <option value='introduction'>Introduction</option>
+                                    <option value='materials'>Materials</option>
+                                    <option value='methods'>Methods</option>
+                                    <option value='results'>Results</option>
+                                    <option value='discussion'>Discussion</option>
+                                    <option value='conclusion'>Conclusion</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="oggettoAnnotazione">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="annullaModifica" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="salvaModifica" type="button" class="btn btn-success">Salva</button>
+                        </div>
+                    </form>
+                 </div>
+                </div>
+        </div>
+        <!-- -->
 
         <!--Modal creazione annotazioni sul documento-->
         <div class="modal fade" id="modalAnnotDoc" role="dialog">
@@ -347,8 +434,8 @@
                                             <option value="doi">DOI</option>
                                             <option value="titolo">Titolo</option>
                                             <option value="url">URL</option>
-                                            <option value="commento" id="commento">Commento</option>
-                                            <option value="funzione" id="funzione">Funzione retorica</option>
+                                            <!--<option value="commento" id="commento">Commento</option>-->
+                                            <!--<option value="funzione" id="funzione">Funzione retorica</option>-->
                                         </select>
                                     </div>
                                 </div>
@@ -423,7 +510,7 @@
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
-                            <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
+                            <button id="salvaInsertCit" type="button" class="btn btn-success" disabled="disabled">Salva</button>
                         </div>
                     </form>
                  </div>
@@ -439,6 +526,7 @@
                     </div>
                  </div>
             </div>
+        </div>
         <!-- riferimenti javascript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
@@ -447,9 +535,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-classapplier.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-highlighter.min.js"></script>
-        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/static/js/gestioneFrammenti.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
+
 
         <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/readFunctions.js"></script>
@@ -457,7 +543,8 @@
         <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/filtriTipiAnnotazioni.js"></script>
-        
+        <script type="text/javascript" charset="utf-8" src="/static/js/gestioneAnnotazioni.js"></script>
 
     </body>
+
 </html>
