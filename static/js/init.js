@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$(document).ready(function() {
 
     //documenti
     $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
@@ -28,8 +28,22 @@ $( document ).ready(function() {
     $('#insertfunzRet').css('display', 'none');
     $('#salvaInsert').attr('disabled', 'disabled');
 
+    $("#home").load("/static/homeText.txt");
+
+    $("#toHomeTab").click(function(){
+        $('#homeTab').trigger("click");
+    });
+
+    $('#homeTab').click(function(){
+        $('#homeTab').addClass("active");
+        $(".in.active").removeClass("in active");
+        $("#home").load("/static/homeText.txt");
+        $("#home").addClass("in active");
+    });
+
 
     // seconda nav fissa dopo lo scrolling della pagina
+
     var stickyNavTop = $('#secondnav').offset().top;
     var stickyNav = function(){
         var scrollTop = $(window).scrollTop();
@@ -43,6 +57,7 @@ $( document ).ready(function() {
     $(window).scroll(function() {
         stickyNav();
     });
+
 
 
     $('#modalAnnotDoc').on('hide.bs.modal', function(e){
@@ -268,7 +283,7 @@ $( document ).ready(function() {
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
         urlNuovoDoc = $("#uriNuovoDoc").val();
-        $("#uriNuovoDoc").val("");
+
         if(urlNuovoDoc !== ""){
             if(isOpen(urlNuovoDoc)){
                 $("ul.nav.nav-tabs a[id='" + urlNuovoDoc + "']").tab("show");
@@ -286,8 +301,24 @@ $( document ).ready(function() {
                             filtriAttivi();
                         },
                         error: function(error) {
-                            $('#alertMessage').text("L'URI inserito non è valido.");
+                            $('#alertMessage').text("Impossibile aprire il documento cercato.");
                             $('#alertDoc').modal('show');
+                        }
+                    });
+                    $.ajax({
+                        url: '/checkDocumentoInCache',
+                        type: 'GET',
+                        data: {url: urlNuovoDoc},
+                        success: function(result) {
+                            obj = JSON.parse(result);
+                            console.log(obj[0].url + " " + obj[0].titolo);
+                            if(obj[0].url != "no"){
+                                $('#numDoc').html(parseInt($('#numDoc').html()) + 1);
+                                $('div#lista_doc').append('<a class="list-group-item" value="' + obj[0].url + '">' + obj[0].titolo + '</a><br>');
+                            }
+                        },
+                        error: function(error) {
+                            console.log("error");
                         }
                     });
                 }else{
@@ -296,7 +327,7 @@ $( document ).ready(function() {
                 }
             }
         } else {
-            $('#alertMessage').text("L'URI inserito non è valido.");
+            $('#alertMessage').text("L'URI inserito non è valido.1");
             $('#alertDoc').modal('show');
         }
     });
@@ -328,6 +359,9 @@ function closeTab(element){
     $(element).parent().parent().remove(); //remove li of tab
     $(tabContentId).remove(); //remove respective tab content
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
+    if($(".in .active").length==0){
+        $('#homeTab').trigger("click");
+    };
 }
 
 function mostraAnnotGruppo(element){

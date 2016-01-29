@@ -1,6 +1,5 @@
 /* funzioni annotazioni */
 
-//globale
 prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
         'PREFIX frbr: <http://purl.org/vocab/frbr/core#> '+
         'PREFIX cito: <http://purl.org/spar/cito/> '+
@@ -18,7 +17,6 @@ prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
         'PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/> '+
         'PREFIX deo: <http://purl.org/spar/deo/> '+
         'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ';
-
 
 // query che restituisce tutte le annotazioni di un determinato documento
 function query_all_annotazioni(url_documento){
@@ -55,17 +53,16 @@ function query_all_annotazioni(url_documento){
     return query;
 }
 
-
-//chiamata ajax
+//chiamata ajax (tutte le annotazioni di un documento)
 function get_annotazioni(query, urlDoc){
     uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
     $.ajax({
         url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
-        //url: "http://localhost:3030/data/query?query=" + uriQuery + "&format=json",
-
-        dataType: "jsonp",
+        // url: "http://localhost:3030/data/query?query=" + uriQuery + "&format=json",
+        dataType: "jsonp",  // Cross-Origin Resource Sharing (for accessing data from from other domains)
         success: function(result) {
             lista_annotazioni = result["results"]["bindings"];
+            var numeroAnnotazioni = 0;
             if(lista_annotazioni.length != 0){
                 for (i = 0; i < lista_annotazioni.length; i++) {
                     ann = lista_annotazioni[i];
@@ -75,19 +72,29 @@ function get_annotazioni(query, urlDoc){
                     } else {
                         //Vengono evidenziate sul testo solo le annotazioni su frammento (ovviamente)
                         highligthFragment(fragmentPath, ann, urlDoc);
-                    }
-                }
+                    };
+                };
                 //TODO aggionare numero ann totali per il documento
-                displayAnnotazioni(lista_annotazioni); //modale
+                displayAnnotazioni(lista_annotazioni);
+                stileAnnotazioniMultiple();
+
             } else {
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
-            }
+            };
         },
-        error: function(error) {
-            $('#alertMessage').text("Errore nel caricamento delle annotazioni.");
-            $('#alertDoc').modal('show');
-        }
+        //there is no error handling for JSONP request
+        //workaround: jQuery ajax Timeout
+        timeout: 20000,
+        error: function(request, status, error) {
+            //if(status==="timeout") {
+                $('#alertMessage').text("Errore nel caricamento delle annotazioni.\nIl server non è attualmente disponibile per elaborare la richiesta.");
+                $('#alertDoc').modal('show');
+            //}
+            $('body').removeClass("loading");
+        },
+        beforeSend: function() { $('body').addClass("loading"); },
+        complete: function() { $('body').removeClass("loading"); }
     });
 };
 
@@ -102,17 +109,18 @@ function displayAnnotazioni(anns) {
         var ann = anns[i];
         var subject = ann["body_s"]["value"];
         if(subject.indexOf("cited") != -1) {
-            var ann_out = displaySingolaAnnotazione("Annotazione su citazione di tipo", ann);
+            var ann_out = displaySingolaAnnotazione("citazione", ann);
         } else {
-            var ann_out = displaySingolaAnnotazione("Annotazione di tipo", ann);
+            var ann_out = displaySingolaAnnotazione("semplice", ann);
         }
         if(ann_out != ""){
-            out += ann_out;
+            //out += ann_out;
             numeroAnnotazioni += 1;
         }
     }
     console.log("Numero totale annotazioni: " + anns.length + ", effettive non scartate: " + numeroAnnotazioni);
-    if(numeroAnnotazioni != 0){
+
+    /*if(numeroAnnotazioni != 0){
         $('#modalAnnotazioni').modal({backdrop: 'static', keyboard: false});  // before modal show line!
         $('#modalAnnotazioni').modal('show');
         $('#numeroAnnotazioni').text("Numero totale annotazioni: " + numeroAnnotazioni);
@@ -120,36 +128,45 @@ function displayAnnotazioni(anns) {
     } else {
         $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
         $('#alertDoc').modal('show');
-    }
+    }*/
 };
 
 // formattazione singola annotazione da visualizzare
 function displaySingolaAnnotazione(str, ann){
-    //tipo e contenuto
     var out = "";
+    //tipo e contenuto
     if(typeof(ann["type"]) != "undefined"){
         var tipo_ann = gestioneTipoType(ann["type"]["value"]);
+        var classCSS = getClassNameType(ann["type"]["value"]);
+        col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
         if(tipo_ann != ""){
-            out = '<div><span class ="filtri">' + str + " " + tipo_ann;
+            out += "<tr><td>" + col + "</td>";
+            if(str == "citazione"){
+                out += '<td>' + tipo_ann + "su citazione</td>";
+            }else{
+                out += '<td>' + tipo_ann + "</td>";
+            }
+            out += "<td>" + parseDatetime(ann["date"]["value"]) + "</td>";
+            out += "<td>target</td>";
             if(ann["type"]["value"] == "denotesRhetoric"){
                 var ret = gestioneRetoriche(ann["body_o"]["value"]);
                 if(ret != ""){
-                    out += ret + '</p>';
+                    out += "<td>" + ret + "</td>";
                 } else {
-                    out += ann["body_o"]["value"];
+                    out += "<td>" + ann["body_o"]["value"] + "</td>";
                 }
             } else {
                 if (typeof(ann["body_ol"]) != "undefined") {
-                    out += ann["body_ol"]["value"];
-                } else if (typeof(ann["body_o"]) != "undefined") {
-                    out += ann["body_o"]["value"];
+                    out += "<td>" + ann["body_ol"]["value"];
                 } else if (typeof(ann["body_l"]) != "undefined") {
-                    out += ann["body_l"]["value"];
+                    out += "<td>" + ann["body_l"]["value"];
+                } else if (typeof(ann["body_o"]) != "undefined") {
+                    out += "<td>" + ann["body_o"]["value"];
                 }
-                out += ".</p>";
+                out += "</td>";
             }
             // provenance e dataora
-            out += '<p>Inserita da: '
+            out += '<td>'
             if(typeof(ann["prov_label"]) != "undefined"){
                 out += ann["prov_label"]["value"] + " "
             } else if(typeof(ann["prov_nome"]) != "undefined"){
@@ -160,46 +177,8 @@ function displaySingolaAnnotazione(str, ann){
             if(typeof(ann["prov_email"]) != "undefined"){
                 out += ann["prov_email"]["value"];
             }
-            out += parseDatetime(ann["date"]["value"]) + "</p>";
-            out += "</div><br>";
-        }
-    }
-
-    else if (typeof(ann["label"]) != "undefined"){
-        var tipo_ann = gestioneTipoLabel(ann["label"]["value"]);
-        if(tipo_ann != ""){
-            var out = '<div><span class="filtri">Annotazione di tipo ' + tipo_ann;
-            if(ann["label"]["value"] == "Retorica" || ann["label"]["value"] == "Rhetoric"){
-                var ret = gestioneRetoriche(ann["body_o"]["value"]);
-                if(ret != ""){
-                    out += ret + '</p>';
-                } else {
-                    out += ann["body_o"]["value"];
-                }
-            } else {
-                if (typeof(ann["body_ol"]) != "undefined") {
-                    out += ann["body_ol"]["value"];
-                } else if (typeof(ann["body_o"]) != "undefined") {
-                    out += ann["body_o"]["value"];
-                } else if (typeof(ann["body_l"]) != "undefined") {
-                    out += ann["body_l"]["value"];
-                }
-                out += ".</p>";
-            }
-            // provenance e dataora
-            out += '<p>Inserita da: '
-            if(typeof(ann["prov_label"]) != "undefined"){
-                out += ann["prov_label"]["value"] + " "
-            } else if(typeof(ann["prov_nome"]) != "undefined"){
-                out += ann["prov_nome"]["value"] + " "
-            } else if(typeof(ann["provenance"]) != "undefined"){
-                out += ann["provenance"]["value"] + " "
-            }
-            if(typeof(ann["prov_email"]) != "undefined"){
-                out += ann["prov_email"]["value"] + " "
-            }
-            out += parseDatetime(ann["date"]["value"]) + "</p>";
-            out += "</div><br>";
+            out += "</td>"
+            out += "<tr>";
         }
     }
     return out;
@@ -212,13 +191,8 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
 
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
-    }
-    else if (typeof(ann["label"]) != "undefined"){
-        var classCSS = getClassNameLabel(ann["label"]["value"]);
-    }
-
-    else {
-        //se il tipo di annotazione non c'è nè nel campo type nè in label l'annotazione viene scartata
+    }else {
+        //l'annotazione viene scartata
         var classCSS = "";
     }
     if(classCSS != ""){
@@ -232,25 +206,29 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
-        //TODO perchè //table/ e non /table/
+        console.log(path);
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
         path = path.replace("div[1]/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[1]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
 
-        //if antropologia e teatro
+        //if antropologia e teatro or if alma tourism
         path = path.replace("div[1]/div[1]/div[1]/div[1]/", ".//*[@id='" + id +"']/div/div/");
         path = path.replace("div[1]/div[3]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
 
         //if rivista statistica or if antropologia e teatro
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
-        //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo (di qualsiasi tipo?//TODO controlla)
-        //rappresentato dal XPath passato come parametro
+        //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
+        console.log(path);
         try {
             //The expression is a legal expression.
             var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-            findCorrectNodo(nodo, start, end, classCSS, ann);
+            if (nodo != null){
+                //findCorrectNodo(nodo, start, end, classCSS, ann);
+                setSelectionRange(nodo, start, end, classCSS, ann);
+            };
         } catch (ex) {
             //The expression is NOT a legal expression.
             //se per esempio il fragmentPath è incompleto o relativo
@@ -260,29 +238,27 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
 
 function findCorrectNodo(nodo, start, end, classCSS, ann){
     var out;
-    if (nodo != null){
-        if (nodo.nodeType == 3){
-            //se è un text node
-            out = check(nodo, start, end, classCSS, ann);
-        } else {
-            //scorro tutti i nodi figli del nodo iniziale (di qualsiasi tipo?//TODO controlla)
-            var elementChildren = nodo.childNodes;
-            var i = 0;
-            while(i < elementChildren.length){
-                var result = findCorrectNodo(elementChildren[i], start, end, classCSS, ann);
-                if (result.exit) {
-                    return result;
-                } else{
-                    if (result.altroNodo){
-                        i++;
-                    }
-                    start = result.inizio;
-                    end = result.fine;
+    if (nodo.nodeType == 3){
+        //se è un nodo di tipo testo
+        out = check(nodo, start, end, classCSS, ann);
+    } else {
+        //scorro tutti i nodi (di qualsiasi tipo) figli del nodo iniziale
+        var children = nodo.childNodes;
+        var i = 0;
+        while(i < children.length){
+            var result = findCorrectNodo(children[i], start, end, classCSS, ann);
+            if (result.exit) {
+                return result;
+            } else {
+                if (result.altroNodo){
                     i++;
                 }
+                start = result.inizio;
+                end = result.fine;
+                i++;
             }
-            out = {inizio: start, fine:end}
         }
+        out = {inizio: start, fine:end}
     }
     return out;
 }
@@ -299,55 +275,47 @@ function check(nodo, start, end, classCSS, ann){
     if(start>=lunghezza){
         output = {inizio: start-lunghezza, fine:end-lunghezza}
     }
+    // compreso
     if(start < lunghezza && end <= lunghezza){
-        //OK
-        var fragment = document.createRange();
-        fragment.setStart(nodo, parseInt(start));
-        fragment.setEnd(nodo, parseInt(end));
-        var nuovoNodo = document.createElement('span');
+        console.log("nonuovonodo")
+        var frammentoEvidenziato = document.createRange();
+        frammentoEvidenziato.setStart(nodo, parseInt(start));
+        frammentoEvidenziato.setEnd(nodo, parseInt(end));
+        var span = document.createElement('span');
 
         var subject = ann["body_s"]["value"];
-        if(subject.indexOf("cited") != -1) {
-            nuovoNodo.className = "highlightMultiple";
-        } else {
-            nuovoNodo.className = classCSS;
-        }
-        nuovoNodo.ondblclick = function () {
+        span.className = classCSS;
+        span.ondblclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
             if(subject.indexOf("cited") != -1) {
-                var out_ann = displaySingolaAnnotazione("Annotazione su citazione di tipo", ann);
+                var out_ann = displaySingolaAnnotazione("citazione", ann);
             } else {
-                var out_ann  = displaySingolaAnnotazione("Annotazione di tipo", ann);
+                var out_ann  = displaySingolaAnnotazione("semplice", ann);
             }
             $('#infoAnnotazione').append(out_ann);
         };
-        fragment.surroundContents(nuovoNodo);
+        frammentoEvidenziato.surroundContents(span);
         output = {exit: true}
     }
     if(start < lunghezza && end > lunghezza){
-        //OK l'ann si estende anche a un altro nodo
-        var fragment = document.createRange();
-        fragment.setStart(nodo, parseInt(start));
-        fragment.setEnd(nodo, parseInt(lunghezza));
-        var nuovoNodo = document.createElement('span');
+        var frammentoEvidenziato = document.createRange();
+        frammentoEvidenziato.setStart(nodo, parseInt(start));
+        frammentoEvidenziato.setEnd(nodo, parseInt(lunghezza));
+        var span = document.createElement('span');
         var subject = ann["body_s"]["value"];
-        if(subject.indexOf("cited") != -1) {
-            nuovoNodo.className = "highlightMultiple";
-        } else {
-            nuovoNodo.className = classCSS;
-        }
-        nuovoNodo.ondblclick = function () {
+        span.className = classCSS;
+        span.ondblclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
             if(subject.indexOf("cited") != -1) {
-                var out_ann = displaySingolaAnnotazione("Annotazione su citazione di tipo", ann);
+                var out_ann = displaySingolaAnnotazione("citazione", ann);
             } else {
-                var out_ann  = displaySingolaAnnotazione("Annotazione di tipo", ann);
+                var out_ann  = displaySingolaAnnotazione("semplice", ann);
             }
             $('#infoAnnotazione').append(out_ann);
         };
-        fragment.surroundContents(nuovoNodo);
+        frammentoEvidenziato.surroundContents(span);
         output={inizio: 0, fine: end-lunghezza, altroNodo: true}
     }
     return output;
@@ -424,32 +392,25 @@ function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
         case "sro:Abstract":
-        case "http://salt.semanticauthoring.org/ontologies/sro#Abstract":
-            out = "Abstract.";
+            out = "Abstract";
             break;
         case "deo:Introduction":
-        case "http://purl.org/spar/deo/Introduction":
-            out = "Introduction.";
+            out = "Introduction";
             break;
         case "deo:Materials":
-        case "http://purl.org/spar/deo/Materials":
-            out = "Materials.";
+            out = "Materials";
             break;
         case "deo:Methods":
-        case "http://purl.org/spar/deo/Methods":
-            out = "Methods.";
+            out = "Methods";
             break;
         case "deo:Results":
-        case "http://purl.org/spar/deo/Results":
-            out = "Results.";
+            out = "Results";
             break;
         case "sro:Discussion":
-        case "http://salt.semanticauthoring.org/ontologies/sro#Discussion":
-            out = "Discussion.";
+            out = "Discussion";
             break;
         case "sro:Conclusion":
-        case "http://salt.semanticauthoring.org/ontologies/sro#Conclusion":
-            out = "Conclusion.";
+            out = "Conclusion";
             break;
     }
     return out;
@@ -458,7 +419,6 @@ function gestioneRetoriche(retorica){
 function getClassNameType(type){
     var classCSS = "";
     switch(type){
-        case "hasUrl":
         case "hasURL":
             classCSS = "highlightURL";
             break;
@@ -469,7 +429,6 @@ function getClassNameType(type){
             classCSS = "highlightPublicationYear";
             break;
         case "hasDOI":
-        case "hasDoi":
             classCSS = "highlightDOI";
             break;
         case "hasAuthor":
@@ -481,138 +440,165 @@ function getClassNameType(type){
         case "denotesRhetoric":
             classCSS = "highlightDenotesRhetoric";
             break;
-        case "Cites":
         case "cites":
-        //case "refecences":
-        //case "Reference":
             classCSS = "highlightCites";
             break;
     }
     return classCSS;
 };
-
-function getClassNameLabel(label){
-    var classCSS = "";
-    switch(label){
-        case "URL":
-        case "Url":
-            classCSS = "highlightURL";
-            break;
-        case "Titolo":
-        case "Title":
-            classCSS = "highlightTitle";
-            break;
-        case "Publication Year":
-        case "PublicationYear":
-        case "Anno di pubblicazione":
-            classCSS = "highlightPublicationYear";
-            break;
-        case "DOI":
-        case "Doi":
-            classCSS = "highlightDOI";
-            break;
-        case "Autore":
-        case "Author":
-            classCSS = "highlightAuthor";
-            break;
-        case "Commento":
-            classCSS = "highlightComment";
-            break;
-        case "Retorica":
-        case "Rhetoric":
-            classCSS = "highlightDenotesRhetoric";
-            break;
-        case "Citation":
-        case "Citazione":
-        //case "refecences":
-        //case "Reference":
-            classCSS = "highlightCites";
-            break;
-    }
-    return classCSS;
-};
-
 
 function gestioneTipoType(type){
     out = "";
     switch(type){
         case "hasURL":
-        case "hasUrl":
-            out = '<span class="filtri labelURL"> URL </span> </span> <p>L\'URL di questo documento è ';
+            out = 'URL';
             break;
         case "hasTitle":
-            out = '<span class="filtri labelTitle"> TITOLO </span> </span> <p>Il titolo di questo documento è ';
+            out = 'Titolo';
             break;
         case "hasPublicationYear":
-            out = '<span class="filtri labelPublicationYear"> ANNO DI PUBBLICAZIONE </span> </span> <p> L\'anno di pubblicazione di questo documento è il ';
+            out = 'Anno pubblicazione';
             break;
-        case "hasDoi":
         case "hasDOI":
-            out = '<span class="filtri labelDOI"> DOI </span> </span> <p> Il DOI di questo documento è ';
+            out = 'DOI';
             break;
         case "hasAuthor":
-            out = '<span class="filtri labelAuthor"> AUTORE </span> </span> <p> Un autore di questo documento è ';
+            out = 'Autore';
             break;
         case "hasComment":
-            out = '<span class="filtri labelComment"> COMMENTO </span> </span> <p> Un commento a questo documento è ';
+            out = 'Commento';
             break;
         case "denotesRhetoric":
-            out = '<span class="filtri labelDenotesRhetoric"> RETORICA </span> </span> <p> Una retorica di questo documento è ';
+            out = 'Funzione retorica';
             break;
-        case "Cites":
         case "cites":
-        //case "references":
-        //case "Reference":
-            out = '<span class="filtri labelCites"> CITAZIONE </span> </span> <p> Questo documento cita ';
+            out = 'Citazione';
             break;
     }
     return out;
 };
 
-function gestioneTipoLabel(label){
-    out = "";
-    switch(label){
-        case "URL":
-        case "Url":
-            out = '<span class="filtri labelURL"> URL </span> </span> <p> L\'URL di questo documento è ';
-            break;
-        case "Titolo":
-        case "Title":
-            out = '<span class="filtri labelTitle"> TITOLO </span> </span> <p> Il titolo di questo documento è ';
-            break;
-        case "PublicationYear":
-        case "Publication Year":
-        case "Anno di pubblicazione":
-            out = '<span class="filtri labelPublicationYear"> ANNO DI PUBBLICAZIONE </span> </span> <p> L\'anno di pubblicazione di questo documento è il ';
-            break;
-        case "DOI":
-        case "Doi":
-            out = '<span class="filtri labelDOI"> DOI </span> </span> <p> Il DOI di questo documento è ';
-            break;
-        case "Autore":
-        case "Author":
-            out = '<span class="filtri labelAuthor"> AUTORE </span> </span> <p> Un autore di questo documento è ';
-            break;
-        case "Commento":
-            out = '<span class="filtri labelComment"> COMMENTO </span> </span> <p> Un commento a questo documento è ';
-            break;
-        case "Retorica":
-        case "Rhetoric":
-            out = '<span class="filtri labelDenotesRhetoric"> RETORICA </span> </span> <p> Una retorica di questo documento è ';
-            break;
-        case "Citation":
-        case "Citazione":
-        //case "refecences":
-        //case "Reference":
-            out = '<span class="filtri labelCites"> CITAZIONE </span> </span> <p> Questo documento cita ';
-            break;
-    }
-    return out;
-}
-
 /* parse formato data e ora YYYY-MM-DDTHH:mm */
 function parseDatetime(dataAnn){
-    return dataAnn = " in data " + dataAnn.replace("T", " alle ") + ".";
+    return dataAnn = dataAnn.replace("T", " ");
+};
+
+function stileAnnotazioniMultiple(){
+
+    //nodo figlio di span high ma preceduto da fratello nodo text
+    $('span[class^="highlight"]>span[class^="highlight"]').each(function(){
+
+
+      var className = $(this).attr('class').split(" ")[0]; //prima classe del nodo
+      console.log(className)
+      if($(this).prev().prop('nodeType')===undefined){ //preceding sibling di tipo testo
+              //children: figli nodi elementi
+              //se ha un figlio nodo elemento span high, altrimenti non si deve fare nulla
+              if ($(this).children('span[class^="highlight"]:first-child') != 0){
+                  //navigo sul figlio span high (sul primo figlio span high)
+                  var figlio = $(this).children('span[class^="highlight"]:first-child');
+                  controllofiglio(figlio, className);
+              };
+         };
+    });
+
+     //tutti i nodi span high che non hanno come parent un altro span high
+     $('*:not([class^="highlight"])>span[class^="highlight"]').each(function(){
+         var className = $(this).attr('class').split(' ')[0]; //prima classe del nodo
+         //children: figli nodi elementi
+         //se ha un figlio nodo elemento span high, altrimenti non si deve fare nulla
+         if ($(this).children('span[class^="highlight"]:first-child') != 0){
+             var figlio = $(this).children('span[class^="highlight"]:first-child');
+             controllofiglio(figlio, className);
+             //classe annot multiple associata all'ultimo figlio
+         }
+     });
+};
+
+function controllofiglio(nodo, classe){
+    //se non ha primo figlio highlight, cioè se il nodo è l ultimo figlio
+    //il metodo finisce
+    //if(($(this).contents()[0].nodeType == 3)) || (nodo.children('span[class^="highlight"]:first-child').length == 0)){
+    if((nodo.contents().first().prop('nodeType') == undefined) || (nodo.children('span[class^="highlight"]:first-child').length == 0)){
+    //if(nodo.children('span[class^="highlight"]:first-child').length == 0){
+        if(!nodo.hasClass(classe)){
+            nodo.addClass("highlightMultipleTipoDiverso");
+        } else {
+            nodo.addClass("highlightMultipleTipoUguale");
+        };
+    }
+    //se padre ha primo figlio figlio highlight
+    else{
+        var primofiglio = $(nodo).children('span[class^="highlight"]:first-child');
+        controllofiglio(primofiglio, classe);
+    };
+
+};
+
+
+function getTextNodesIn(node) {
+    var textNodes = [];
+    if (node.nodeType == 3) {
+        textNodes.push(node);
+    } else {
+        var children = node.childNodes;
+        for (var i = 0, len = children.length; i < len; ++i) {
+            textNodes.push.apply(textNodes, getTextNodesIn(children[i]));
+        }
+    }
+    return textNodes;
+}
+
+function setSelectionRange(el, start, end, classCSS, ann) {
+    if (document.createRange && window.getSelection) {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        var textNodes = getTextNodesIn(el);
+        var foundStart = false;
+        var charCount = 0, endCharCount;
+
+        for (var i = 0, textNode; textNode = textNodes[i++]; ) {
+            endCharCount = charCount + textNode.length;
+            if (!foundStart && start >= charCount && (start < endCharCount || (start == endCharCount && i <= textNodes.length))) {
+                range.setStart(textNode, start - charCount);
+                foundStart = true;
+                thisStart = start - charCount;
+                //alert("start : " + start + " charCount : " + charCount + " setStart : " + thisStart);
+            }
+            if (foundStart && end <= endCharCount) {
+                range.setEnd(textNode, end - charCount);
+                thisEnd = end - charCount;
+                //alert("end : " + end + " charCount : " + charCount + " setEnd : " + thisEnd);
+                break;
+            }
+            charCount = endCharCount;
+        }
+
+        var span = document.createElement('span');
+        var subject = ann["body_s"]["value"];
+        span.className = classCSS;
+        span.ondblclick = function () {
+            $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
+            $("#modalAnnotazioneSingola").modal('show');
+            if(subject.indexOf("cited") != -1) {
+                var out_ann = displaySingolaAnnotazione("citazione", ann);
+            } else {
+                var out_ann  = displaySingolaAnnotazione("semplice", ann);
+            }
+            console.log(ann);
+            $('#infoAnnotazione').append(out_ann);
+        };
+        range.surroundContents(span);
+
+    } else if (document.selection && document.body.createTextRange) {
+        alert("else if document.selection");
+        var textRange = document.body.createTextRange();
+        textRange.moveToElementText(el);
+        textRange.collapse(true);
+        textRange.moveEnd("character", end);
+        textRange.moveStart("character", start);
+        textRange.select();
+    }
 }
 
 

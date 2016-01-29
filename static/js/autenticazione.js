@@ -15,10 +15,11 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
+        $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
     }
 
     /* Passaggio da modalità reader a modalità annotator e viceversa */
+    /* quando cambia il valore della checkbox #modalitaToggle */
     $('#modalitaToggle').change(function() {
         if ($("#modalitaToggle").prop('checked')) {
             $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
@@ -34,7 +35,7 @@ $(document).ready(function() {
 
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
+        $("#modalitaToggleLabel").attr('title','Passa a modalità annotator');
         $('[data-toggle="tooltip"]').tooltip();
         $('#utenteAutenticato').text("");
         $('#bottoniAnnotator').hide();
@@ -42,7 +43,7 @@ $(document).ready(function() {
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
+        $("#modalitaToggleLabel").attr('title','Passa a modalità reader');
         $('[data-toggle="tooltip"]').tooltip();
         $('#bottoniAnnotator').show();
     }
@@ -90,4 +91,9 @@ $(document).ready(function() {
         $('#modalitaToggle').prop('checked', false);
         readerMode();
     });
+
+    /*
+        prop() // attr()
+        con le checkboxes uso prop(), attr() potrebbe dare risultati indesiderati
+    */
 });

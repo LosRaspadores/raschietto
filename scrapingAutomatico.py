@@ -78,7 +78,6 @@ def scraping_titolo(urlDoc):
             else:
                 data['titolo'] = title.string
             lista.append(data)
-    print json.dumps(lista)
     return json.dumps(lista)
 
 def scarping_autore(urlDoc):
