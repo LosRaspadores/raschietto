@@ -17,9 +17,9 @@ from flask import Flask, render_template, request
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
-from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto
+from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto, rfrbDocToEndpoint
 import json
-from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno, scraping_citazioni,scraping_automatico_titolo
+from scrapingAutomatico import scraping_titolo, scarping_autore, scraping_doi, scraping_anno, scraping_citazioni, scraping_automatico_titolo
 
 # inizializzazione applicazione
 app = Flask(__name__)

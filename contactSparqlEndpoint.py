@@ -538,7 +538,10 @@ def main():
     do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
 
+
     url_doc = "http://www.dlib.org/dlib/july15/downs/07downs.html"
+
+    """
     query = query_delete_annotazioni_documento(url_doc)
     do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
@@ -574,6 +577,7 @@ def main():
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_retorica)
     do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
+    """
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_multipla)
     do_query_post(sparql_endpoint_remoto, query)
