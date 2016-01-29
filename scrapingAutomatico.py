@@ -78,6 +78,37 @@ def scraping_titolo(urlDoc):
             else:
                 data['titolo'] = title.string
             lista.append(data)
+    return json.dumps(lista)
+
+
+
+def scraping_automatico_titolo(url):
+    print("url " + url)
+    lista = []
+    resp = br.open(url)
+    raw_html = resp.read()
+    soup = BeautifulSoup(raw_html)
+
+    parsed_uri = urlparse(url)
+    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    print domain
+
+    if domain == 'http://www.dlib.org/':
+        result = soup.select("h3.blue-space")
+        for res in result:
+            data = {}
+            data["titolo"] = res.text
+            lista.append(data)
+
+    elif domain == 'http://antropologiaeteatro.unibo.it/' \
+            or 'http://almatourism.unibo.it/' \
+            or 'http://rivista-statistica.unibo.it/':
+        result = soup.find("h3")
+        for res in result:
+            data = {}
+            data["titolo"] = res.string
+            lista.append(data)
+
     print json.dumps(lista)
     return json.dumps(lista)
 

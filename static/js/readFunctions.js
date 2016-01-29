@@ -37,15 +37,11 @@ function getGruppi(){
                     }
 
                     listaGruppi(listaGruppiCompleta);
-                },
-                error: function() {
-                    $('#alertMessage').text("Errore nel caricamento della lista dei grafi!");
-                    $('#alertDoc').modal('show');
                 }
             });
         },
         error: function(){
-            $('#alertMessage').text("Errore nel caricamento della lista dei grafi!");
+            $('#alertMessage').text("Errore nel caricamento della lista dei grafi.");
             $('#alertDoc').modal('show');
         }
     });
@@ -68,7 +64,7 @@ function getDocFromSparql(){
     urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
     return $.ajax({
                 url: urlG,
-                dataType: 'jsonp'
+                dataType: 'jsonp',
             });
 }
 
@@ -102,7 +98,6 @@ function getDocumenti(docAnnotati, docScraping){
             $('#numDoc').html(res.length);
             for(j = 0; j < res.length; j++){
                 $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
-
             }
         },
         error: function(){

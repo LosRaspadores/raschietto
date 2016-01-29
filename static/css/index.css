@@ -122,6 +122,7 @@ body {
 input.cmn-toggle-yes-no + label {
     width: 210px;
     height: 50px;
+    margin-right: 15px;
 }
 
 #lista_annot input.cmn-toggle-yes-no + label{
@@ -332,10 +333,14 @@ button.button-lg:active {
     background-color: #d29aaf;
 }
 
-.highlightMultiple{
+.highlightMultipleTipoDiverso{
     background-color: #dae0e6;
+    border: 1px solid #989ca1;
 }
 
+.highlightMultipleTipoUguale{
+    border: 1px solid #57595c;
+}
 
 .panel-default>.panel-heading .badge {
     color: #FFFFFF;
@@ -484,21 +489,102 @@ span.glyphicon.glyphicon-remove{
 
 .tableAnnot{
     margin: auto;
+    overflow:auto;
+    display: block;
 }
 
 .tableAnnot td, .tableAnnot th{
     width: 173px;
-    font-weight: normal;
-    font-size: medium;
 }
 
 .tableAnnot td{
     padding-top: 5px;
     padding-bottom: 5px;
+    word-wrap: break-word;
+    max-width: 500px;
+    overflow: auto;
 }
 
 .tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
     width: 66px;
+}
+
+thead{
+    border-bottom: 5px solid #44B78B;
+}
+
+.tableAnnot thead, .tableAnnot tbody { display: block; }
+
+.tableAnnot tbody {
+    max-height: 400px;       /* Just for the demo          */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+}
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+#loading {
+    display: none;
+    position: fixed;
+    left: 33%;
+    top: 33%;
+    height: 100px;
+    width: 300px;
+    margin: auto;
+    background: rgba( 255, 255, 255, .8 )
+                url('/static/ico/loader.gif')
+                50% 50%
+                no-repeat;
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading #loading {
+    display: block;
+}
+
+
+
+.tableAnnot{
+    margin: auto;
+    overflow:auto;
+    display: block;
+}
+
+.tableAnnot td, .tableAnnot th{
+    width: 173px;
+}
+
+.tableAnnot td{
+    padding-top: 5px;
+    padding-bottom: 5px;
+    word-wrap: break-word;
+    max-width: 500px;
+    overflow: auto;
+}
+
+.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
+    width: 66px;
+}
+
+thead{
+    border-bottom: 5px solid #44B78B;
+}
+
+.tableAnnot thead, .tableAnnot tbody { display: block; }
+
+.tableAnnot tbody {
+    max-height: 400px;       /* Just for the demo          */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
 }
 
 #modalGestAnnotazioni h4{

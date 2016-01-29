@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$(document).ready(function() {
 
     localStorage.clear();
 
@@ -35,14 +35,24 @@ $( document ).ready(function() {
     $('#insertfunzRet').css('display', 'none');
     $('#salvaInsert').attr('disabled', 'disabled');
 
+    $("#home").load("/static/homeText.txt");
 
+    $("#toHomeTab").click(function(){
+        $('#homeTab').trigger("click");
+    });
 
+    $('#homeTab').click(function(){
+        $('#homeTab').addClass("active");
+        $(".in.active").removeClass("in active");
+        $("#home").load("/static/homeText.txt");
+        $("#home").addClass("in active");
+    });
 
     var year = new Date().getFullYear();
     for(i = year; i >=  1800; i--){
         $('select#anno').append('<option value="'+i+'">'+i+'</option>');
     }
-
+    // seconda nav fissa dopo lo scrolling della pagina
     var stickyNavTop = $('#secondnav').offset().top;
     var stickyNav = function(){
         var scrollTop = $(window).scrollTop();
@@ -104,7 +114,6 @@ $( document ).ready(function() {
                 $('#insertComm').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "anno":
                 $('#salvaInsert').attr('disabled', 'disabled');
@@ -115,7 +124,6 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "titolo":
                 $('#salvaInsert').attr('disabled', 'disabled');
@@ -126,7 +134,6 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "url":
                 $('#salvaInsert').attr('disabled', 'disabled');
@@ -137,7 +144,6 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "doi":
                 $('#salvaInsert').attr('disabled', 'disabled');
@@ -145,10 +151,9 @@ $( document ).ready(function() {
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
+                $('#insertDOI').css('display', 'block');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#insertDOI').css('display', 'block');
-//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "commento":
                 $('#salvaInsert').attr('disabled', 'disabled');
@@ -159,7 +164,6 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertAutore').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "funzione":
                 $('#salvaInsert').attr('disabled', 'disabled');
@@ -170,7 +174,6 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertAutore').css('display', 'none');
                 $('#insertfunzRet').css('display', 'block');
-//                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "":
                 $('#salvaInsert').attr('disabled', 'disabled');
@@ -178,10 +181,9 @@ $( document ).ready(function() {
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
-                $('#insertComm').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
+                $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-//                $('#salvaInsert').attr('disabled', 'disabled');
                 break;
         }
    });
@@ -317,10 +319,32 @@ $( document ).ready(function() {
             }
         }
     });
-    
-    function lanciaScraper() {
-        alert("ciao");
-        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
+
+    function lanciaScraper(urlDoc) {
+    alert("ciaooooo11111");
+
+   // for (i = 0; i < anns["results"]["bindings"].length; i++) {
+    //    ann = anns["results"]["bindings"][i];
+        //ann_out = displaySingolaAnnotazione(ann);
+        //if(ann_out !== ""){
+        //    out += ann_out;
+        //    numeroAnnotazioni += 1;
+       // }
+   // }
+    //alert('sono io:::'+out);
+
+
+     //   ann_out = displaySingolaAnnotazione(ann);
+//        if(ann_out !== ""){
+//            out += ann_out;
+//            numeroAnnotazioni += 1;
+//    alert("ann_out="+ann_out);
+
+//        tipo_ann = gestioneTipoType(ann["type"]["value"]);
+//        alert("tipo_ann"+tipo_ann);
+//        ret = gestioneRetoriche(ann["body_o"]["value"]);
+//        alert("ret"+ret);
+        //var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
         $.ajax({
             url: '/scrapingAutomatico',
             type: 'GET',
@@ -338,7 +362,10 @@ $( document ).ready(function() {
 
     $('#buttonScraper').click(function(){
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lanciaScraper(href);
+        alert("ciao"+href);
+        query = query_all_annotazioni(href);
+        get_annotazioni(query, href);
+
     });
 
     //quando viene premuto il bottone per caricare un nuovo url
@@ -362,8 +389,24 @@ $( document ).ready(function() {
                             filtriAttivi();
                         },
                         error: function(error) {
-                            $('#alertMessage').text("L'URI inserito non è valido.");
+                            $('#alertMessage').text("Impossibile aprire il documento cercato.");
                             $('#alertDoc').modal('show');
+                        }
+                    });
+                    $.ajax({
+                        url: '/checkDocumentoInCache',
+                        type: 'GET',
+                        data: {url: urlNuovoDoc},
+                        success: function(result) {
+                            obj = JSON.parse(result);
+                            console.log(obj[0].url + " " + obj[0].titolo);
+                            if(obj[0].url != "no"){
+                                $('#numDoc').html(parseInt($('#numDoc').html()) + 1);
+                                $('div#lista_doc').append('<a class="list-group-item" value="' + obj[0].url + '">' + obj[0].titolo + '</a><br>');
+                            }
+                        },
+                        error: function(error) {
+                            console.log("error");
                         }
                     });
                 }else{
@@ -376,7 +419,6 @@ $( document ).ready(function() {
             $('#alertDoc').modal('show');
         }
     });
-
 });
 
 /* Funzioni per la gestione delle tab in cui visualizzare i documenti */
@@ -402,8 +444,10 @@ function closeTab(element){
     $(element).parent().parent().remove(); //remove li of tab
     $(tabContentId).remove(); //remove respective tab content
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
+    if($(".in .active").length==0){
+        $('#homeTab').trigger("click");
+    };
 }
-
 
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");

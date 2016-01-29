@@ -19,8 +19,7 @@ from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
 from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto
 import json
-from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno, scraping_citazioni
-
+from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno, scraping_citazioni,scraping_automatico_titolo
 
 # inizializzazione applicazione
 app = Flask(__name__)
@@ -29,7 +28,6 @@ app = Flask(__name__)
 app.config.update(
     DEBUG=True,
 )
-
 
 # controllers
 @app.route('/')
@@ -54,14 +52,38 @@ def return_citazioni():
     data = scraping_citazioni(urlD)
     return data
 
-@app.route('/scrapingTitolo')
+@app.route('/scrapingAutomaticoAutore')
+def return_autore():
+     urlD = request.args.get('url')
+     data = scarping_autore(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoDoi')
+def return_doi():
+     urlD = request.args.get('url')
+     data = scraping_doi(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoYears')
+def return_years():
+     urlD = request.args.get('url')
+     data = scraping_anno(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoTitolo')
+def return_auto_titolo():
+    urlD = request.args.get('url')
+    data = scraping_automatico_titolo(urlD)
+    return data
+
+
+@app.route('/scrapingTitolo')    #prende il titolo dei docuemnti quando vengono caricati
 def return_titolo():
     url = request.args.get('url')
     item_list = json.loads(url)
     read_file = open('cacheDoc.json', 'r')
     result = read_file.read()
     read_file.close()
-
     if (result):
         data = result
     else:
@@ -69,17 +91,7 @@ def return_titolo():
         out_file = open('cacheDoc.json', 'w')
         out_file.write(data)
         out_file.close()
-
     return data
-
-# @app.route('/scrapingAutomatico')
-# def return_titolo():
-#     data = scraping_titolo(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-#     #data = scarping_autore(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-#     #data = scraping_doi(urlDoc="http://www.dlib.org/dlib/september15/wu/09wu.html")
-#     #data = scraping_anno(urlDoc="http://www.dlib.org/dlib/november14/fedoryszak/11fedoryszak.html")
-#     return data
-
 
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
@@ -87,18 +99,59 @@ def return_singolo_documento():
     data = scraping_singolo_documento(url)
     return data
 
-"""NON PIU USATO. COMPITO FATTO LATO CLIENT
-@app.route('/getAllAnnotazioni')
-def return_all_annotazioni():
-    query = request.args.get('data')
-    results = do_query_get(sparql_endpoint_remoto, prefissi+query)
-    return json.dumps(results)  #dict to json
-"""
 
+@app.route('/checkDocumentoInCache')
+def check_Documento_In_Cache():
+    url_doc = request.args.get('url')
+    with open('cacheDoc.json') as fp:
+        content = fp.read()
+        result = json.loads(content)
+
+    is_in = 0
+    for res in result:
+        print (res["url"])
+        if url_doc == res["url"]:
+            is_in = 1
+            break
+
+    dict = []
+    dict.append(url_doc)
+    lista = scraping_titolo(dict)  # string
+    item = lista[1:]
+    item = item[:-1]
+
+    if(is_in == 0):
+        with open("cacheDoc.json", "r") as fp:
+            content = fp.read()
+            value = json.loads(content)
+            jitem = json.loads(item)
+            value.append(jitem)
+
+        with open("cacheDoc.json", "w") as fp:
+            json.dump(value, fp)
+
+        rfrbDocToEndpoint(url_doc)
+    else:
+        lista = []
+        data = {}
+        data['url'] = "no"
+        data['titolo'] = "no"
+        lista.append(data)
+        lista = json.dumps(lista)
+
+    return lista
+
+@app.route('/salvaAnnotazioni')
+def salvaAnnotazioni():
+    query = request.args.get('query')
+    do_query_post(sparql_endpoint_remoto, query)
+    print query
+    return "ok"
 
 # launch app
 if __name__ == "__main__":
-    # app.run(host='bla', port=8080)
+    #app.run(host='bla', port=8080) host server
+    app.run(host='127.0.0.1', port=5000) # host server (macchina local)
 
     # in locale: run on default port localhost:5000
     app.run()

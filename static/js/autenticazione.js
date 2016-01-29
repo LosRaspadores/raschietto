@@ -2,10 +2,10 @@ $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
     /*
-        Verifica della presenza di un utente gi‡ autenticato come annotator.
+        Verifica della presenza di un utente giÔøΩ autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
         I dati in sessionStorage vengono ripuliti ogniqualvolta la sessione della pagine termina.
-        La sessione della pagina dura fino a quando il browser Ë aperto e sopravvive alla ricarica della pagina e al
+        La sessione della pagina dura fino a quando il browser ÔøΩ aperto e sopravvive alla ricarica della pagina e al
         ripristino. L'apertuta di una nuova un un nuovo tab o nuova finestra implica l'apertura di una nuova sessione,
         il che differisce da come funzionano i cookie di sessione.
     */
@@ -15,10 +15,11 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
+        $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
     }
 
-    /* Passaggio da modalit‡ reader a modalit‡ annotator e viceversa */
+    /* Passaggio da modalit√† reader a modalit√† annotator e viceversa */
+    /* quando cambia il valore della checkbox #modalitaToggle */
     $('#modalitaToggle').change(function() {
         if ($("#modalitaToggle").prop('checked')) {
             $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
@@ -36,7 +37,7 @@ $(document).ready(function() {
 
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ annotator');
+        $("#modalitaToggleLabel").attr('title','Passa a modalit√† annotator');
         $('[data-toggle="tooltip"]').tooltip();
         $('#utenteAutenticato').text("");
         $('#bottoniAnnotator').hide();
@@ -44,7 +45,7 @@ $(document).ready(function() {
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalit‡ reader');
+        $("#modalitaToggleLabel").attr('title','Passa a modalit√† reader');
         $('[data-toggle="tooltip"]').tooltip();
         $('#bottoniAnnotator').show();
     }
@@ -58,15 +59,15 @@ $(document).ready(function() {
         var annotazioniSessione = [];
         var citazioniSessione = [];
         if(nomecognome==""){
-            $('#messaggioErrore').text("Il campo nome e cognome Ë obbligatorio.");
+            $('#messaggioErrore').text("Il campo nome e cognome √® obbligatorio.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(email==""){
-            $('#messaggioErrore').text("Il campo email Ë obbligatorio.");
+            $('#messaggioErrore').text("Il campo email √® obbligatorio.");
             $("#email").val("");
             $("#email").focus();
         } else if(!regexNomecognome.test(nomecognome)){
-            $('#messaggioErrore').text("Il campo nome e cognome puÚ contenere solo caratteri alfabetici.");
+            $('#messaggioErrore').text("Il campo nome e cognome pu√≤ contenere solo caratteri alfabetici.");
             $("#nomecognome").val("");
             $("#nomecognome").focus();
         } else if(!regexEmail.test(email)){
@@ -88,7 +89,7 @@ $(document).ready(function() {
         };
     });
 
-    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalit‡ reader */
+    /* Gestione della chiusura del modal autenticazione: si ritorna alla modalit√† reader */
     $('#modalAutenticazione button.close').click(function (){
         $("#nomecognome").val("");
         $("#email").val("");
@@ -96,4 +97,9 @@ $(document).ready(function() {
         $('#modalitaToggle').prop('checked', false);
         readerMode();
     });
+
+    /*
+        prop() // attr()
+        con le checkboxes uso prop(), attr() potrebbe dare risultati indesiderati
+    */
 });
