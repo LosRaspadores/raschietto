@@ -347,8 +347,8 @@ annotazione_prova_multipla = """
     <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression;
         fabio:hasRepresentation <http://www.dlib.org/dlib/july15/downs/07downs.html>.
 
-    <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> rdfs:label "[1] Yeo, Richard. 2007. Betwee...gland. History of Science 45 (March): 1—46"^^xsd:string .
-
+    g .
+<http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> rdfs:label "[1] Yeo, Richard. 2007. Betwee...gland. History of Science 45 (March): 1—46"^^xsd:strin
     [] a oa:Annotation ;
         rdfs:label "Titolo"^^xsd:string ;
         rsch:type "hasTitle"^^xsd:string ;

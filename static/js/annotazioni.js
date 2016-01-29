@@ -131,7 +131,7 @@ function displaySingolaAnnotazione(str, ann){
     //tipo e contenuto
     var out = "";
     if(typeof(ann["type"]) != "undefined"){
-        var tipo_ann = gestioneTipoType(ann["type"]["value"]);
+        var tipo_ann = typeToIta(ann["type"]["value"]);
         if(tipo_ann != ""){
             out = '<div><span class ="filtri">' + str + " " + tipo_ann;
             if(ann["type"]["value"] == "denotesRhetoric"){
@@ -411,19 +411,6 @@ function getXPath(x){
 }
 
 
-function mostraAnnotGruppo(element){
-    $(element).addClass("active").siblings().removeClass("active");
-    var numeroAnnotazioniGruppo = 0;
-    if(numeroAnnotazioniGruppo != 0){
-        $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
-        $("#modalAnnotazioneSingola").modal('show');
-    } else {
-        $('#alertMessage').text("Non ci sono annotazioni di questo gruppo per il documento selezionato.");
-        $('#alertDoc').modal('show');
-    }
-}
-
-
 function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
@@ -536,42 +523,6 @@ function getClassNameLabel(label){
     return classCSS;
 };
 
-
-function gestioneTipoType(type){
-    out = "";
-    switch(type){
-        case "hasURL":
-        case "hasUrl":
-            out = '<span class="filtri labelURL"> URL </span> </span> <p>L\'URL di questo documento è ';
-            break;
-        case "hasTitle":
-            out = '<span class="filtri labelTitle"> TITOLO </span> </span> <p>Il titolo di questo documento è ';
-            break;
-        case "hasPublicationYear":
-            out = '<span class="filtri labelPublicationYear"> ANNO DI PUBBLICAZIONE </span> </span> <p> L\'anno di pubblicazione di questo documento è il ';
-            break;
-        case "hasDoi":
-        case "hasDOI":
-            out = '<span class="filtri labelDOI"> DOI </span> </span> <p> Il DOI di questo documento è ';
-            break;
-        case "hasAuthor":
-            out = '<span class="filtri labelAuthor"> AUTORE </span> </span> <p> Un autore di questo documento è ';
-            break;
-        case "hasComment":
-            out = '<span class="filtri labelComment"> COMMENTO </span> </span> <p> Un commento a questo documento è ';
-            break;
-        case "denotesRhetoric":
-            out = '<span class="filtri labelDenotesRhetoric"> RETORICA </span> </span> <p> Una retorica di questo documento è ';
-            break;
-        case "Cites":
-        case "cites":
-        //case "references":
-        //case "Reference":
-            out = '<span class="filtri labelCites"> CITAZIONE </span> </span> <p> Questo documento cita ';
-            break;
-    }
-    return out;
-};
 
 function gestioneTipoLabel(label){
     out = "";

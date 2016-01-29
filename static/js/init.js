@@ -4,6 +4,8 @@ $( document ).ready(function() {
 
     listaGruppiCompleta = [];
 
+
+
     //documenti
     $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
         docS = JSON.parse(r1[0]);
@@ -223,7 +225,7 @@ $( document ).ready(function() {
                     classCSS = getClassNameLabel(annot_gest[i].label.value);
                 }
                 col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>'; //<td>'+ parseDatetime(annot_gest[i].date.value)+'</td>
-                tr = '<tr><td>'+col+'</td><td>'+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit"></span><span class="glyphicon glyphicon-trash"></span></td></tr>';
+                tr = '<tr><td>'+col+'</td><td>'+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><button onclick="modificaAnnot(this)"><span class="glyphicon glyphicon-edit"></span></button><span class="glyphicon glyphicon-trash"></span></td></tr>';
 
                 $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').append(tr);
             }
@@ -324,6 +326,31 @@ $( document ).ready(function() {
         }
     });
 
+    $('#salvaGest').click(function(){
+        for(k = 0; k < listaAnnotGrafo1537.length; k++){
+            if(listaAnnotGrafo1537[k].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+                for(l = 0; l < listaAnnotGrafo1537[k].annotazioni.length; l++){
+                    if(typeof(listaAnnotGrafo1537[k].annotazioni[l].update) != "undefined"){
+                        console.log(creaQueryUpdate(listaAnnotGrafo1537[k].annotazioni[l]));
+                        if(typeof(listaAnnotGrafo1537[k].annotazioni[l].update.oggetto) != "undefined"){
+                            if(typeof(listaAnnotGrafo1537[k].annotazioni[l].update.tipo) != "undefined"){
+                                tipo = listaAnnotGrafo1537[k].annotazioni[l].update.tipo;
+                            } else {
+                                tipo = listaAnnotGrafo1537[k].annotazioni[l].label.value;
+                            }
+
+                            if(tipo.toLowerCase() == "autore"){
+                                console.log(creaTripleAutore(listaAnnotGrafo1537[k].annotazioni[l].update.oggetto, listaAnnotGrafo1537[k].annotazioni[l].body_s.value));
+                            } else if(tipo.toLowerCase() == "citazione"){
+                                //TODO completare con l'oggetto delle citazioni
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+
 });
 
 /* Funzioni per la gestione delle tab in cui visualizzare i documenti */
@@ -346,9 +373,21 @@ function addTab(text, urlP, title){
 }
 function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
+    var tabId = $(element).parent().attr("id");
     $(element).parent().parent().remove(); //remove li of tab
     $(tabContentId).remove(); //remove respective tab content
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
+
+    for(j = 0; j < listaAllAnnotazioni.length; j++){
+        if(listaAllAnnotazioni[j].url == tabId){
+            listaAllAnnotazioni.splice(j, 1);
+        }
+    }
+
+    console.log("lista");
+    for(j = 0; j < listaAllAnnotazioni.length; j++){
+        console.log(listaAllAnnotazioni[j].url);
+    }
 }
 
 
@@ -359,4 +398,27 @@ function mostraAnnotGruppo(element){
     filtriGruppo(urlGruppo, urlD);
 }
 
+function modificaAnnot(element){
+    index = $(element).closest('td').parent()[0].rowIndex-1;
+    for(i = 0; i < listaAnnotGrafo1537.length; i++){
+        if(listaAnnotGrafo1537[i].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+            if(typeof(listaAnnotGrafo1537[i].annotazioni[index]['update']) == "undefined"){
+                listaAnnotGrafo1537[i].annotazioni[index]['update'] = {};
+            }
+            listaAnnotGrafo1537[i].annotazioni[index]['update']['autore'] = "<mailto:" + sessionStorage.email + ">";
+            listaAnnotGrafo1537[i].annotazioni[index]['update']['data_mod'] = getDateTime();
 
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['tipo'] = "hasTipo";
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['label_tipo'] = "label tipo";
+
+            listaAnnotGrafo1537[i].annotazioni[index]['update']['oggetto'] = "Abstract";
+            listaAnnotGrafo1537[i].annotazioni[index]['update']['label_oggetto'] = listaAnnotGrafo1537[i].annotazioni[index]['update']['oggetto'];
+
+
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['path'] = "html_div_p";
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['start_fragm'] = "55";
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['end_fragm'] = "66";
+            //console.log(listaAnnotGrafo1537[i].annotazioni[index]);
+        }
+    }
+}

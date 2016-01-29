@@ -72,6 +72,7 @@ def return_titolo():
 
     return data
 
+
 # @app.route('/scrapingAutomatico')
 # def return_titolo():
 #     data = scraping_titolo(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
