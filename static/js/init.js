@@ -1,5 +1,9 @@
 $(document).ready(function() {
 
+    localStorage.clear();
+
+    listaGruppiCompleta = [];
+
     //documenti
     $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
         docS = JSON.parse(r1[0]);
@@ -41,9 +45,11 @@ $(document).ready(function() {
         $("#home").addClass("in active");
     });
 
-
+    var year = new Date().getFullYear();
+    for(i = year; i >=  1800; i--){
+        $('select#anno').append('<option value="'+i+'">'+i+'</option>');
+    }
     // seconda nav fissa dopo lo scrolling della pagina
-
     var stickyNavTop = $('#secondnav').offset().top;
     var stickyNav = function(){
         var scrollTop = $(window).scrollTop();
@@ -57,7 +63,6 @@ $(document).ready(function() {
     $(window).scroll(function() {
         stickyNav();
     });
-
 
 
     $('#modalAnnotDoc').on('hide.bs.modal', function(e){
@@ -97,16 +102,17 @@ $(document).ready(function() {
         var annot = $(this).val();
         switch (annot) {
             case "autore":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
-                $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
+                $('#insertDOI').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "anno":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'block');
                 $('#insertTitolo').css('display', 'none');
@@ -114,9 +120,9 @@ $(document).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "titolo":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'block');
@@ -124,9 +130,9 @@ $(document).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "url":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -134,9 +140,9 @@ $(document).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "doi":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -144,29 +150,29 @@ $(document).ready(function() {
                 $('#insertDOI').css('display', 'block');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "commento":
-                $('#insertAutore').css('display', 'none');
+                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#insertComm').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
-                $('#insertComm').css('display', 'block');
+                $('#insertAutore').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "funzione":
-                $('#insertAutore').css('display', 'none');
+                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#insertComm').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'block');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -174,7 +180,6 @@ $(document).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').attr('disabled', 'disabled');
                 break;
         }
    });
@@ -222,6 +227,25 @@ $(document).ready(function() {
         }
     });
 
+    $('#buttonGest').click(function(){
+        var id = $("ul.nav.nav-tabs li.active a").attr("id");
+        if(id != 'homeTab'){
+            annot_gest = annotDaGestire(id, 'http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537');
+            $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').html("");
+            for(i = 0; i < annot_gest.length; i++){
+                if(typeof(annot_gest[i].type) != "undefined"){
+                    classCSS = getClassNameType(annot_gest[i].type.value);
+                } else if (typeof(annot_gest[i].label) != "undefined"){
+                    classCSS = getClassNameLabel(annot_gest[i].label.value);
+                }
+                col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>'; //<td>'+ parseDatetime(annot_gest[i].date.value)+'</td>
+                tr = '<tr><td>'+col+'</td><td>'+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit"></span><span class="glyphicon glyphicon-trash"></span></td></tr>';
+
+                $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').append(tr);
+            }
+        }
+    });
+
 
     /* Chiamata ajax per ottenere il documento selezionato */
     $(document).on("click", "#lista_doc a.list-group-item", function(){
@@ -256,10 +280,32 @@ $(document).ready(function() {
         }
 
     });
-    
-    function lanciaScraper() {
-        alert("ciao");
-        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
+
+    function lanciaScraper(urlDoc) {
+    alert("ciaooooo11111");
+
+   // for (i = 0; i < anns["results"]["bindings"].length; i++) {
+    //    ann = anns["results"]["bindings"][i];
+        //ann_out = displaySingolaAnnotazione(ann);
+        //if(ann_out !== ""){
+        //    out += ann_out;
+        //    numeroAnnotazioni += 1;
+       // }
+   // }
+    //alert('sono io:::'+out);
+
+
+     //   ann_out = displaySingolaAnnotazione(ann);
+//        if(ann_out !== ""){
+//            out += ann_out;
+//            numeroAnnotazioni += 1;
+//    alert("ann_out="+ann_out);
+
+//        tipo_ann = gestioneTipoType(ann["type"]["value"]);
+//        alert("tipo_ann"+tipo_ann);
+//        ret = gestioneRetoriche(ann["body_o"]["value"]);
+//        alert("ret"+ret);
+        //var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
         $.ajax({
             url: '/scrapingAutomatico',
             type: 'GET',
@@ -277,13 +323,16 @@ $(document).ready(function() {
 
     $('#buttonScraper').click(function(){
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lanciaScraper(href);
+        alert("ciao"+href);
+        query = query_all_annotazioni(href);
+        get_annotazioni(query, href);
+
     });
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
         urlNuovoDoc = $("#uriNuovoDoc").val();
-
+        $("#uriNuovoDoc").val("");
         if(urlNuovoDoc !== ""){
             if(isOpen(urlNuovoDoc)){
                 $("ul.nav.nav-tabs a[id='" + urlNuovoDoc + "']").tab("show");
@@ -327,13 +376,10 @@ $(document).ready(function() {
                 }
             }
         } else {
-            $('#alertMessage').text("L'URI inserito non è valido.1");
+            $('#alertMessage').text("L'URI inserito non è valido.");
             $('#alertDoc').modal('show');
         }
     });
-
-
-
 });
 
 /* Funzioni per la gestione delle tab in cui visualizzare i documenti */
@@ -366,6 +412,7 @@ function closeTab(element){
 
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");
-    $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
-    $("#modalAnnotazioneSingola").modal('show');
+    urlGruppo = $(element).attr('value');
+    urlD = $("ul.nav.nav-tabs li.active a").attr("id");
+    filtriGruppo(urlGruppo, urlD);
 }

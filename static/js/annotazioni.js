@@ -18,6 +18,7 @@ prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
         'PREFIX deo: <http://purl.org/spar/deo/> '+
         'PREFIX foaf: <http://xmlns.com/foaf/0.1/> ';
 
+
 // query che restituisce tutte le annotazioni di un determinato documento
 function query_all_annotazioni(url_documento){
     var query = prefissi +
@@ -64,6 +65,7 @@ function get_annotazioni(query, urlDoc){
             lista_annotazioni = result["results"]["bindings"];
             var numeroAnnotazioni = 0;
             if(lista_annotazioni.length != 0){
+                salvaAnnotazioniJSON(urlDoc, lista_annotazioni);
                 for (i = 0; i < lista_annotazioni.length; i++) {
                     ann = lista_annotazioni[i];
                     fragmentPath = ann["fs_value"]["value"];
@@ -82,6 +84,8 @@ function get_annotazioni(query, urlDoc){
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
             };
+            }
+            scraper(lista_annotazioni,urlDoc);
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -97,6 +101,166 @@ function get_annotazioni(query, urlDoc){
         complete: function() { $('body').removeClass("loading"); }
     });
 };
+
+
+function scraper(anns,urlDoc){
+    alert('ciao2...'+urlDoc);
+    $findTitle = false;
+    $findAuthor = false;
+    $findDoi = false;
+    $findYears = false;
+    $findCitazioni = false;
+
+     for (i = 0; i < anns.length; i++) {
+        ann = anns[i];
+        // alert('ann='+ann);
+        ann_out = displaySingolaAnnotazione("",ann);
+        if(typeof(ann["type"]) !== "undefined"){
+           tipo_ann = gestioneTipoType(ann["type"]["value"]);
+           //console.log("tipo ann="+ann["type"]["value"]);
+
+           if(ann["type"]["value"]=="hasTitle"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                console.log("annot titolo="+ann_out);
+                $findTitle = true;
+               }
+             }
+           }
+           if(ann["type"]["value"]== "hasAuthor"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annot autore="+ann_out);
+                    $findAuthor = true;
+               }
+             }
+           }
+           if(ann["type"]["value"]== "hasDOI"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annotazione doi="+ann_out);
+                    $findDoi = true;
+               }
+             }
+           }
+           if(ann["type"]["value"]== "hasPublicationYear"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annotazione anno="+ann_out);
+                    $findYears = true;
+               }
+             }
+           }
+
+            if(ann["type"]["value"]== "cites"){
+             if(typeof(ann["prov_nome"]) !== "undefined"){
+               if(ann["prov_nome"]["value"] == "Heisenbergg"){
+                    console.log("annotazione anno="+ann_out);
+                    $findYears = true;
+               }
+             }
+           }
+
+
+        }
+    }
+
+    if($findTitle == false){
+        console.log($findTitle);
+        console.log("chiamare scraper titolo");
+
+        $.ajax({
+             url: '/scrapingAutomaticoTitolo',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping titolo="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+     if($findAuthor == false){
+        console.log($findTitle);
+        console.log("chiamare scraper autore");
+
+        $.ajax({
+             url: '/scrapingAutomaticoAutore',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping autore="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+    if ($findDoi ==false) {
+       console.log($findDoi);
+       console.log("chiamare scraper doi");
+
+       $.ajax({
+             url: '/scrapingAutomaticoDoi',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping Doi="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+    }
+
+    if($findYears == false){
+        console.log($findYears);
+        console.log("chiamare scraper anno");
+
+        $.ajax({
+             url: '/scrapingAutomaticoYears',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping anno="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+        if($findCitazioni == false){
+        console.log($findCitazioni);
+        console.log("chiamare scraper citazioni");
+
+        $.ajax({
+             url: '/scrapingCitazioni',
+             type: 'GET',
+             data: {url: urlDoc},
+             success: function(result) {
+                   alert("scraping citazioni="+result);
+             },
+             error: function(error) {
+                   alert("Error: " + error);
+             }
+        });
+
+    }
+
+
+}
+
+
+
+
+
 
 
 // modal
@@ -133,6 +297,7 @@ function displayAnnotazioni(anns) {
 
 // formattazione singola annotazione da visualizzare
 function displaySingolaAnnotazione(str, ann){
+    //tipo e contenuto
     var out = "";
     //tipo e contenuto
     if(typeof(ann["type"]) != "undefined"){
@@ -206,7 +371,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
-        console.log(path);
+        //TODO perchè //table/ e non /table/
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
@@ -256,7 +421,7 @@ function findCorrectNodo(nodo, start, end, classCSS, ann){
                 start = result.inizio;
                 end = result.fine;
                 i++;
-            }
+            }   
         }
         out = {inizio: start, fine:end}
     }

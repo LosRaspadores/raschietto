@@ -17,10 +17,9 @@ from flask import Flask, render_template, request
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
 from scrapingSingoloDocumento import scraping_singolo_documento
-from contactSparqlEndpoint import do_query_get, do_query_post, nome_grafo_gruppo, prefissi, sparql_endpoint_remoto, rfrbDocToEndpoint, query_annotazione, queryFRBRdocument
+from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto
 import json
-from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno, scraping_citazioni
-
+from scrapingAutomatico import scraping_titolo, scarping_autore,scraping_doi,scraping_anno, scraping_citazioni,scraping_automatico_titolo
 
 # inizializzazione applicazione
 app = Flask(__name__)
@@ -29,7 +28,6 @@ app = Flask(__name__)
 app.config.update(
     DEBUG=True,
 )
-
 
 # controllers
 @app.route('/')
@@ -54,7 +52,32 @@ def return_citazioni():
     data = scraping_citazioni(urlD)
     return data
 
-@app.route('/scrapingTitolo')
+@app.route('/scrapingAutomaticoAutore')
+def return_autore():
+     urlD = request.args.get('url')
+     data = scarping_autore(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoDoi')
+def return_doi():
+     urlD = request.args.get('url')
+     data = scraping_doi(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoYears')
+def return_years():
+     urlD = request.args.get('url')
+     data = scraping_anno(urlD)
+     return data
+
+@app.route('/scrapingAutomaticoTitolo')
+def return_auto_titolo():
+    urlD = request.args.get('url')
+    data = scraping_automatico_titolo(urlD)
+    return data
+
+
+@app.route('/scrapingTitolo')    #prende il titolo dei docuemnti quando vengono caricati
 def return_titolo():
     url = request.args.get('url')
     item_list = json.loads(url)
@@ -68,17 +91,7 @@ def return_titolo():
         out_file = open('cacheDoc.json', 'w')
         out_file.write(data)
         out_file.close()
-
     return data
-
-# @app.route('/scrapingAutomatico')
-# def return_titolo():
-#     data = scraping_titolo(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-#     #data = scarping_autore(urlDoc="http://rivista-statistica.unibo.it/article/view/4600")
-#     #data = scraping_doi(urlDoc="http://www.dlib.org/dlib/september15/wu/09wu.html")
-#     #data = scraping_anno(urlDoc="http://www.dlib.org/dlib/november14/fedoryszak/11fedoryszak.html")
-#     return data
-
 
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():

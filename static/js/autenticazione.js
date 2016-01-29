@@ -2,10 +2,10 @@ $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
     /*
-        Verifica della presenza di un utente già autenticato come annotator.
+        Verifica della presenza di un utente gi� autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
         I dati in sessionStorage vengono ripuliti ogniqualvolta la sessione della pagine termina.
-        La sessione della pagina dura fino a quando il browser è aperto e sopravvive alla ricarica della pagina e al
+        La sessione della pagina dura fino a quando il browser � aperto e sopravvive alla ricarica della pagina e al
         ripristino. L'apertuta di una nuova un un nuovo tab o nuova finestra implica l'apertura di una nuova sessione,
         il che differisce da come funzionano i cookie di sessione.
     */
