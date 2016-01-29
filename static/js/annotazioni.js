@@ -24,11 +24,11 @@ function query_all_annotazioni(url_documento){
     var query = prefissi +
         'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?body_ol ?fs_value '+
         '?start ?end ';
-    var i;
+    /*var i;
     for (i=0; i<listaGruppiCompleta.length; i++){
         query += 'FROM NAMED <' + listaGruppiCompleta[i].url + '> ';
-    }
-    //query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
+    }*/
+    query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
     query += 'WHERE {'+
             'GRAPH ?graph {?a a oa:Annotation. '+
             'OPTIONAL {?a rdfs:label ?label} '+
@@ -84,8 +84,7 @@ function get_annotazioni(query, urlDoc){
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
             };
-            }
-            scraper(lista_annotazioni,urlDoc);
+            //scraper(lista_annotazioni,urlDoc);
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -257,16 +256,9 @@ function scraper(anns,urlDoc){
 
 }
 
-
-
-
-
-
-
 // modal
 function displayAnnotazioni(anns) {
     var numeroAnnotazioni = 0;
-
     var out = "";
     var i;
     for (i = 0; i < anns.length; i++) {
@@ -297,22 +289,20 @@ function displayAnnotazioni(anns) {
 
 // formattazione singola annotazione da visualizzare
 function displaySingolaAnnotazione(str, ann){
-    //tipo e contenuto
+
     var out = "";
-    //tipo e contenuto
     if(typeof(ann["type"]) != "undefined"){
         var tipo_ann = gestioneTipoType(ann["type"]["value"]);
         var classCSS = getClassNameType(ann["type"]["value"]);
         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
         if(tipo_ann != ""){
-            out += "<tr><td>" + col + "</td>";
+            out += "<tr><td>" + col;
             if(str == "citazione"){
-                out += '<td>' + tipo_ann + "su citazione</td>";
+                out += tipo_ann + " su citazione</td>";
             }else{
-                out += '<td>' + tipo_ann + "</td>";
+                out += tipo_ann + "</td>";
             }
             out += "<td>" + parseDatetime(ann["date"]["value"]) + "</td>";
-            out += "<td>target</td>";
             if(ann["type"]["value"] == "denotesRhetoric"){
                 var ret = gestioneRetoriche(ann["body_o"]["value"]);
                 if(ret != ""){
@@ -330,7 +320,6 @@ function displaySingolaAnnotazione(str, ann){
                 }
                 out += "</td>";
             }
-            // provenance e dataora
             out += '<td>'
             if(typeof(ann["prov_label"]) != "undefined"){
                 out += ann["prov_label"]["value"] + " "
@@ -346,6 +335,7 @@ function displaySingolaAnnotazione(str, ann){
             out += "<tr>";
         }
     }
+    alert("ann " + out);
     return out;
 }
 
@@ -357,12 +347,14 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
     }else {
+        console.log("annotazione scartata" + ann);
         //l'annotazione viene scartata
         var classCSS = "";
     }
     if(classCSS != ""){
         //fragmentPath trasformato in XPath (del documento originale)
         var path = getXPath(fragmentPath);
+        console.log("path originale " + path);
 
         //XPath (del documento originale) trasformato in xPath locale
         var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
@@ -386,7 +378,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
         //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
-        console.log(path);
+        console.log("path locale app " + path);
         try {
             //The expression is a legal expression.
             var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -453,7 +445,7 @@ function check(nodo, start, end, classCSS, ann){
         span.ondblclick = function () {
             $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
             $("#modalAnnotazioneSingola").modal('show');
-            if(subject.indexOf("cited") != -1) {
+            if(subject.indexOf("cited") != -1) { //ann su cit
                 var out_ann = displaySingolaAnnotazione("citazione", ann);
             } else {
                 var out_ann  = displaySingolaAnnotazione("semplice", ann);
@@ -653,10 +645,9 @@ function stileAnnotazioniMultiple(){
     //nodo figlio di span high ma preceduto da fratello nodo text
     $('span[class^="highlight"]>span[class^="highlight"]').each(function(){
 
-
-      var className = $(this).attr('class').split(" ")[0]; //prima classe del nodo
-      console.log(className)
-      if($(this).prev().prop('nodeType')===undefined){ //preceding sibling di tipo testo
+        var className = $(this).attr('class').split(" ")[0]; //prima classe del nodo
+        console.log(className)
+        if($(this).prev().prop('nodeType')===undefined){ //preceding sibling di tipo testo
               //children: figli nodi elementi
               //se ha un figlio nodo elemento span high, altrimenti non si deve fare nulla
               if ($(this).children('span[class^="highlight"]:first-child') != 0){
@@ -703,7 +694,7 @@ function controllofiglio(nodo, classe){
 
 function getTextNodesIn(node) {
     var textNodes = [];
-    if (node.nodeType == 3) {
+    if (node.nodeType == 3) { // se il nodo è di tipo testo
         textNodes.push(node);
     } else {
         var children = node.childNodes;
@@ -717,7 +708,7 @@ function getTextNodesIn(node) {
 function setSelectionRange(el, start, end, classCSS, ann) {
     if (document.createRange && window.getSelection) {
         var range = document.createRange();
-        range.selectNodeContents(el);
+        //range.selectNodeContents(el); // Il Node i cui contenuti devono essere selezionati dentro il Range
         var textNodes = getTextNodesIn(el);
         var foundStart = false;
         var charCount = 0, endCharCount;
@@ -728,12 +719,10 @@ function setSelectionRange(el, start, end, classCSS, ann) {
                 range.setStart(textNode, start - charCount);
                 foundStart = true;
                 thisStart = start - charCount;
-                //alert("start : " + start + " charCount : " + charCount + " setStart : " + thisStart);
             }
             if (foundStart && end <= endCharCount) {
                 range.setEnd(textNode, end - charCount);
                 thisEnd = end - charCount;
-                //alert("end : " + end + " charCount : " + charCount + " setEnd : " + thisEnd);
                 break;
             }
             charCount = endCharCount;
