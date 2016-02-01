@@ -292,7 +292,7 @@ function displaySingolaAnnotazione(str, ann){
 
     var out = "";
     if(typeof(ann["type"]) != "undefined"){
-        var tipo_ann = gestioneTipoType(ann["type"]["value"]);
+        var tipo_ann = typeToIta(ann["type"]["value"]);
         var classCSS = getClassNameType(ann["type"]["value"]);
         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
         //var tipo_ann = typeToIta(ann["type"]["value"]);
@@ -578,106 +578,40 @@ function getClassNameType(type){
     var classCSS = "";
     switch(type){
         case "hasURL":
+        case "URL":
             classCSS = "highlightURL";
             break;
         case "hasTitle":
+        case "Titolo":
             classCSS = "highlightTitle";
             break;
         case "hasPublicationYear":
-            classCSS = "highlightPublicationYear";
-            break;
-        case "hasDOI":
-            classCSS = "highlightDOI";
-            break;
-        case "hasAuthor":
-            classCSS = "highlightAuthor";
-            break;
-        case "hasComment":
-            classCSS = "highlightComment";
-            break;
-        case "denotesRhetoric":
-            classCSS = "highlightDenotesRhetoric";
-            break;
-        case "cites":
-            classCSS = "highlightCites";
-            break;
-    }
-    return classCSS;
-};
-
-function getClassNameLabel(label){
-    var classCSS = "";
-    switch(label){
-        case "URL":
-        case "Url":
-            classCSS = "highlightURL";
-            break;
-        case "Titolo":
-        case "Title":
-            classCSS = "highlightTitle";
-            break;
-        case "Publication Year":
-        case "PublicationYear":
         case "Anno di pubblicazione":
         case "Anno pubblicazione":
             classCSS = "highlightPublicationYear";
             break;
+        case "hasDOI":
         case "DOI":
-        case "Doi":
             classCSS = "highlightDOI";
             break;
+        case "hasAuthor":
         case "Autore":
-        case "Author":
             classCSS = "highlightAuthor";
             break;
+        case "hasComment":
         case "Commento":
             classCSS = "highlightComment";
             break;
-        case "Retorica":
-        case "Rhetoric":
+        case "denotesRhetoric":
         case "Funzione retorica":
             classCSS = "highlightDenotesRhetoric";
             break;
-        case "Citation":
+        case "cites":
         case "Citazione":
-        //case "refecences":
-        //case "Reference":
             classCSS = "highlightCites";
             break;
     }
     return classCSS;
-};
-
-
-function gestioneTipoType(type){
-    out = "";
-    switch(type){
-        case "hasURL":
-            out = 'URL';
-            break;
-        case "hasTitle":
-            out = 'Titolo';
-            break;
-        case "hasPublicationYear":
-            out = 'Anno pubblicazione';
-            break;
-        case "hasDOI":
-            out = 'DOI';
-            break;
-        case "hasAuthor":
-            out = 'Autore';
-            break;
-        case "hasComment":
-            out = 'Commento';
-            break;
-        case "denotesRhetoric":
-            out = 'Funzione retorica';
-            break;
-        case "cites":
-            out = 'Citazione';
-            break;
-    }
-    return out;
 };
 
 /* parse formato data e ora YYYY-MM-DDTHH:mm */

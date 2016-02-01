@@ -605,6 +605,7 @@ div.tab-content{
 
 #selezione {
    resize: none;
+   margin-bottom:5px;
 }
 
 #didascaliaModal{
@@ -615,10 +616,10 @@ div.tab-content{
     cursor: pointer;
 }
 
-#modificaSelezione{
+/*#modificaSelezione{
     padding: 5px 5px 5px 5px;
     text-align: right;
-}
+}*/
 
 #confermaModificaSelezione{
     position: relative;
@@ -634,4 +635,14 @@ div.tab-content{
 .glyphicon-plus:hover, .glyphicon-trash:hover, .glyphicon-edit:hover {
     cursor: pointer;
     color: #44B78B;
+}
+
+#bottonemodFramm{
+    /*margin-top: 5px;*/
+    margin-bottom: 5px;
+    float: right;
+}
+
+#divInsert{
+    clear: both;
 }

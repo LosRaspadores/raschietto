@@ -1,20 +1,25 @@
 function verificaTab(){
     if($("ul.nav.nav-tabs li.active a").attr("id") != 'homeTab'){
+        $('button#bottonemodFramm').css("display", "none");
         oggettoSelezionato = verificaFrammento();
         if(!oggettoSelezionato){
             $('#selezione').css('display', 'none');
-            $('#commento').css('display', 'none');
-            $('#funzione').css('display', 'none');
+            $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',true);
+            $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
+//            $('#commento').css('display', 'none');
+//            $('#funzione').css('display', 'none');
             $('#modalTipoAnnotazione').modal('show');
         }else{
             //apri modale per inserire annotazione sul frammento
             $('#selezione').css('display', 'block');
-            $('#commento').css('display', 'block');
-            $('#funzione').css('display', 'block');
+            $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
+            $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
+//            $('#commento').css('display', 'block');
+//            $('#funzione').css('display', 'block');
 
 
-            $('#modalAnnotDoc #selectTipoAnnot').append('<option value="commento" id="commento">Commento</option>');
-            $('#modalAnnotDoc #selectTipoAnnot').append('<option value="funzione" id="funzione">Funzione retorica</option>');
+//            $('#modalAnnotDoc #selectTipoAnnot').append('<option value="commento" id="commento">Commento</option>');
+//            $('#modalAnnotDoc #selectTipoAnnot').append('<option value="funzione" id="funzione">Funzione retorica</option>');
             $('#modalAnnotDoc').modal('show');
         }
     }
@@ -129,10 +134,7 @@ function getTextNodes(node) {
 
 /* Inserimento annotazione sul documento */
 $('#salvaInsert').on('click', function(){
-    var soggetto = '';
-    if($('#modalAnnotDoc').data("id") != undefined){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
-        soggetto = 'jettka.html_ver1_cited[n]' //TODO passargli il soggetto
-    }
+
     var tipoAnnotazione = $('#selectTipoAnnot').find(":selected").text();
     var testo = '';
     var tipo = '';
@@ -167,92 +169,112 @@ $('#salvaInsert').on('click', function(){
                 break;
     }
 
-    //Costruisce annotazione locale
-    var singolaAnnotazione = {};
-    singolaAnnotazione['id'] = Math.random();
-    singolaAnnotazione['tipo'] = tipo;
-    singolaAnnotazione['data'] = getDateTime();
-//    singolaAnnotazione['target'] = 'target'; //documento o frammento
-    singolaAnnotazione['selezione'] = selection.toString();
-    singolaAnnotazione['oggetto'] = testo;
-    singolaAnnotazione['soggetto'] = soggetto; //TODO metto sempre il soggetto senza il source !? (sono la stessa cosa)
-    singolaAnnotazione['source'] = $('.active a').attr('id');
-    singolaAnnotazione['idFrammento'] = idFrammento;
-    singolaAnnotazione['start'] = startOffset;
-    singolaAnnotazione['end'] = endOffset;
-    singolaAnnotazione['autore'] = sessionStorage.email;
+    if($('#modalAnnotDoc').data("azione") == "modifica"){ // mettere come parametro "azione" - "modifica" per la modifica delle annotazioni sia locali che del grafo
+        if($('#modalAnnotDoc').data("indexDoc") != "undefined"){ // modifica annotazioni del grafo
+            var index = $('#modalAnnotDoc').data("index");
+            var indexDoc = $('#modalAnnotDoc').data("indexDoc");
+            var annot = listaAnnotGrafo1537[indexDoc].annotazioni[index];
 
-    /* Verifica che sul grafo non ci sia già la tripla contenente le informzioni dell'utente */
-    var endpoint = "http://tweb2015.cs.unibo.it:8080/data/query";
-    var query = "ASK {?email a <http://xmlns.com/foaf/0.1/mbox> . ?email <http://schema.org/email> '"+sessionStorage.email+"' .}";
-    var encodedQuery = encodeURIComponent(query);
-    var queryUrl = endpoint+"?query="+encodedQuery+"&format=json";
-    $.ajax({
-        dataType: 'jsonp',
-        url: queryUrl,
-        success: function(data) {
-            /* Inserisce le info dell'utente sul nostro grafo se non è già presente */
-            if(!data.boolean){
-                //inserisciUtenteGrafo(sessionStorage.email, sessionStorage.nomecognome)
-                /*
-                <mailto:sessionStorage.email>  <http://schema.org/email>
-                  "+sessionStorage.email+" ;
-                    foaf:name                  "+sessionStorage.nomecognome+" .
-                */
+            if(typeof(annot['update']) == "undefined"){
+                annot['update'] = {};
+            }
+
+            annot['update']['autore'] = "<mailto:" + sessionStorage.email + ">";
+            annot['update']['data_mod'] = getDateTime();
+
+            if(tipo != typeToIta(annot.type.value)){
+                annot['update']['tipo'] = tipo;
+                annot['update']['label_tipo'] = tipo;
+            }
+
+            if(tipo == "Funzione retorica" || typeToIta(annot.type.value) == "Funzione retorica"){
+                var arr = annot[index].body_o.value.split("#");
+                var arrTemp = annot.body_o.value.split('#');
+                if(arr[arr.length-1] != arrTemp[arrTemp.length-1]){
+                    annot['update']['oggetto'] = testo;
+                }
+            } else {
+                if(testo != annot.body_o.value){
+                    annot['update']['oggetto'] = testo;
+                }
+            }
+
+
+
+
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['path'] = "html_div_p";
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['start_fragm'] = "55";
+//            listaAnnotGrafo1537[i].annotazioni[index]['update']['end_fragm'] = "66";
+            //console.log(listaAnnotGrafo1537[i].annotazioni[index]);
+
+        }
+    } else { // inserimento
+        var soggetto = '';
+        if($('#modalAnnotDoc').data("id") != undefined){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
+            soggetto = 'jettka.html_ver1_cited[n]' //TODO passargli il soggetto
+        }
+
+        //Costruisce annotazione locale
+        var singolaAnnotazione = {};
+        singolaAnnotazione['id'] = Math.random();
+        singolaAnnotazione['tipo'] = tipo;
+        singolaAnnotazione['data'] = getDateTime();
+    //    singolaAnnotazione['target'] = 'target'; //documento o frammento
+        singolaAnnotazione['selezione'] = selection.toString();
+        singolaAnnotazione['oggetto'] = testo;
+        singolaAnnotazione['soggetto'] = soggetto; //TODO metto sempre il soggetto senza il source !? (sono la stessa cosa)
+        singolaAnnotazione['source'] = $('.active a').attr('id');
+        singolaAnnotazione['idFrammento'] = idFrammento;
+        singolaAnnotazione['start'] = startOffset;
+        singolaAnnotazione['end'] = endOffset;
+        singolaAnnotazione['autore'] = sessionStorage.email;
+
+        /* Verifica che non ci sia gia l'entry per il documento */
+        var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
+        if(annotazioniSessione.length == 0){
+            //l'oggetto è vuoto -> inserisco l'annotazione
+            var annotazioniDoc = {};
+            annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
+            annotazioniDoc['annotazioni'] = [];
+            annotazioniDoc['annotazioni'].push(singolaAnnotazione);
+            annotazioniSessione.push(annotazioniDoc);
+        }else{
+            for(i = 0; i<annotazioniSessione.length; i++){
+                //alert("doc: "+annotazioniSessione[i].doc)
+                if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
+                    //trovato e aggiungi qui
+                    //alert("trovato")
+                    annotazioniSessione[i].annotazioni.push(singolaAnnotazione)
+                    break;
+                }else{
+                    //crea nuovo
+                    //alert("non trovato")
+                    annotazioniDoc = {};
+                    annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
+                    annotazioniDoc['annotazioni'] = [];
+                    annotazioniDoc['annotazioni'].push(singolaAnnotazione);
+                    annotazioniSessione.push(annotazioniDoc);
+                    break;
+                }
             }
         }
-    });
-    /* Verifica che non ci sia gia l'entry per il documento */
-    var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-    if(annotazioniSessione.length == 0){
-        //l'oggetto è vuoto -> inserisco l'annotazione
-        var annotazioniDoc = {};
-        annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
-        annotazioniDoc['annotazioni'] = [];
-        annotazioniDoc['annotazioni'].push(singolaAnnotazione);
-        annotazioniSessione.push(annotazioniDoc);
-    }else{
-        for(i = 0; i<annotazioniSessione.length; i++){
-            //alert("doc: "+annotazioniSessione[i].doc)
-            if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
-                //trovato e aggiungi qui
-                //alert("trovato")
-                annotazioniSessione[i].annotazioni.push(singolaAnnotazione)
-                break;
-            }else{
-                //crea nuovo
-                //alert("non trovato")
-                annotazioniDoc = {};
-                annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
-                annotazioniDoc['annotazioni'] = [];
-                annotazioniDoc['annotazioni'].push(singolaAnnotazione);
-                annotazioniSessione.push(annotazioniDoc);
-                break;
-            }
-        }
+
+
+        sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
     }
-
-
-    sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-
     $('#modalAnnotDoc').modal('hide');
     $('#modalGestAnnotazioni').modal('hide');
 
 });
 
-//function inserisciUtenteGrafo(nome, mail){
-//    $.ajax({
-//        url:
-//    });
-//}
-/* Rimuove annotazioni inserite e non ancora salvate */
+/* Rimuove annotazioni inserite e non ancora salvate */ //TODO PER ANNOTAZIONI PRESENTI
 function eliminaAnnotazioneLocale(id){
     $('#modalConfermaEliminazione h4').html("Sei sicuro di voler eliminare l'annotazione ?");
     $('#modalConfermaEliminazione').data('tipo', 0); //annot
     $('#modalConfermaEliminazione').data('id', id).modal('show');
 
 }
-function eliminaAnnotazione(id){
+function eliminaAnnotazione(id){ // TODO PER ANNOTAZIONI PRESENTI
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
     for(i = 0; i<annotazioniSessione.length; i++){
         if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
@@ -268,7 +290,7 @@ function eliminaAnnotazione(id){
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
 }
 
-function modificaAnnotazioneLocale(id){
+function modificaAnnotazioneLocale(id){ //TODO
     $('textarea#frammento').css("display", "none");
     $('div#modificaSelezione').css("display", "none");
     $('div#modificaSelezione button').remove();
@@ -373,12 +395,13 @@ function modificaSelezione(id){
     $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' data-toggle='modal' onclick='aggiornaAnnotazione("+id+")'>Conferma nuova selezione</button>")
 }
 
-function aggiornaAnnotazione(id){
+function aggiornaAnnotazione(id){ // bottone che sta fermo
     obj = verificaFrammento();
     if(!obj){
         $('#alertMessage').text("Nessun frammento selezionato.");
         $('#alertDoc').modal('show');
     }else{
+
         annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
         for(i = 0; i<annotazioniSessione.length; i++){
             if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
@@ -446,6 +469,57 @@ function annotaCitazione(idCit){
     $("#modalAnnotDoc #funzione").remove();
     sessionStorage.citazioniSessione = JSON.stringify(citazioniSessione);
     $("#modalAnnotDoc").data("id", idCit).modal("show");
+    $('button#bottonemodFramm').css("display", "none");
+}
+
+// modifica annotazione presente nel grafo
+function modificaAnnot(element){
+    var index = $(element).closest('td').parent()[0].rowIndex-1;
+
+    $('textarea#selezione').css("display", "none");
+    $('button#bottonemodFramm').css("display", "none");
+
+    var indexDoc = 0;
+    for(i = 0; i < listaAnnotGrafo1537.length; i++){
+        if(listaAnnotGrafo1537[i].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+            indexDoc = i;
+        }
+    }
+
+    $('#modalAnnotDoc').data('azione', 'modifica');
+    $('#modalAnnotDoc').data('index', index);
+    $('#modalAnnotDoc').data('indexDoc', indexDoc);
+    $('#modalAnnotDoc').modal('show');
+
+    // controllo il tipo dell'annotazione, in base a quello seleziono l'opzione di quel tipo
+    var tipo = typeToIta(listaAnnotGrafo1537[indexDoc].annotazioni[index].type.value);
+    $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
+
+    // se l'annotazione è stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
+    if(listaAnnotGrafo1537[indexDoc].annotazioni[index].fs_value.value != "document"){
+        $('textarea#selezione').css("display", "block");
+        $('button#bottonemodFramm').css("display", "block");
+        $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
+        $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
+    }
+    else {
+        $('textarea#selezione').css("display", "none");
+        $('button#bottonemodFramm').css("display", "none");
+        $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',true);
+        $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
+    }
+
+    // in base al tipo mostro l'oggetto dell'annotazione nell'apposito contenitore
+    if(tipo == "Funzione retorica"){
+        var arr = listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value.split("#");
+        $('select[id="funcRet"]').find('option:contains("'+arr[arr.length-1]+'")').attr("selected",true);
+    } else if (tipo == "Anno pubblicazione"){
+        $('select[id="anno"]').find('option:contains("'+listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value+'")').attr("selected",true);
+    } else if(tipo == "Commento" || tipo == "Titolo"){
+        $('div.form-group textarea').text(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
+    } else {
+        $('div.form-group input').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
+    }
 }
 
 
@@ -514,6 +588,7 @@ $(document).ready(function(){
         //invia listaNuoveAnnotazioni + listaNuoveCitazioni
 
     });
+
     /* Modifica annotazioni localmente */
     $("#salvaModifica").click(function(){
         annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);

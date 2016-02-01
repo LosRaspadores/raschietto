@@ -32,6 +32,7 @@ $(document).ready(function() {
             sessionStorage.removeItem("email");
             sessionStorage.removeItem("annotazioniSessione");
             sessionStorage.removeItem("citazioniSessione");
+            sessionStorage.removeItem("annotModificSessione");
         }
     });
 
@@ -58,6 +59,7 @@ $(document).ready(function() {
         var email = $("#email").val();
         var annotazioniSessione = [];
         var citazioniSessione = [];
+        var annotModificSessione = [];
         if(nomecognome==""){
             $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
             $("#nomecognome").val("");
@@ -84,6 +86,7 @@ $(document).ready(function() {
             sessionStorage.email = email;
             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
             sessionStorage.citazioniSessione = JSON.stringify(citazioniSessione);
+            sessionStorage.annotModificSessione = JSON.stringify(annotModificSessione);
             $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
             annotatorMode();
         };
