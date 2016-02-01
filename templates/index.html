@@ -47,7 +47,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="http://vitali.web.cs.unibo.it/TechWeb15/ProgettoDelCorso" title="Info sul progetto Raschietto"><span class="glyphicon glyphicon-info-sign"></span> Info progetto</a></li>
-                        <li><a href="#home" title="Ti serve aiuto?"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
+                        <li><a id="toHomeTab" title="Ti serve aiuto?"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
                     </ul>
                 </div>
             </div>
@@ -90,7 +90,7 @@
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
                         <li>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
-                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" data-toggle="modal" data-target="#modalAnnotDoc"><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" onclick="verificaTab()"><span class="glyphicon glyphicon-pencil"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonGest" data-tooltip="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create" data-toggle="modal" data-target="#modalGestAnnotazioni"><span class="glyphicon glyphicon-floppy-disk"></span></button>
                         </li>
@@ -157,9 +157,9 @@
 
                         <div class="panel panel-default" id="panelAnnot" >
                             <div class="panel-heading">
-                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#listaAnnotazioni">Annotazioni sul documento</a></h4>
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#panelListaAnnotazioni">Annotazioni<span class="badge" id="numAnn">0</span></a></h4>
                             </div>
-                            <div id="#listaAnnotazioni" class="panel-collapse collapse">
+                            <div id="#panelListaAnnotazioni" class="panel-collapse collapse">
                                 <div class="panel-body">
 
                                 </div>
@@ -171,14 +171,12 @@
 
                 <div class="col-sm-9" id="tabs">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#home" id="homeTab"><b>Home</b></a></li>
+                        <li class="active"><a data-toggle="tab" id="homeTab"><b>Home</b></a></li>
                     </ul>
 
                     <div class="tab-content" >
                         <div class="tab-pane fade in active" id="home">
-                            <div>
-                                <div id="listaDocumenti"></div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -221,7 +219,7 @@
         <!-- Modal annotazioni -->
         <div class="modal fade" id="modalAnnotazioni" role="dialog">
             <div class="modal-dialog modal-lg">
-                 <div class="modal-content">
+                <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h3 class="text-center" id="numeroAnnotazioni"></h3>
@@ -234,24 +232,54 @@
                  </div>
             </div>
         </div>
-
-
-        <div class="modal fade" id="modalAnnotazioneSingola" role="dialog">
-            <div class="modal-dialog modal-lg">
+        <!--Modal di scelta del tipo di annotazione (documento - frammento)-->
+        <div class="modal fade" id="modalTipoAnnotazione" role="dialog">
+            <div class="modal-dialog modal-md">
                  <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="text-center">Annotazioni</h3>
+                        <h3 class="text-center">Nessun frammento selezionato</h3>
                     </div>
-                    <div class="modal-body col-md-12">
-                        <div id="infoAnnotazione"></div>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
+                        <div class="modal-body">
+                            <div>
+                                <label id="didascaliaModal">Prosegui per inserire un'annotazione sul documento, altrimenti seleziona un frammento di testo da annotare.</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="chiudi" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="prosegui" type="button" class="btn btn-success" data-toggle="modal" data-target="#modalAnnotDoc" data-dismiss="modal">Prosegui</button>
+                        </div>
                  </div>
             </div>
         </div>
+        <div class="modal fade" id="modalAnnotazioneSingola" role="dialog">
+            <div class="modal-dialog modal-lg">
+                 <div class="modal-content">
+                     <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                         <h3 class="text-center">Lista annotazioni</h3>
+                     </div>
+                     <div class="modal-body col-md-12">
+                         <h4 class="text-center">Annotazioni</h4>
+                         <table class="tableAnnot">
+                             <thead>
+                                 <tr>
+                                     <th>Tipo</th>
+                                     <th>Data</th>
+                                     <th>Oggetto</th>
+                                     <th>Autore</th>
+                                 </tr>
+                             </thead>
+                             <tbody id="infoAnnotazione">
 
+                             </tbody>
+                         </table>
+                     </div>
+                     <div class="modal-footer">
+                     </div>
+                 </div>
+            </div>
+        </div>
         <!-- Modal gestione e cancellazione annotazioni-->
         <div class="modal fade" id="modalGestAnnotazioni" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -261,41 +289,41 @@
                         <h3 class="text-center">Gestisci le annotazioni</h3>
                     </div>
                     <div class="modal-body col-md-12">
-                        <div id="annotazioniInserite">
-                            <h4 class="text-center">Annotazioni inserite</h4>
-                            <table class="tableAnnot">
-                                <thead>
-                                    <tr>
-                                        <th>Colore</th>
-                                        <th>Tipo</th>
-                                        <th>Data</th>
-                                        <th>Target</th>
-                                        <th>Oggetto</th>
-                                        <th>Operazioni</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <div id="annotazioniInserite" class="table-responsive">
+                                <h4 class="text-center">Annotazioni inserite</h4>
+                                <table class="tableAnnot table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>Colore</th>-->
+                                            <th>Tipo</th>
+                                            <th>Data</th>
+                                            <!--<th>Target</th>-->
+                                            <th>Oggetto</th>
+                                            <th>Operazioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tbody>
-                            </table>
-                        </div>
-                        <div id="annotazioniPresenti">
-                            <h4 class="text-center">Annotazioni presenti</h4>
-                            <table class="tableAnnot">
-                                <thead>
-                                    <tr>
-                                        <th>Colore</th>
-                                        <th>Tipo</th>
-                                        <th>Target</th>
-                                        <th>Oggetto</th>
-                                        <th>Operazioni</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="annotazioniPresenti">
+                                <h4 class="text-center">Annotazioni presenti</h4>
+                                <table class="tableAnnot table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <!--<th>Colore</th>-->
+                                            <th>Tipo</th>
+                                            <th>Target</th>
+                                            <th>Oggetto</th>
+                                            <th>Operazioni</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                </tbody>
-                            </table>
-                        </div>
+                                    </tbody>
+                                </table>
+                            </div>
                     </div>
                     <div class="modal-footer">
                         <button id="annullaGest" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
@@ -305,17 +333,104 @@
             </div>
         </div>
 
+        <!-- Modal conferma elimina annotazione -->
+        <div class="modal fade" id="modalConfermaEliminazione" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                         <h3 class="modal-title" id="modalLabel">Conferma eliminazione</h3>
+                    </div>
+                    <div class="modal-body">
+                         <h4></h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" id="eliminaAnnotazione">Elimina</button>
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Annulla</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal modifica annotazioni non ancora salvate -->
+        <div class="modal fade" id="modalModificaAnnot" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="text-center">Modifica annotazione</h3>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+                            <textarea class="form-control" rows="3" id="frammento" readonly></textarea>
+                            <div id="modificaSelezione"></div>
+                            <div class="form-group">
+                                <label for="selectTipoAnnot">Tipo annotazione: <span id="tipo"></span></label>
+                            </div>
+                            <div class='modificaAnn' id="modAutore">
+                                <label for='autoreMod'>Inserisci il nome dell'autore</label>
+                                <input type='text' class='form-control' id='autoreMod'>
+                            </div>
+                            <div class='modificaAnn' id="modAnno">
+                                <label for="annoMod">Seleziona l'anno di pubblicazione</label>
+                                        <select class="form-control" id="annoMod">
+                                            <option value=" "></option>
+                                        </select>
+                            </div>
+                            <div class='modificaAnn' id="modDoi">
+                                <label for='doiMod'>Inserisci un DOI</label>
+                                <input type='text' class='form-control' id='doiMod'>
+                            </div>
+                            <div class='modificaAnn' id="modTitolo">
+                                <label for='titoloMod'>Inserisci il titolo del documento</label>
+                                <textarea class='form-control' id='titoloMod' rows='2'></textarea>
+                            </div>
+                            <div class='modificaAnn' id="modUrl">
+                                <label for='urlMod'>Inserisci un URL associato al documento</label>
+                                <input type='text' class='form-control' id='urlMod'>
+                            </div>
+                            <div class='modificaAnn' id="modCommento">
+                                <label for='commMod'>Inserisci un commento</label>
+                                <textarea class='form-control' id='commMod' rows='2'></textarea>
+                            </div>
+                            <div class='modificaAnn' id="modFunzioneRetorica">
+                                <label for='funcRet'>Scegli una funzione retorica</label>
+                                <select class='form-control' id='funcRetMod'>
+                                    <option value=''></option>
+                                    <option value='abstract'>Abstract</option>
+                                    <option value='introduction'>Introduction</option>
+                                    <option value='materials'>Materials</option>
+                                    <option value='methods'>Methods</option>
+                                    <option value='results'>Results</option>
+                                    <option value='discussion'>Discussion</option>
+                                    <option value='conclusion'>Conclusion</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="oggettoAnnotazione">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="annullaModifica" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                            <button id="salvaModifica" type="button" class="btn btn-success">Salva</button>
+                        </div>
+                    </form>
+                 </div>
+                </div>
+        </div>
+        <!-- -->
+
         <!--Modal creazione annotazioni sul documento-->
         <div class="modal fade" id="modalAnnotDoc" role="dialog">
             <div class="modal-dialog modal-md">
                  <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="text-center">Inserisci annotazione sul documento</h3>
+                        <h3 class="text-center">Inserisci annotazione</h3>
                     </div>
-                    <form>
+                    <form id="formAnnotazione">
                         <div class="modal-body">
-
+                            <textarea class="form-control" rows="3" id="selezione" readonly></textarea>
                                 <div class="form-group" id="divInsert">
                                     <label for="selectTipoAnnot">Seleziona il tipo di annotazione</label>
                                     <div>
@@ -323,63 +438,53 @@
                                             <option value=""></option>
                                             <option value="autore">Autore</option>
                                             <option value="anno">Anno pubblicazione</option>
-                                            <!--<option value="citazione">Citazione</option>-->
-                                            <option value="commento">Commento</option>
                                             <option value="doi">DOI</option>
-                                            <option value="funzione">Funzione retorica</option>
                                             <option value="titolo">Titolo</option>
                                             <option value="url">URL</option>
+                                            <!--<option value="commento" id="commento">Commento</option>-->
+                                            <!--<option value="funzione" id="funzione">Funzione retorica</option>-->
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group" id="insertAutore">
                                     <label for="autore">Inserisci il nome dell'autore</label>
-
                                         <input type="text" class="form-control" placeholder="" id="autore">
-
                                 </div>
-
                                 <div class="form-group" id="insertAnnoPub">
                                     <label for="anno">Seleziona l'anno di pubblicazione</label>
                                             <select class="form-control" id="anno">
                                                 <option value=" "></option>
                                             </select>
                                 </div>
-
                                 <div class="form-group" id="insertTitolo">
                                     <label for="titolo">Inserisci il titolo del documento</label>
                                         <textarea class="form-control" placeholder="" id="titolo" rows="2"></textarea>
-
                                 </div>
-
                                 <div class="form-group" id="insertURL">
                                     <label for="url">Inserisci un URL associato al documento</label>
                                         <input type="text" class="form-control" placeholder="" id="url">
                                 </div>
-
                                 <div class="form-group" id="insertDOI">
                                     <label for="doi">Inserisci un DOI</label>
                                         <input type="text" class="form-control" placeholder="" id="doi">
                                 </div>
-                                <div class="form-group" id="insertComm">
-                                    <label for="comm">Inserisci un commento</label>
-                                        <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
-                                </div>
-
-                                <div class="form-group" id="insertfunzRet">
-                                    <label for="funcRet">Scegli una funzione retorica</label>
-                                        <select class="form-control" id="funcRet">
-                                            <option value=""></option>
-                                            <option value="abstract">Abstract</option>
-                                            <option value="introduction">Introduction</option>
-                                            <option value="materials">Materials</option>
-                                            <option value="methods">Methods</option>
-                                            <option value="results">Results</option>
-                                            <option value="discussion">Discussion</option>
-                                            <option value="conclusion">Conclusion</option>
-                                        </select>
-                                </div>
-
+                            <div class="form-group" id="insertComm">
+                                <label for="comm">Inserisci un commento</label>
+                                    <textarea class="form-control" placeholder="" id="comm" rows="2"></textarea>
+                            </div>
+                            <div class="form-group" id="insertfunzRet">
+                                <label for="funcRet">Scegli una funzione retorica</label>
+                                    <select class="form-control" id="funcRet">
+                                        <option value=""></option>
+                                        <option value="abstract">Abstract</option>
+                                        <option value="introduction">Introduction</option>
+                                        <option value="materials">Materials</option>
+                                        <option value="methods">Methods</option>
+                                        <option value="results">Results</option>
+                                        <option value="discussion">Discussion</option>
+                                        <option value="conclusion">Conclusion</option>
+                                    </select>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsert" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
@@ -403,7 +508,7 @@
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
-                            <button id="salvaInsertCit" type="button" class="btn btn-success">Salva</button>
+                            <button id="salvaInsertCit" type="button" class="btn btn-success" disabled="disabled">Salva</button>
                         </div>
                     </form>
                  </div>
@@ -421,19 +526,27 @@
             </div>
         </div>
 
+        <div class="modal" id="loading">
+        </div>
+
         <!-- riferimenti javascript -->
         <script type="text/javascript" charset="utf-8" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-classapplier.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-highlighter.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-selectionsaverestore.js"></script>
+        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
+        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
 
-        <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/readFunctions.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/utils.js"></script>
-        <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/filtriTipiAnnotazioni.js"></script>
-        
+        <script type="text/javascript" charset="utf-8" src="/static/js/gestioneAnnotazioni.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/salvaAnnotazioni.js"></script>
 
     </body>
 </html>

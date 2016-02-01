@@ -1,10 +1,8 @@
-$( document ).ready(function() {
+$(document).ready(function() {
 
     localStorage.clear();
 
     listaGruppiCompleta = [];
-
-
 
     //documenti
     $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
@@ -22,6 +20,9 @@ $( document ).ready(function() {
     //inizializzazione elementi layout
     $('[data-tooltip="tooltip"]').tooltip();
     $('[data-toggle="tooltip"]').tooltip();
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
     $("#uriNuovoDoc").val("");
 
     $('#bottoniAnnotator').hide();
@@ -34,6 +35,18 @@ $( document ).ready(function() {
     $('#insertfunzRet').css('display', 'none');
     $('#salvaInsert').attr('disabled', 'disabled');
 
+    $("#home").load("/static/homeText.txt");
+
+    $("#toHomeTab").click(function(){
+        $('#homeTab').trigger("click");
+    });
+
+    $('#homeTab').click(function(){
+        $('#homeTab').addClass("active");
+        $(".in.active").removeClass("in active");
+        $("#home").load("/static/homeText.txt");
+        $("#home").addClass("in active");
+    });
 
     // seconda nav fissa dopo lo scrolling della pagina
     var stickyNavTop = $('#secondnav').offset().top;
@@ -73,6 +86,7 @@ $( document ).ready(function() {
     var year = new Date().getFullYear();
     for(i = year; i >=  1800; i--){
         $('select#anno').append('<option value="'+i+'">'+i+'</option>');
+        $('select#annoMod').append('<option value="'+i+'">'+i+'</option>');
     }
 
     $('ul#bottoniAnnotator button').click(function(e){
@@ -88,6 +102,7 @@ $( document ).ready(function() {
         var annot = $(this).val();
         switch (annot) {
             case "autore":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -95,9 +110,9 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "anno":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'block');
                 $('#insertTitolo').css('display', 'none');
@@ -105,9 +120,9 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "titolo":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'block');
@@ -115,9 +130,9 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "url":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -125,9 +140,9 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "doi":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -135,9 +150,9 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'block');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "commento":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -145,19 +160,19 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'block');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "funzione":
-                $('#insertAutore').css('display', 'none');
+                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#insertComm').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
-                $('#insertComm').css('display', 'none');
+                $('#insertAutore').css('display', 'none');
                 $('#insertfunzRet').css('display', 'block');
-                $('#salvaInsert').removeAttr('disabled', 'disabled');
                 break;
             case "":
+                $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -165,46 +180,9 @@ $( document ).ready(function() {
                 $('#insertDOI').css('display', 'none');
                 $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
-                $('#salvaInsert').attr('disabled', 'disabled');
                 break;
         }
    });
-
-   function citazioniWidget(lista_cit){
-        var cit = '';
-        $('#modalAnnotCit div.modal-body').html('<form><div class="form-group" id="insertCit"><label for="selectCit">Scegli un riferimento bibliografico</label>'
-                                   + '<select class="form-control" id="selectCit"><option value=""></option></select></div></form>');
-        for(i = 0; i < lista_cit.length; i++){
-            if(lista_cit[i].cit.length > 50){
-            cit = lista_cit[i].cit.substring(0, 50)+'...';
-            } else {
-            cit = lista_cit[i].cit;
-            }
-            $('#selectCit').append('<option value="">'+cit+'</option>');
-        }
-   };
-
-    function getCitazioni(urlDoc){
-        //var urlDoc = 'http://www.dlib.org/dlib/november14/brook/11brook.html';
-        $.ajax({
-            url: '/scrapingCitazioni',
-            type: 'GET',
-            data: {url: urlDoc},
-            success: function(result) {
-                lista_cit = JSON.parse(result);
-                if(lista_cit.length > 0){
-                    citazioniWidget(lista_cit)
-                } else {
-                    $('#alertMessage').text("Nessuna citazione presente nel documento selezionato.");
-                    $('#alertDoc').modal('show');
-                }
-            },
-            error: function(error) {
-                $('#alertMessage').text(error);
-                $('#alertDoc').modal('show');
-            }
-        });
-    }
 
     $('#buttonCit').click(function(){
         var id = $("ul.nav.nav-tabs li.active a").attr("id");
@@ -213,9 +191,11 @@ $( document ).ready(function() {
         }
     });
 
+    /* Riempie modale di gestione delle annotazioni */
     $('#buttonGest').click(function(){
         var id = $("ul.nav.nav-tabs li.active a").attr("id");
         if(id != 'homeTab'){
+            //mostra annotazioni sul nostro grafo
             annot_gest = annotDaGestire(id, 'http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537');
             $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').html("");
             for(i = 0; i < annot_gest.length; i++){
@@ -225,51 +205,143 @@ $( document ).ready(function() {
                     classCSS = getClassNameLabel(annot_gest[i].label.value);
                 }
                 col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>'; //<td>'+ parseDatetime(annot_gest[i].date.value)+'</td>
+                tr = '<tr><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit"></span><span class="glyphicon glyphicon-trash"></span></td></tr>';
                 tr = '<tr><td>'+col+'</td><td>'+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><button onclick="modificaAnnot(this)"><span class="glyphicon glyphicon-edit"></span></button><span class="glyphicon glyphicon-trash"></span></td></tr>';
 
                 $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').append(tr);
             }
+
+            //mostra annotazioni non ancora salvate nella variabile 'annotazioniSessione' per quel documento !!
+            $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').html("");
+            var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
+            for(i = 0; i<annotazioniSessione.length; i++){
+                if(annotazioniSessione[i].doc == id){
+                    for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
+                        tipo = annotazioniSessione[i].annotazioni[j].tipo;
+                        data = annotazioniSessione[i].annotazioni[j].data.replace("T", " ");
+//                        target = annotazioniSessione[i].annotazioni[j].target;
+                        selezione = annotazioniSessione[i].annotazioni[j].selezione;
+                        oggetto = annotazioniSessione[i].annotazioni[j].oggetto;
+
+                        idAnn = annotazioniSessione[i].annotazioni[j].id;
+                        classCSS = getClassNameLabel(tipo);
+                        col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
+                        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
+
+                        $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
+                    }
+                }
+            }
+            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
         }
+
+            //Visualizza citazioni inserite
+            var citazioniSessione = JSON.parse(sessionStorage.citazioniSessione);
+            for(i = 0; i<citazioniSessione.length; i++){
+                if(citazioniSessione[i].doc == id){
+                    for(j = 0; j<citazioniSessione[i].citazioni.length; j++){
+                        tipo = citazioniSessione[i].citazioni[j].tipo;
+                        data = citazioniSessione[i].citazioni[j].data.replace("T", " ");
+//                        target = '';
+                        citazione = citazioniSessione[i].citazioni[j].citazione;
+
+                        idCit = citazioniSessione[i].citazioni[j].id;
+                        classCSS = getClassNameLabel(tipo);
+                        col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
+                        tr = '<tr data-id="'+idCit+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+data+'</td><td>'+citazione+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaCitazioneLocale('+idCit+')" data-toggle="tooltip" title="Modifica citazione"></span><span onclick="eliminaCitazioneLocale('+idCit+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina citazione"></span><span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Annota citazione" onclick="annotaCitazione('+idCit+')"></span></td></tr>';
+
+                        $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
+                    }
+                }
+            }
+            sessionStorage.citazioniSessione = JSON.stringify(citazioniSessione);
+
     });
 
 
     /* Chiamata ajax per ottenere il documento selezionato */
     $(document).on("click", "#lista_doc a.list-group-item", function(){
         var urlDoc = $(this).attr('value');
-
         if(isOpen(urlDoc)){
             $("ul.nav.nav-tabs a[id='" + urlDoc + "']").tab("show");
         }else{
             var numTabs = $("ul.nav.nav-tabs").children().length;
-            if(numTabs <= 4){
-                var title = $(this).text()
-                $(this).addClass("active").siblings().removeClass("active");
-                $.ajax({
-                    url: '/scrapingSingoloDocumento',
-                    type: 'GET',
-                    data: {url: urlDoc},
-                    success: function(result) {
-                        addTab(result, urlDoc, title);
-                        query = query_all_annotazioni(urlDoc);
-                        get_annotazioni(query, urlDoc);
-                        filtriAttivi();
-                    },
-                    error: function(error) {
-                        $('#alertMessage').text("Errore nel caricamento del documento.");
-                        $('#alertDoc').modal('show');
-                    }
-                });
+            var mq = window.matchMedia("(min-width: 700px)");
+            if(mq.matches){
+                if(numTabs <= 4){
+                    var title = $(this).text()
+                    $(this).addClass("active").siblings().removeClass("active");
+                    $.ajax({
+                        url: '/scrapingSingoloDocumento',
+                        type: 'GET',
+                        data: {url: urlDoc},
+                        success: function(result) {
+                            addTab(result, urlDoc, title);
+                            query = query_all_annotazioni(urlDoc);
+                            get_annotazioni(query, urlDoc);
+                            filtriAttivi();
+                        },
+                        error: function(error) {
+                            $('#alertMessage').text("Errore nel caricamento del documento.");
+                            $('#alertDoc').modal('show');
+                        }
+                    });
+                }else{
+                    $('#alertMessage').text("Puoi aprire 4 documenti contemporaneamente.");
+                    $('#alertDoc').modal('show');
+                }
             }else{
-                $('#alertMessage').text("Puoi aprire 4 documenti contemporaneamente.");
-                $('#alertDoc').modal('show');
+                if(numTabs <= 1){
+                    var title = $(this).text()
+                    $(this).addClass("active").siblings().removeClass("active");
+                    $.ajax({
+                        url: '/scrapingSingoloDocumento',
+                        type: 'GET',
+                        data: {url: urlDoc},
+                        success: function(result) {
+                            addTab(result, urlDoc, title);
+                            query = query_all_annotazioni(urlDoc);
+                            get_annotazioni(query, urlDoc);
+                            filtriAttivi();
+                        },
+                        error: function(error) {
+                            $('#alertMessage').text("Errore nel caricamento del documento.");
+                            $('#alertDoc').modal('show');
+                        }
+                    });
+                }else{
+                    $('#alertMessage').text("Ingrandisci la pagina per aprire piu' documenti.");
+                    $('#alertDoc').modal('show');
+                }
             }
         }
-
     });
-    
-    function lanciaScraper() {
-        alert("ciao");
-        var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
+
+    function lanciaScraper(urlDoc) {
+    alert("ciaooooo11111");
+
+   // for (i = 0; i < anns["results"]["bindings"].length; i++) {
+    //    ann = anns["results"]["bindings"][i];
+        //ann_out = displaySingolaAnnotazione(ann);
+        //if(ann_out !== ""){
+        //    out += ann_out;
+        //    numeroAnnotazioni += 1;
+       // }
+   // }
+    //alert('sono io:::'+out);
+
+
+     //   ann_out = displaySingolaAnnotazione(ann);
+//        if(ann_out !== ""){
+//            out += ann_out;
+//            numeroAnnotazioni += 1;
+//    alert("ann_out="+ann_out);
+
+//        tipo_ann = gestioneTipoType(ann["type"]["value"]);
+//        alert("tipo_ann"+tipo_ann);
+//        ret = gestioneRetoriche(ann["body_o"]["value"]);
+//        alert("ret"+ret);
+        //var urlDoc = "http://almatourism.unibo.it/article/view/5290?acceptCookies=1";
         $.ajax({
             url: '/scrapingAutomatico',
             type: 'GET',
@@ -287,7 +359,10 @@ $( document ).ready(function() {
 
     $('#buttonScraper').click(function(){
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lanciaScraper(href);
+        alert("ciao"+href);
+        query = query_all_annotazioni(href);
+        get_annotazioni(query, href);
+
     });
 
     //quando viene premuto il bottone per caricare un nuovo url
@@ -311,8 +386,24 @@ $( document ).ready(function() {
                             filtriAttivi();
                         },
                         error: function(error) {
-                            $('#alertMessage').text("L'URI inserito non è valido.");
+                            $('#alertMessage').text("Impossibile aprire il documento cercato.");
                             $('#alertDoc').modal('show');
+                        }
+                    });
+                    $.ajax({
+                        url: '/checkDocumentoInCache',
+                        type: 'GET',
+                        data: {url: urlNuovoDoc},
+                        success: function(result) {
+                            obj = JSON.parse(result);
+                            console.log(obj[0].url + " " + obj[0].titolo);
+                            if(obj[0].url != "no"){
+                                $('#numDoc').html(parseInt($('#numDoc').html()) + 1);
+                                $('div#lista_doc').append('<a class="list-group-item" value="' + obj[0].url + '">' + obj[0].titolo + '</a><br>');
+                            }
+                        },
+                        error: function(error) {
+                            console.log("error");
                         }
                     });
                 }else{
@@ -388,8 +479,10 @@ function closeTab(element){
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         console.log(listaAllAnnotazioni[j].url);
     }
+    if($(".in .active").length==0){
+        $('#homeTab').trigger("click");
+    };
 }
-
 
 function mostraAnnotGruppo(element){
     $(element).addClass("active").siblings().removeClass("active");
@@ -422,3 +515,38 @@ function modificaAnnot(element){
         }
     }
 }
+
+function citazioniWidget(lista_cit){
+        var cit = '';
+        $('#modalAnnotCit div.modal-body').html('<form><div class="form-group" id="insertCit"><label for="selectCit">Scegli un riferimento bibliografico</label>'
+                                   + '<select class="form-control" id="selectCit"><option value=""></option></select></div></form>');
+        for(i = 0; i < lista_cit.length; i++){
+            if(lista_cit[i].cit.length > 50){
+            cit = lista_cit[i].cit.substring(0, 50)+'...';
+            } else {
+            cit = lista_cit[i].cit;
+            }
+            $('#selectCit').append('<option value="">'+cit+'</option>');
+        }
+   }
+function getCitazioni(urlDoc){
+        //var urlDoc = 'http://www.dlib.org/dlib/november14/brook/11brook.html';
+        $.ajax({
+            url: '/scrapingCitazioni',
+            type: 'GET',
+            data: {url: urlDoc},
+            success: function(result) {
+                lista_cit = JSON.parse(result);
+                if(lista_cit.length > 0){
+                    citazioniWidget(lista_cit)
+                } else {
+                    $('#alertMessage').text("Nessuna citazione presente nel documento selezionato.");
+                    $('#alertDoc').modal('show');
+                }
+            },
+            error: function(error) {
+                $('#alertMessage').text(error);
+                $('#alertDoc').modal('show');
+            }
+        });
+    }

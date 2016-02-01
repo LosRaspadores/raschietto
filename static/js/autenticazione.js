@@ -2,10 +2,10 @@ $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
 
     /*
-        Verifica della presenza di un utente già autenticato come annotator.
+        Verifica della presenza di un utente gi� autenticato come annotator.
         I dati dell'utente vengono salvati nella sessionStorage.
         I dati in sessionStorage vengono ripuliti ogniqualvolta la sessione della pagine termina.
-        La sessione della pagina dura fino a quando il browser è aperto e sopravvive alla ricarica della pagina e al
+        La sessione della pagina dura fino a quando il browser � aperto e sopravvive alla ricarica della pagina e al
         ripristino. L'apertuta di una nuova un un nuovo tab o nuova finestra implica l'apertura di una nuova sessione,
         il che differisce da come funzionano i cookie di sessione.
     */
@@ -15,10 +15,11 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text(sessionStorage.nomecognome + ", - " + sessionStorage.email);
+        $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
     }
 
     /* Passaggio da modalità reader a modalità annotator e viceversa */
+    /* quando cambia il valore della checkbox #modalitaToggle */
     $('#modalitaToggle').change(function() {
         if ($("#modalitaToggle").prop('checked')) {
             $('#modalAutenticazione').modal({backdrop: 'static', keyboard: false});  // before modal show line!
@@ -29,12 +30,14 @@ $(document).ready(function() {
             readerMode();
             sessionStorage.removeItem("nomecognome");
             sessionStorage.removeItem("email");
+            sessionStorage.removeItem("annotazioniSessione");
+            sessionStorage.removeItem("citazioniSessione");
         }
     });
 
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità annotator');
+        $("#modalitaToggleLabel").attr('title','Passa a modalità annotator');
         $('[data-toggle="tooltip"]').tooltip();
         $('#utenteAutenticato').text("");
         $('#bottoniAnnotator').hide();
@@ -42,7 +45,7 @@ $(document).ready(function() {
 
     function annotatorMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").prop('title','Passa a modalità reader');
+        $("#modalitaToggleLabel").attr('title','Passa a modalità reader');
         $('[data-toggle="tooltip"]').tooltip();
         $('#bottoniAnnotator').show();
     }
@@ -53,6 +56,8 @@ $(document).ready(function() {
         var regexEmail = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|it|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
+        var annotazioniSessione = [];
+        var citazioniSessione = [];
         if(nomecognome==""){
             $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
             $("#nomecognome").val("");
@@ -77,6 +82,8 @@ $(document).ready(function() {
             //I dati dell'utente vengono salvati nella sessionStorage
             sessionStorage.nomecognome = nomecognome;
             sessionStorage.email = email;
+            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
+            sessionStorage.citazioniSessione = JSON.stringify(citazioniSessione);
             $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
             annotatorMode();
         };
@@ -90,4 +97,9 @@ $(document).ready(function() {
         $('#modalitaToggle').prop('checked', false);
         readerMode();
     });
+
+    /*
+        prop() // attr()
+        con le checkboxes uso prop(), attr() potrebbe dare risultati indesiderati
+    */
 });
