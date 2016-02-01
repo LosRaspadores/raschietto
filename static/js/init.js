@@ -106,6 +106,7 @@ $(document).ready(function() {
         var annot = $(this).val();
         switch (annot) {
             case "autore":
+                $("#autore").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
@@ -116,6 +117,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "anno":
+                $('#anno').find(":selected").text("")
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'block');
@@ -126,6 +128,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "titolo":
+                $("#titolo").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -136,6 +139,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "url":
+                $("#url").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -146,6 +150,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "doi":
+                $("#doi").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -156,6 +161,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "commento":
+                $("#comm").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertComm').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
@@ -166,6 +172,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "funzione":
+                $("#funcRet").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertComm').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -228,8 +235,14 @@ $(document).ready(function() {
 
                         idAnn = annotazioniSessione[i].annotazioni[j].id;
                         classCSS = getClassNameLabel(tipo);
+                        var span = '';
+                        var alert = 'annotazione';
+                        if(tipo == 'Citazione'){
+                            span = '<span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Annota citazione" onclick="annotaCitazione('+idAnn+')">'
+                            alert = 'citazione';
+                        }
                         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
-                        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
+                        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica '+alert+'"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina '+alert+'"></span>'+span+'</td></tr>';
 
                         $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
                     }
@@ -237,28 +250,6 @@ $(document).ready(function() {
             }
             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
         }
-
-            //Visualizza citazioni inserite
-            var citazioniSessione = JSON.parse(sessionStorage.citazioniSessione);
-            for(i = 0; i<citazioniSessione.length; i++){
-                if(citazioniSessione[i].doc == id){
-                    for(j = 0; j<citazioniSessione[i].citazioni.length; j++){
-                        tipo = citazioniSessione[i].citazioni[j].tipo;
-                        data = citazioniSessione[i].citazioni[j].data.replace("T", " ");
-//                        target = '';
-                        citazione = citazioniSessione[i].citazioni[j].citazione;
-
-                        idCit = citazioniSessione[i].citazioni[j].id;
-                        classCSS = getClassNameLabel(tipo);
-                        col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
-                        tr = '<tr data-id="'+idCit+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+data+'</td><td>'+citazione+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaCitazioneLocale('+idCit+')" data-toggle="tooltip" title="Modifica citazione"></span><span onclick="eliminaCitazioneLocale('+idCit+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina citazione"></span><span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Annota citazione" onclick="annotaCitazione('+idCit+')"></span></td></tr>';
-
-                        $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
-                    }
-                }
-            }
-            sessionStorage.citazioniSessione = JSON.stringify(citazioniSessione);
-
     });
 
 

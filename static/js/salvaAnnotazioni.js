@@ -84,15 +84,15 @@ $(document).ready(function() {
                    ]
               };
         var query = creaQueryInsertAnnotazioni(annotazioni);
-        $.ajax({
-            url: "/salvaAnnotazioni",
-            data: {"query": query},
-            success: function(result) {
-                $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
-                $('#alertDoc').modal('show');
-                //TODO svuotare l'oggetto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            }
-        });
+//        $.ajax({
+//            url: "/salvaAnnotazioni",
+//            data: {"query": query},
+//            success: function(result) {
+//                $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
+//                $('#alertDoc').modal('show');
+//                //TODO svuotare l'oggetto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//            }
+//        });
    });
 
     //globale
