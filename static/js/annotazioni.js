@@ -295,6 +295,7 @@ function displaySingolaAnnotazione(str, ann){
         var tipo_ann = gestioneTipoType(ann["type"]["value"]);
         var classCSS = getClassNameType(ann["type"]["value"]);
         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
+        //var tipo_ann = typeToIta(ann["type"]["value"]);
         if(tipo_ann != ""){
             out += "<tr><td>" + col;
             if(str == "citazione"){
