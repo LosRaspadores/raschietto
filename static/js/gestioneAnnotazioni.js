@@ -1,3 +1,4 @@
+oggettoSelezionato = {};
 function verificaTab(){
     if($("ul.nav.nav-tabs li.active a").attr("id") != 'homeTab'){
         $('button#bottonemodFramm').css("display", "none");
@@ -207,6 +208,8 @@ $('#salvaInsert').on('click', function(){
 //            listaAnnotGrafo1537[i].annotazioni[index]['update']['end_fragm'] = "66";
             //console.log(listaAnnotGrafo1537[i].annotazioni[index]);
 
+        } else {
+            //eawsfdgh
         }
     } else { // inserimento
         var soggetto = '';
@@ -290,7 +293,7 @@ function eliminaAnnotazione(id){ // TODO PER ANNOTAZIONI PRESENTI
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
 }
 
-function modificaAnnotazioneLocale(id){ //TODO
+function modificaAnnotazioneLocale(id){
     $('textarea#frammento').css("display", "none");
     $('div#modificaSelezione').css("display", "none");
     $('div#modificaSelezione button').remove();
@@ -321,78 +324,13 @@ function modificaAnnotazioneLocale(id){ //TODO
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
 }
 
-function popolaModalModifica(tipo){
-    switch (tipo) {
-        case "Autore":
-            $("#modAutore").css("display", "block");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Anno pubblicazione":
-            $("#modAnno").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "DOI":
-            $("#modDoi").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Titolo":
-            $("#modTitolo").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "URL":
-            $("#modUrl").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Commento":
-            $("#modCommento").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Funzione retorica":
-            $("#modFunzioneRetorica").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            break;
-    }
-}
-
+// modifica selezione frammento
 function modificaSelezione(id){
     $('#modalGestAnnotazioni').modal('hide');
+    $('#modalAnnotDoc').modal('hide');
+
     var idTab = $("ul.nav.nav-tabs li.active a").attr("href").substr(1);
-    $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' data-toggle='modal' onclick='aggiornaAnnotazione("+id+")'>Conferma nuova selezione</button>")
+    $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' onclick='aggiornaAnnotazione("+id+")'>Conferma nuova selezione</button>")
 }
 
 function aggiornaAnnotazione(id){ // bottone che sta fermo
@@ -401,27 +339,11 @@ function aggiornaAnnotazione(id){ // bottone che sta fermo
         $('#alertMessage').text("Nessun frammento selezionato.");
         $('#alertDoc').modal('show');
     }else{
+        oggettoSelezionato = obj;
 
-        annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-        for(i = 0; i<annotazioniSessione.length; i++){
-            if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
-                for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
-                    if(annotazioniSessione[i].annotazioni[j].id == id){
-                        annotazioniSessione[i].annotazioni[j].selezione = obj.selezione;
-                        annotazioniSessione[i].annotazioni[j].source = obj.source;
-                        annotazioniSessione[i].annotazioni[j].idFrammento = obj.id;
-                        annotazioniSessione[i].annotazioni[j].start = obj.inizio;
-                        annotazioniSessione[i].annotazioni[j].end = obj.fine;
-
-                        $("modalModificaAnnot textarea").html(obj.selezione);
-                    }
-                }
-            }
-        }
-        sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-        modificaAnnotazioneLocale(id)
+        $("#modalAnnotDoc textarea").html(obj.selezione);
         $("#confermaModificaSelezione").remove();
-        $('#modalModificaAnnot').modal('show');
+        $('#modalAnnotDoc').modal('show');
 
     }
 }
@@ -489,7 +411,7 @@ function modificaAnnot(element){
     $('#modalAnnotDoc').data('azione', 'modifica');
     $('#modalAnnotDoc').data('index', index);
     $('#modalAnnotDoc').data('indexDoc', indexDoc);
-    $('#modalAnnotDoc').modal('show');
+
 
     // controllo il tipo dell'annotazione, in base a quello seleziono l'opzione di quel tipo
     var tipo = typeToIta(listaAnnotGrafo1537[indexDoc].annotazioni[index].type.value);
@@ -520,8 +442,21 @@ function modificaAnnot(element){
     } else {
         $('div.form-group input').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
     }
+
+    $('#modalAnnotDoc').modal('show');
 }
 
+function cancellaAnnotGrafo(element){
+    var index = $(element).closest('td').parent()[0].rowIndex-1;
+    var indexDoc = 0;
+    for(i = 0; i < listaAnnotGrafo1537.length; i++){
+        if(listaAnnotGrafo1537[i].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+            indexDoc = i;
+        }
+    }
+
+
+}
 
 
 $(document).ready(function(){
