@@ -85,7 +85,7 @@ $(document).ready(function() {
             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
             $('#utenteAutenticato').text(sessionStorage.nomecognome);
             sessionStorage.annotModificSessione = JSON.stringify(annotModificSessione);
-            $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
+            $('#utenteAutenticato').text(sessionStorage.nomecognome);
             annotatorMode();
         }
     });

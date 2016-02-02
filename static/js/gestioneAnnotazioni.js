@@ -3,6 +3,7 @@ function verificaTab(){
     var start = '';
     var end = '';
     var selezione = '';
+    $('#modalAnnotDoc h3').html("Inserisci annotazione");
     if($("ul.nav.nav-tabs li.active a").attr("id") != 'homeTab'){
         $('button#bottonemodFramm').css("display", "none");
         var oggettoSelezionato = verificaFrammento();
@@ -10,8 +11,6 @@ function verificaTab(){
             $('#selezione').css('display', 'none');
             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',true);
             $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
-            $('#commento').css('display', 'none');
-            $('#funzione').css('display', 'none');
 
             $('#modalAnnotDoc').data("path", path);
             $('#modalAnnotDoc').data("start", start);
@@ -148,11 +147,6 @@ function getTextNodes(node) {
 
 /* Inserimento annotazione sul documento */
 $('#salvaInsert').on('click', function(){
-
-    var source = $('.active a').attr('id');
-    if($('#modalAnnotDoc').data("id") != undefined){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
-        source += '_ver1_cited[n]' //TODO passargli queste cose +++++++++
-    }
     var tipoAnnotazione = $('#selectTipoAnnot').find(":selected").text();
     var testo = '';
     var tipo = '';
@@ -187,19 +181,12 @@ $('#salvaInsert').on('click', function(){
                 break;
     }
 
-    var idFrammento = $('#modalAnnotDoc').data("path");
-    var startOffset = $('#modalAnnotDoc').data("start");
-    var endOffset = $('#modalAnnotDoc').data("end");
-    var selezione = $('#modalAnnotDoc').data("selezione");
-    //silvia b
     if($('#modalAnnotDoc').data("azione") == "modifica"){ // mettere come parametro "azione" - "modifica" per la modifica delle annotazioni sia locali che del grafo
-        if($('#modalAnnotDoc').data("indexDoc") != "undefined"){ // modifica annotazioni del grafo
+        if(typeof($('#modalAnnotDoc').data("indexDoc")) != "undefined"){ // modifica annotazioni del grafo
             var index = $('#modalAnnotDoc').data("index");
             var indexDoc = $('#modalAnnotDoc').data("indexDoc");
             var annot = listaAnnotGrafo1537[indexDoc].annotazioni[index];
 
-    var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione);
-    //silvia b
             if(typeof(annot['update']) == "undefined"){
                 annot['update'] = {};
             }
@@ -223,29 +210,61 @@ $('#salvaInsert').on('click', function(){
                     annot['update']['oggetto'] = testo;
                 }
             }
-
-
-
-
 //            listaAnnotGrafo1537[i].annotazioni[index]['update']['path'] = "html_div_p";
 //            listaAnnotGrafo1537[i].annotazioni[index]['update']['start_fragm'] = "55";
 //            listaAnnotGrafo1537[i].annotazioni[index]['update']['end_fragm'] = "66";
             //console.log(listaAnnotGrafo1537[i].annotazioni[index]);
 
-        }
+        } else{
+            /* Modifica annotazione locale */
+            var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale
+            var nuovaSelezione = $('#modalAnnotDoc').data("selezione");
+            var nuovoPath = $('#modalAnnotDoc').data("path");
+            var nuovoStart = $('#modalAnnotDoc').data("inizio");
+            var nuovoEnd = $('#modalAnnotDoc').data("fine");
+
+            annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
+            for(i = 0; i<annotazioniSessione.length; i++){
+                if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
+                    for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
+                        if(annotazioniSessione[i].annotazioni[j].id == idAnn){
+                            annotazioniSessione[i].annotazioni[j].selezione = nuovaSelezione;
+                            annotazioniSessione[i].annotazioni[j].source = $("ul.nav.nav-tabs li.active a").attr("id");
+                            annotazioniSessione[i].annotazioni[j].idFrammento = nuovoPath;
+                            annotazioniSessione[i].annotazioni[j].start = nuovoStart;
+                            annotazioniSessione[i].annotazioni[j].end = nuovoEnd;
+                            annotazioniSessione[i].annotazioni[j].oggetto = testo;
+                            annotazioniSessione[i].annotazioni[j].tipo = tipo;
+                            annotazioniSessione[i].annotazioni[j].data = getDateTime();
+
+                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(2)').html(annotazioniSessione[i].annotazioni[j].data.replace("T", " "));
+                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(3)').html(testo);
+                            $('#modalAnnotDoc').modal('hide');
+                        }
+                    }
+                }
+            }
+            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
+       }
     } else { // inserimento
-        var soggetto = '';
-        if($('#modalAnnotDoc').data("id") != undefined){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
-            soggetto = 'jettka.html_ver1_cited[n]' //TODO passargli il soggetto
+        var source = $('.active a').attr('id');
+        if(typeof($('#modalAnnotDoc').data("id")) != "undefined"){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
+            source += '_ver1_cited[n]' //TODO passargli queste cose +++++++++
         }
+        var idFrammento = $('#modalAnnotDoc').data("path");
+        var startOffset = $('#modalAnnotDoc').data("start");
+        var endOffset = $('#modalAnnotDoc').data("end");
+        var selezione = $('#modalAnnotDoc').data("selezione");
+        var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione);
 
-    if($('#modalAnnotDoc').data("id") != undefined){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
-        var idCit = $('#modalAnnotDoc').data("id");
-        classCSS = getClassNameLabel(tipo);
-        col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
-        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+getDateTime().replace("T", " ")+'</td><td>'+testo+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
+        if(typeof($('#modalAnnotDoc').data("id")) != "undefined"){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
+            var idCit = $('#modalAnnotDoc').data("id");
+            classCSS = getClassNameType(tipo);
+            col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
+            tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+getDateTime().replace("T", " ")+'</td><td>'+testo+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
 
-        $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
+            $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
+        }
     }
     $('#modalAnnotDoc').modal('hide');
 
@@ -255,6 +274,7 @@ $('#salvaInsert').on('click', function(){
 function eliminaAnnotazioneLocale(id){
     $('#modalConfermaEliminazione').data('id', id).modal('show');
 }
+
 function eliminaAnnotazione(id){ // TODO PER ANNOTAZIONI PRESENTI
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
     for(i = 0; i<annotazioniSessione.length; i++){
@@ -271,150 +291,130 @@ function eliminaAnnotazione(id){ // TODO PER ANNOTAZIONI PRESENTI
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
 }
 
-
-function modificaAnnotazioneLocale(id){ //TODO vedere come ha fatto silvia !!!
-//    var tipoModifica = '';
-    $('#modalAnnotDoc h3').html("Modifica annotazione"); //TODO NON funzia
-    $('textarea#selezione').css("display", "none");
-//    $('div#modificaSelezione').css("display", "none");
-//    $('div#modificaSelezione button').remove();
+function modificaAnnotazioneLocale(id){
+    var tipo = '';
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
     for(i = 0; i<annotazioniSessione.length; i++){
         if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
             for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                 if(annotazioniSessione[i].annotazioni[j].id == id){
                     tipo = annotazioniSessione[i].annotazioni[j].tipo;
-                    if(tipo != 'Citazione'){ //modifica citazione
+                    if(tipo != 'Citazione'){ //sto modificando un'annotazione
+
+                        $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
+                        // in base al tipo mostro l'oggetto dell'annotazione nell'apposito contenitore
+                        if(tipo == "Funzione retorica"){
+                            $('select[id="funcRet"]').find('option:contains("'+annotazioniSessione[i].annotazioni[j].oggetto+'")').attr("selected",true);
+                        } else if (tipo == "Anno pubblicazione"){
+                            $('select[id="anno"]').find('option:contains("'+annotazioniSessione[i].annotazioni[j].oggetto+'")').attr("selected",true);
+                        } else if(tipo == "Commento" || tipo == "Titolo"){
+                            $('div.form-group textarea').text(annotazioniSessione[i].annotazioni[j].oggetto);
+                        } else {
+                            $('div.form-group input').val(annotazioniSessione[i].annotazioni[j].oggetto);
+                        }
+                        /* Se l'annotazione è su un frammento, lo mostra nel modal */
                         if(annotazioniSessione[i].annotazioni[j].selezione.length != 0){
                             $('textarea#selezione').css("display", "block");
-//                            $('div#modificaSelezione').append('<button type="button" class="btn btn-success" data-dismiss="modal" onclick="modificaSelezione('+id+')">Modifica Testo Selezionato</button>');
-//                            $('div#modificaSelezione').css("display", "block");
+                            $('button#bottonemodFramm').css("display", "block");
+                            $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
+                            $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
 
                             $('#modalAnnotDoc textarea').html(annotazioniSessione[i].annotazioni[j].selezione);
                         }else{
                             $('textarea#selezione').css("display", "none");
-//                            $('div#modificaSelezione').css("display", "none");
-//                            $('div#modificaSelezione button').remove();
+                            $('button#bottonemodFramm').css("display", "none");
+                            $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',true);
+                            $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
                         }
-//                        $("#tipo").html(annotazioniSessione[i].annotazioni[j].tipo);
-                        $("#oggettoAnnotazione").children('div.modificaAnn').remove();
-//                        popolaModalModifica(annotazioniSessione[i].annotazioni[j].tipo)
+
+                        $('#modalAnnotDoc h3').html("Modifica annotazione");
+                        $('#modalAnnotDoc').data('azione', "modifica");
+                        var nuovoOggetto = '';
+                        var nuovoTipo = '';
+//                        $('#selectTipoAnnot').change(function(){
+//                            nuovoTipo = $('#selectTipoAnnot').find(":selected").text();
+//                            alert("tipo selezionato: "+nuovoTipo)
+//                            if(nuovoTipo == "Funzione retorica"){
+//                                nuovoOggetto = $('#funcRet').find(':selected').text();
+//                                alert("nuovoOggetto: "+nuovoOggetto)
+//                            } else if (nuovoTipo == "Anno pubblicazione"){
+//                                nuovoOggetto = $('#anno').find(':selected');
+//                                alert("nuovoOggetto: "+nuovoOggetto)
+//                            } else if(nuovoTipo == "Commento" || tipo == "Titolo"){
+//                                nuovoOggetto = $('div.form-group textarea').val();
+//                                alert("nuovoOggetto: "+nuovoOggetto)
+//                            } else {
+//                                nuovoOggetto = $('div.form-group input').val();
+//                                alert("nuovoOggetto: "+nuovoOggetto)
+//                            }
+//                        });
+                        $('#modalAnnotDoc').data('tipo', nuovoTipo);
+                        $('#modalAnnotDoc').data('oggetto', nuovoOggetto);
                         $('#modalAnnotDoc').data('id', id).modal('show');
-                        $('#modalAnnotDoc h3').html("Inserisci annotazione");
-                    }else{
+
+                    }else{ //sto modificando una citazione (si apre il modal per le citazioni)
                         getCitazioni($("ul.nav.nav-tabs li.active a").attr("id"));
                         $("#modalAnnotCit h3").html("Modifica citazione");
                         $("#modalAnnotCit").data('idCit', id).modal("show");
                     }
                 }
+
             }
         }
     }
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
 }
 
-//TODO da togliere !!
-function popolaModalModifica(tipo){
-    switch (tipo) {
-        case "Autore":
-            $("#modAutore").css("display", "block");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Anno pubblicazione":
-            $("#modAnno").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "DOI":
-            $("#modDoi").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Titolo":
-            $("#modTitolo").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "URL":
-            $("#modUrl").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modCommento").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Commento":
-            $("#modCommento").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modFunzioneRetorica").css("display", "none");
-            break;
-        case "Funzione retorica":
-            $("#modFunzioneRetorica").css("display", "block");
-            $("#modAutore").css("display", "none");
-            $("#modAnno").css("display", "none");
-            $("#modDoi").css("display", "none");
-            $("#modTitolo").css("display", "none");
-            $("#modUrl").css("display", "none");
-            $("#modCommento").css("display", "none");
-            break;
-    }
-}
+/* Variabile contenente le informazioni sull'annotazione corrente (da modificare) */
+annotazioneCorrente = [];
 
-function modificaSelezione(id){
+function modificaSelezione(){
+    if(typeof($('#modalAnnotDoc').data('id'))!= "undefined"){
+        //faccio le mie cose
+        annotazioneCorrente["id"] = $('#modalAnnotDoc').data('id');
+        annotazioneCorrente["tipo"] = $('#modalAnnotDoc').data('tipo');
+        annotazioneCorrente["oggetto"] = $('#modalAnnotDoc').data('oggetto');
+    }else{
+        //roba di silviab
+    }
     $('#modalGestAnnotazioni').modal('hide');
     var idTab = $("ul.nav.nav-tabs li.active a").attr("href").substr(1);
-    $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' data-toggle='modal' onclick='aggiornaAnnotazione("+id+")'>Conferma nuova selezione</button>")
+    $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' data-toggle='modal' onclick='aggiornaAnnotazione()'>Conferma nuova selezione</button>")
 }
 
-function aggiornaAnnotazione(id){ // bottone che sta fermo
+function aggiornaAnnotazione(){ // bottone che sta fermo
+    var id = annotazioneCorrente["id"];
+    var tipo = annotazioneCorrente["tipo"];
+    var oggetto = annotazioneCorrente["oggetto"];
+    alert("tipo: "+tipo+"\noggetto: "+oggetto)
+    //TODO prendere tipo e oggetto
+    $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
+    // in base al tipo mostro l'oggetto dell'annotazione nell'apposito contenitore
+    if(tipo == "Funzione retorica"){
+        $('select[id="funcRet"]').find('option:contains("'+oggetto+'")').attr("selected",true);
+    } else if (tipo == "Anno pubblicazione"){
+        $('select[id="anno"]').find('option:contains("'+oggetto+'")').attr("selected",true);
+    } else if(tipo == "Commento" || tipo == "Titolo"){
+        $('div.form-group textarea').text(oggetto);
+    } else {
+        $('div.form-group input').val(oggetto);
+    }
+
     obj = verificaFrammento();
     if(!obj){
         $('#alertMessage').text("Nessun frammento selezionato.");
         $('#alertDoc').modal('show');
     }else{
+        $("modalAnnotDoc textarea#selezione").html(obj.selezione);
+        $('#modalAnnotDoc').data("azione", "modifica");
+        $('#modalAnnotDoc').data("id", id);
+        $('#modalAnnotDoc').data("selezione", obj.selezione);
+        $('#modalAnnotDoc').data("path", obj.id);
+        $('#modalAnnotDoc').data("inizio", obj.inizio);
+        $('#modalAnnotDoc').data("fine", obj.fine);
 
-        annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-        for(i = 0; i<annotazioniSessione.length; i++){
-            if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
-                for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
-                    if(annotazioniSessione[i].annotazioni[j].id == id){
-                        annotazioniSessione[i].annotazioni[j].selezione = obj.selezione;
-                        annotazioniSessione[i].annotazioni[j].source = obj.source;
-                        annotazioniSessione[i].annotazioni[j].idFrammento = obj.id;
-                        annotazioniSessione[i].annotazioni[j].start = obj.inizio;
-                        annotazioniSessione[i].annotazioni[j].end = obj.fine;
-
-                        $("modalModificaAnnot textarea").html(obj.selezione);
-                    }
-                }
-            }
-        }
-        sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-        modificaAnnotazioneLocale(id)
         $("#confermaModificaSelezione").remove();
-        $('#modalModificaAnnot').modal('show');
+        $('#modalAnnotDoc').modal('show');
     }
 }
 
@@ -435,12 +435,15 @@ function annotaCitazione(idCit){
             }
         }
     }
-    $('#funzione').css('display', 'none'); //TODO renderla visibile ma non cliccabile
+    $('button#bottonemodFramm').css("display", "none");
+    $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
     $("#modalAnnotDoc").data("path", pathCit);
     $("#modalAnnotDoc").data("start", startCit);
     $("#modalAnnotDoc").data("end", endCit);
     $("#modalAnnotDoc").data("selezione", '');
+    $('#modalAnnotDoc h3').html("Inserisci annotazione");
+
     $("#modalAnnotDoc").data("id", idCit).modal("show");
 }
 
@@ -554,7 +557,7 @@ $(document).ready(function(){
     $("#modUrl").css("display", "none");
     $("#modCommento").css("display", "none");
 
-    /* Salvare annotazioni e citazioni inserite */
+    /* Salvare sul grafo annotazioni e citazioni inserite localmente */
     $("#salvaGest").click(function(){
         /* Invia annotazioni DEL DOCUMENTO corrente da salvare */
         var listaNuoveAnnotazioni = {"annotazioni":[]};
@@ -580,53 +583,8 @@ $(document).ready(function(){
         console.log(listaNuoveAnnotazioni)
         sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
         $('#modalGestAnnotazioni').modal('hide');
-        //invia listaNuoveAnnotazioni
     });
 
-    /* Modifica annotazioni localmente */ //TODO questo andrà nell'inserimento
-    $("#salvaModifica").click(function(){
-        annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-        var id = $('#modalModificaAnnot').data('id');
-        for(i = 0; i<annotazioniSessione.length; i++){
-            if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
-                for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
-                    if(annotazioniSessione[i].annotazioni[j].id == id){
-                        var valore = '';
-                        switch(annotazioniSessione[i].annotazioni[j].tipo){
-                            case 'Anno pubblicazione':
-                                valore = $("#annoMod").find(":selected").text();
-                                break;
-                            case 'Autore':
-                                valore = $("#autoreMod").val();
-                                break;
-                            case 'DOI':
-                                valore = $("#doiMod").val();
-                                break;
-                            case 'Titolo':
-                                valore = $("#titoloMod").val();
-                                break;
-                            case 'URL':
-                                valore = $("#urlMod").val();
-                                break;
-                            case 'Commento':
-                                valore = $("#commMod").val();
-                                break;
-                            case 'Funzione retorica':
-                                valore = $("#funcRetMod").find(":selected").text();
-                                break;
-                        }
-                        annotazioniSessione[i].annotazioni[j].oggetto = valore;
-                        annotazioniSessione[i].annotazioni[j].data = getDateTime();
-
-                        $('[data-id="' + id + '"]').children().filter(':nth-child(2)').html(annotazioniSessione[i].annotazioni[j].data.replace("T", " "));
-                        $('[data-id="' + id + '"]').children().filter(':nth-child(3)').html(valore);
-                        $('#modalModificaAnnot').modal('hide');
-                    }
-                }
-            }
-        }
-        sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-    });
 
     /* Eliminare annotazioni o citazioni in locale */
     $('#eliminaAnnotazione').click(function () {

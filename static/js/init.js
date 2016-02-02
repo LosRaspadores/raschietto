@@ -102,7 +102,7 @@ $(document).ready(function() {
         var annot = $(this).val();
         switch (annot) {
             case "autore":
-                $("#autore").val("");
+//                $("#autore").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
@@ -113,7 +113,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "anno":
-                $('#anno').find(":selected").text("")
+//                $('#anno').find(":selected").text("")
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'block');
@@ -124,7 +124,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "titolo":
-                $("#titolo").val("");
+//                $("#titolo").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -135,7 +135,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "url":
-                $("#url").val("");
+//                $("#url").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -146,7 +146,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "doi":
-                $("#doi").val("");
+//                $("#doi").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -157,7 +157,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "commento":
-                $("#comm").val("");
+//                $("#comm").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
@@ -168,7 +168,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "funzione":
-                $("#funcRet").val("");
+//                $("#funcRet").val("");
                 $('#salvaInsert').attr('disabled', 'disabled');
                 $('#insertComm').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
