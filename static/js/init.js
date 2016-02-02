@@ -207,14 +207,10 @@ $(document).ready(function() {
             $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').html("");
             for(i = 0; i < annot_gest.length; i++){
                 if(typeof(annot_gest[i].type) != "undefined"){
-                    classCSS = getClassNameType(annot_gest[i].type.value);
-                } else if (typeof(annot_gest[i].label) != "undefined"){
-                    classCSS = getClassNameLabel(annot_gest[i].label.value);
+                    classCSS = getClassNameType(typeToIta(annot_gest[i].type.value));
                 }
                 col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>'; //<td>'+ parseDatetime(annot_gest[i].date.value)+'</td>
-                tr = '<tr><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit"></span><span class="glyphicon glyphicon-trash"></span></td></tr>';
-                tr = '<tr><td>'+col+'</td><td>'+ classCSS.substring(9, classCSS.length)+'</td><td>Frammento</td><td>'+annot_gest[i].body_o.value+'</td><td><button onclick="modificaAnnot(this)"><span class="glyphicon glyphicon-edit"></span></button><span class="glyphicon glyphicon-trash"></span></td></tr>';
-
+                tr = '<tr><td>'+col+' '+ typeToIta(annot_gest[i].type.value)+'</td><td>'+ parseDatetime(annot_gest[i].date.value)+'</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnot(this)"></span><span class="glyphicon glyphicon-trash"></span></td></tr>';
                 $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').append(tr);
             }
 
@@ -231,7 +227,7 @@ $(document).ready(function() {
                         oggetto = annotazioniSessione[i].annotazioni[j].oggetto;
 
                         idAnn = annotazioniSessione[i].annotazioni[j].id;
-                        classCSS = getClassNameLabel(tipo);
+                        classCSS = getClassNameType(tipo);
                         var span = '';
                         var alert = 'annotazione';
                         if(tipo == 'Citazione'){
@@ -239,7 +235,7 @@ $(document).ready(function() {
                             alert = 'citazione';
                         }
                         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
-                        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica '+alert+'"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina '+alert+'"></span>'+span+'</td></tr>';
+                        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ tipo+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica '+alert+'"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina '+alert+'"></span>'+span+'</td></tr>';
 
                         $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
                     }
@@ -259,6 +255,8 @@ $(document).ready(function() {
             var numTabs = $("ul.nav.nav-tabs").children().length;
             var mq = window.matchMedia("(min-width: 700px)");
             if(mq.matches){
+
+
                 if(numTabs <= 4){
                     var title = $(this).text()
                     $(this).addClass("active").siblings().removeClass("active");
@@ -268,6 +266,7 @@ $(document).ready(function() {
                         data: {url: urlDoc},
                         success: function(result) {
                             addTab(result, urlDoc, title);
+
                             query = query_all_annotazioni(urlDoc);
                             get_annotazioni(query, urlDoc);
                             filtriAttivi();
@@ -293,6 +292,7 @@ $(document).ready(function() {
                             addTab(result, urlDoc, title);
                             query = query_all_annotazioni(urlDoc);
                             get_annotazioni(query, urlDoc);
+
                             filtriAttivi();
                         },
                         error: function(error) {
@@ -480,31 +480,6 @@ function mostraAnnotGruppo(element){
     urlGruppo = $(element).attr('value');
     urlD = $("ul.nav.nav-tabs li.active a").attr("id");
     filtriGruppo(urlGruppo, urlD);
-}
-
-function modificaAnnot(element){
-    index = $(element).closest('td').parent()[0].rowIndex-1;
-    for(i = 0; i < listaAnnotGrafo1537.length; i++){
-        if(listaAnnotGrafo1537[i].url == $("ul.nav.nav-tabs li.active a").attr("id")){
-            if(typeof(listaAnnotGrafo1537[i].annotazioni[index]['update']) == "undefined"){
-                listaAnnotGrafo1537[i].annotazioni[index]['update'] = {};
-            }
-            listaAnnotGrafo1537[i].annotazioni[index]['update']['autore'] = "<mailto:" + sessionStorage.email + ">";
-            listaAnnotGrafo1537[i].annotazioni[index]['update']['data_mod'] = getDateTime();
-
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['tipo'] = "hasTipo";
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['label_tipo'] = "label tipo";
-
-            listaAnnotGrafo1537[i].annotazioni[index]['update']['oggetto'] = "Abstract";
-            listaAnnotGrafo1537[i].annotazioni[index]['update']['label_oggetto'] = listaAnnotGrafo1537[i].annotazioni[index]['update']['oggetto'];
-
-
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['path'] = "html_div_p";
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['start_fragm'] = "55";
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['end_fragm'] = "66";
-            //console.log(listaAnnotGrafo1537[i].annotazioni[index]);
-        }
-    }
 }
 
 function citazioniWidget(lista_cit){

@@ -15,8 +15,6 @@ __author__ = 'Los Raspadores'
 
 
 # moduli importati
-from pyquery import PyQuery
-from urlparse import urlparse
 import json
 from bs4 import BeautifulSoup
 import mechanize

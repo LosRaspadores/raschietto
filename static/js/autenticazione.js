@@ -31,6 +31,7 @@ $(document).ready(function() {
             sessionStorage.removeItem("nomecognome");
             sessionStorage.removeItem("email");
             sessionStorage.removeItem("annotazioniSessione");
+            sessionStorage.removeItem("annotModificSessione");
         }
     });
 
@@ -49,7 +50,6 @@ $(document).ready(function() {
         $('#bottoniAnnotator').show();
     }
 
-
     /* Validazione autenticazione utente */
     $("#autenticati").click(function(){
         var regexNomecognome = /^([a-zA-Z]+\s)*[a-zA-Z]+$/i;
@@ -57,6 +57,7 @@ $(document).ready(function() {
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
         var annotazioniSessione = [];
+        var annotModificSessione = [];
         if(nomecognome==""){
             $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
             $("#nomecognome").val("");
@@ -83,6 +84,8 @@ $(document).ready(function() {
             sessionStorage.email = email;
             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
             $('#utenteAutenticato').text(sessionStorage.nomecognome);
+            sessionStorage.annotModificSessione = JSON.stringify(annotModificSessione);
+            $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
             annotatorMode();
         }
     });
