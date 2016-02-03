@@ -1,6 +1,9 @@
 /* Variabile contenente le informazioni sull'annotazione corrente (da modificare) */
 annotazioneCorrente = [];
+
+/* Variabile contenente le informazioni della selezione di un frammento di testo (path, startOffset, endOffsett, selezione) */
 oggettoSelezionato = {};
+
 function verificaTab(){
     var path = '';
     var start = '';
@@ -214,9 +217,9 @@ $('#salvaInsert').on('click', function(){
                 annot['upgrade']['end_fragm'] = oggettoSelezionato.fine;
             }
             annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
-            for(i = 0; i < annotazioniGrafoSessione; i++){
-                if(annotazioniGrafoSessione[i].)
-            }
+//            for(i = 0; i < annotazioniGrafoSessione; i++){
+//                if(annotazioniGrafoSessione[i].)
+//            }
         } else{
             /* Modifica annotazione locale */
             var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale
@@ -252,13 +255,14 @@ $('#salvaInsert').on('click', function(){
             }
             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
        }
-       oggettoSelezionato = {};
+       oggettoSelezionato = {}; //svuota l'oggetto dopo la modifica
+
     } else { // inserimento
         var source = $('.active a').attr('id');
         if(typeof($('#modalAnnotDoc').data("id")) != "undefined"){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
             source += '_ver1_cited[n]' //TODO passargli queste cose +++++++++
         }
-        var idFrammento = $('#modalAnnotDoc').data("path");
+        var idFrammento = $('#modalAnnotDoc').data("path"); //TODO prendere queste cose dall'oggetto annotazioneCorrente
         var startOffset = $('#modalAnnotDoc').data("start");
         var endOffset = $('#modalAnnotDoc').data("end");
         var selezione = $('#modalAnnotDoc').data("selezione");
@@ -270,7 +274,7 @@ $('#salvaInsert').on('click', function(){
             col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
             tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ classCSS.substring(9, classCSS.length)+'</td><td>'+getDateTime().replace("T", " ")+'</td><td>'+testo+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
 
-            $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
+            $('#modalGestAnnotazioni div#annotazioniInserite tbody').append(tr);
         }
     }
     $('#modalAnnotDoc').modal('hide');
@@ -429,11 +433,11 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
         oggettoSelezionato = obj;
         $("modalAnnotDoc textarea#selezione").html(obj.selezione);
         $('#modalAnnotDoc').data("azione", "modifica");
-        $('#modalAnnotDoc').data("id", id);
-        $('#modalAnnotDoc').data("selezione", obj.selezione);
-        $('#modalAnnotDoc').data("path", obj.id);
-        $('#modalAnnotDoc').data("inizio", obj.inizio);
-        $('#modalAnnotDoc').data("fine", obj.fine);
+//        $('#modalAnnotDoc').data("id", id);
+//        $('#modalAnnotDoc').data("selezione", obj.selezione);
+//        $('#modalAnnotDoc').data("path", obj.id);
+//        $('#modalAnnotDoc').data("inizio", obj.inizio);
+//        $('#modalAnnotDoc').data("fine", obj.fine);
 
         if(typeof(annotazioneCorrente["id"]) != "undefined"){
             $('#modalAnnotDoc').data("id", annotazioneCorrente["id"]);
