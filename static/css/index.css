@@ -8,6 +8,7 @@
 body {
     overflow: auto;
     font-family: Arial, Helvetica, 'Exo' sans-serif;
+    padding-right: 0px !important;
 }
 
 
