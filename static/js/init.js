@@ -210,7 +210,7 @@ $(document).ready(function() {
                     classCSS = getClassNameType(typeToIta(annot_gest[i].type.value));
                 }
                 col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>'; //<td>'+ parseDatetime(annot_gest[i].date.value)+'</td>
-                tr = '<tr><td>'+col+' '+ typeToIta(annot_gest[i].type.value)+'</td><td>'+ parseDatetime(annot_gest[i].date.value)+'</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnot(this)"></span><span class="glyphicon glyphicon-trash"></span></td></tr>';
+                tr = '<tr><td>'+col+' '+ typeToIta(annot_gest[i].type.value)+'</td><td>'+ parseDatetime(annot_gest[i].date.value)+'</td><td>'+annot_gest[i].body_o.value+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnot(this)"></span><span class="glyphicon glyphicon-trash" onclick="cancellaAnnotGrafo(this)"></span></td></tr>';
                 $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').append(tr);
             }
 

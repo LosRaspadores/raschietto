@@ -1,3 +1,6 @@
+/* Variabile contenente le informazioni sull'annotazione corrente (da modificare) */
+annotazioneCorrente = [];
+oggettoSelezionato = {};
 function verificaTab(){
     var path = '';
     var start = '';
@@ -204,18 +207,19 @@ $('#salvaInsert').on('click', function(){
                     annot['update']['oggetto'] = testo;
                 }
             }
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['path'] = "html_div_p";
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['start_fragm'] = "55";
-//            listaAnnotGrafo1537[i].annotazioni[index]['update']['end_fragm'] = "66";
-            //console.log(listaAnnotGrafo1537[i].annotazioni[index]);
 
+            if(typeof(oggettoSelezionato.id) != "undefined"){
+                annot['update']['path'] = oggettoSelezionato.id;
+                annot['update']['start_fragm'] = oggettoSelezionato.inizio;
+                annot['upgrade']['end_fragm'] = oggettoSelezionato.fine;
+            }
+            annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
+            for(i = 0; i < annotazioniGrafoSessione; i++){
+                if(annotazioniGrafoSessione[i].)
+            }
         } else{
             /* Modifica annotazione locale */
             var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale
-//            var nuovaSelezione = $('#modalAnnotDoc').data("selezione");
-//            var nuovoPath = $('#modalAnnotDoc').data("path");
-//            var nuovoStart = $('#modalAnnotDoc').data("inizio");
-//            var nuovoEnd = $('#modalAnnotDoc').data("fine");
             var nuovaSelezione = oggettoSelezionato.selezione;
             var nuovoPath = oggettoSelezionato.idFrammento;
             var nuovoStart = oggettoSelezionato.inizio;
@@ -248,6 +252,7 @@ $('#salvaInsert').on('click', function(){
             }
             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
        }
+       oggettoSelezionato = {};
     } else { // inserimento
         var source = $('.active a').attr('id');
         if(typeof($('#modalAnnotDoc').data("id")) != "undefined"){ //sto inserendo un'annotazione su una citazione -> il soggetto di tale annotazione è la citazione stessa
@@ -331,7 +336,6 @@ function modificaAnnotazioneLocale(id){
 
                         $('#modalAnnotDoc h3').html("Modifica annotazione");
                         $('#modalAnnotDoc').data('azione', "modifica");
-
                         $('#modalAnnotDoc').data('id', id).modal('show');
 
                     }else{ //sto modificando una citazione (si apre il modal per le citazioni)
@@ -347,29 +351,64 @@ function modificaAnnotazioneLocale(id){
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
 }
 
-/* Variabile contenente le informazioni sull'annotazione corrente (da modificare) */
-annotazioneCorrente = [];
+
 
 function modificaSelezione(){
+     var tipoAnnotazione = $('#selectTipoAnnot').find(":selected").text();
+        var testo = '';
+        var tipo = '';
+        switch (tipoAnnotazione) {
+                case "Autore":
+                    testo = $('#autore').val();
+                    tipo = "Autore";
+                    break;
+                case "Anno pubblicazione":
+                    testo = $('#anno').find(":selected").text();
+                    tipo = "Anno pubblicazione";
+                    break;
+                case "DOI":
+                    testo = $('#doi').val();
+                    tipo = "DOI";
+                    break;
+                case "Titolo":
+                    testo = $('#titolo').val();
+                    tipo = "Titolo";
+                    break;
+                case "URL":
+                    testo = $('#url').val();
+                    tipo = "URL";
+                    break;
+                case "Commento":
+                    testo = $('#comm').val();
+                    tipo = "Commento";
+                    break;
+                case "Funzione retorica":
+                    testo = $('#funcRet').find(":selected").text();
+                    tipo = "Funzione retorica";
+                    break;
+        }
+        annotazioneCorrente["tipo"] = tipo;
+        annotazioneCorrente["oggetto"] = testo;
+
     if(typeof($('#modalAnnotDoc').data('id'))!= "undefined"){
-        //faccio le mie cose
         annotazioneCorrente["id"] = $('#modalAnnotDoc').data('id');
-//        annotazioneCorrente["tipo"] = $('#modalAnnotDoc').data('tipo');
-//        annotazioneCorrente["oggetto"] = $('#modalAnnotDoc').data('oggetto');
     }else{
-        //roba di silviab
+        annotazioneCorrente["index"] =  $('#modalAnnotDoc').data('index');
+        annotazioneCorrente["indexDoc"] = $('#modalAnnotDoc').data('indexDoc');
     }
     $('#modalGestAnnotazioni').modal('hide');
+    $('#modalAnnotDoc').modal('hide');
+
     var idTab = $("ul.nav.nav-tabs li.active a").attr("href").substr(1);
-    $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' data-toggle='modal' onclick='aggiornaAnnotazione()'>Conferma nuova selezione</button>")
+    $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' onclick='aggiornaAnnotazione()'>Conferma nuova selezione</button>")
 }
 
 function aggiornaAnnotazione(){ // bottone che sta fermo
-    var id = annotazioneCorrente["id"];
+
     var tipo = annotazioneCorrente["tipo"];
     var oggetto = annotazioneCorrente["oggetto"];
-
-    //TODO prendere tipo e oggetto
+    alert("tipo: "+tipo+"\noggetto: "+oggetto)
+    //prendere tipo e oggetto
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
     // in base al tipo mostro l'oggetto dell'annotazione nell'apposito contenitore
     if(tipo == "Funzione retorica"){
@@ -387,16 +426,21 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
         $('#alertMessage').text("Nessun frammento selezionato.");
         $('#alertDoc').modal('show');
     }else{
-        //passo obj nell
         oggettoSelezionato = obj;
         $("modalAnnotDoc textarea#selezione").html(obj.selezione);
-//        $('#modalAnnotDoc').data("azione", "modifica");
+        $('#modalAnnotDoc').data("azione", "modifica");
         $('#modalAnnotDoc').data("id", id);
-//        $('#modalAnnotDoc').data("selezione", obj.selezione);
-//        $('#modalAnnotDoc').data("path", obj.id);
-//        $('#modalAnnotDoc').data("inizio", obj.inizio);
-//        $('#modalAnnotDoc').data("fine", obj.fine);
+        $('#modalAnnotDoc').data("selezione", obj.selezione);
+        $('#modalAnnotDoc').data("path", obj.id);
+        $('#modalAnnotDoc').data("inizio", obj.inizio);
+        $('#modalAnnotDoc').data("fine", obj.fine);
 
+        if(typeof(annotazioneCorrente["id"]) != "undefined"){
+            $('#modalAnnotDoc').data("id", annotazioneCorrente["id"]);
+        } else {
+            $('#modalAnnotDoc').data("index", annotazioneCorrente["index"]);
+            $('#modalAnnotDoc').data("indexDoc", annotazioneCorrente["indexDoc"]);
+        }
         $("#confermaModificaSelezione").remove();
         $('#modalAnnotDoc').modal('show');
     }
@@ -495,7 +539,6 @@ function modificaAnnot(element){
     $('#modalAnnotDoc').data('azione', 'modifica');
     $('#modalAnnotDoc').data('index', index);
     $('#modalAnnotDoc').data('indexDoc', indexDoc);
-    $('#modalAnnotDoc').modal('show');
 
     // controllo il tipo dell'annotazione, in base a quello seleziono l'opzione di quel tipo
     var tipo = typeToIta(listaAnnotGrafo1537[indexDoc].annotazioni[index].type.value);
@@ -526,8 +569,21 @@ function modificaAnnot(element){
     } else {
         $('div.form-group input').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
     }
+
+    $('#modalAnnotDoc').modal('show');
 }
 
+function cancellaAnnotGrafo(element){
+    var index = $(element).closest('td').parent()[0].rowIndex-1;
+    var indexDoc = 0;
+    for(i = 0; i < listaAnnotGrafo1537.length; i++){
+        if(listaAnnotGrafo1537[i].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+            indexDoc = i;
+        }
+    }
+
+
+}
 
 
 $(document).ready(function(){
@@ -568,7 +624,6 @@ $(document).ready(function(){
         console.log(listaNuoveAnnotazioni)
         sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
         $('#modalGestAnnotazioni').modal('hide');
-        // svuotare annotazioni sessione
     });
 
 
