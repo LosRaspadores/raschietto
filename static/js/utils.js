@@ -315,7 +315,7 @@ function creaQueryUpdate(annotazione){
             'oa:annotatedBy <'+ annotazione.provenance.value+'> . ';
     query_insert = 'INSERT { '+
                    '?a oa:annotatedAt "'+ annotazione.update.data_mod+'"^^xsd:dateTime; '+
-                   'oa:annotatedBy '+ annotazione.update.autore+' . ';
+                   'oa:annotatedBy '+ annotazione.update.autore +' . ';
     query_end = 'WHERE { '+
                 '?a a oa:Annotation; '+
                 'oa:annotatedAt "'+ annotazione.date.value+'"^^xsd:dateTime; '+
