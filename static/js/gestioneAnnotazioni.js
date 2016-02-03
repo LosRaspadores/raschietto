@@ -43,12 +43,6 @@ function getHostname(url) {
     return m ? m[0] : null;
 }
 
-var urlDoc = '';
-//var idFrammento = '';
-//var startOffset = '';
-//var endOffset = '';
-//var selection = '';
-
 function verificaFrammento(){
     selection = rangy.getSelection();
     if(selection.toString() != ""){
@@ -138,7 +132,7 @@ function getTextNodes(node) {
         textNodes.push(node);
     } else {
         var children = node.childNodes;
-        for (var i = 0, len = children.length; i < len; ++i) {
+        for (var i = 0; i < children.length; i++) {
             textNodes.push.apply(textNodes, getTextNodes(children[i]));
         }
     }
@@ -218,10 +212,14 @@ $('#salvaInsert').on('click', function(){
         } else{
             /* Modifica annotazione locale */
             var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale
-            var nuovaSelezione = $('#modalAnnotDoc').data("selezione");
-            var nuovoPath = $('#modalAnnotDoc').data("path");
-            var nuovoStart = $('#modalAnnotDoc').data("inizio");
-            var nuovoEnd = $('#modalAnnotDoc').data("fine");
+//            var nuovaSelezione = $('#modalAnnotDoc').data("selezione");
+//            var nuovoPath = $('#modalAnnotDoc').data("path");
+//            var nuovoStart = $('#modalAnnotDoc').data("inizio");
+//            var nuovoEnd = $('#modalAnnotDoc').data("fine");
+            var nuovaSelezione = oggettoSelezionato.selezione;
+            var nuovoPath = oggettoSelezionato.idFrammento;
+            var nuovoStart = oggettoSelezionato.inizio;
+            var nuovoEnd = oggettoSelezionato.fine;
 
             annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
             for(i = 0; i<annotazioniSessione.length; i++){
@@ -239,6 +237,10 @@ $('#salvaInsert').on('click', function(){
 
                             $('[data-id="' + idAnn + '"]').children().filter(':nth-child(2)').html(annotazioniSessione[i].annotazioni[j].data.replace("T", " "));
                             $('[data-id="' + idAnn + '"]').children().filter(':nth-child(3)').html(testo);
+                            var classCSS = getClassNameType(tipo);
+                            var col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
+                            var tagTipo = '<td>'+col+' '+ tipo+'</td>'
+                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(1)').html(tagTipo);//TODO cambiare il tipo nel modal
                             $('#modalAnnotDoc').modal('hide');
                         }
                     }
@@ -329,27 +331,7 @@ function modificaAnnotazioneLocale(id){
 
                         $('#modalAnnotDoc h3').html("Modifica annotazione");
                         $('#modalAnnotDoc').data('azione', "modifica");
-                        var nuovoOggetto = '';
-                        var nuovoTipo = '';
-//                        $('#selectTipoAnnot').change(function(){
-//                            nuovoTipo = $('#selectTipoAnnot').find(":selected").text();
-//                            alert("tipo selezionato: "+nuovoTipo)
-//                            if(nuovoTipo == "Funzione retorica"){
-//                                nuovoOggetto = $('#funcRet').find(':selected').text();
-//                                alert("nuovoOggetto: "+nuovoOggetto)
-//                            } else if (nuovoTipo == "Anno pubblicazione"){
-//                                nuovoOggetto = $('#anno').find(':selected');
-//                                alert("nuovoOggetto: "+nuovoOggetto)
-//                            } else if(nuovoTipo == "Commento" || tipo == "Titolo"){
-//                                nuovoOggetto = $('div.form-group textarea').val();
-//                                alert("nuovoOggetto: "+nuovoOggetto)
-//                            } else {
-//                                nuovoOggetto = $('div.form-group input').val();
-//                                alert("nuovoOggetto: "+nuovoOggetto)
-//                            }
-//                        });
-                        $('#modalAnnotDoc').data('tipo', nuovoTipo);
-                        $('#modalAnnotDoc').data('oggetto', nuovoOggetto);
+
                         $('#modalAnnotDoc').data('id', id).modal('show');
 
                     }else{ //sto modificando una citazione (si apre il modal per le citazioni)
@@ -372,8 +354,8 @@ function modificaSelezione(){
     if(typeof($('#modalAnnotDoc').data('id'))!= "undefined"){
         //faccio le mie cose
         annotazioneCorrente["id"] = $('#modalAnnotDoc').data('id');
-        annotazioneCorrente["tipo"] = $('#modalAnnotDoc').data('tipo');
-        annotazioneCorrente["oggetto"] = $('#modalAnnotDoc').data('oggetto');
+//        annotazioneCorrente["tipo"] = $('#modalAnnotDoc').data('tipo');
+//        annotazioneCorrente["oggetto"] = $('#modalAnnotDoc').data('oggetto');
     }else{
         //roba di silviab
     }
@@ -386,7 +368,7 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
     var id = annotazioneCorrente["id"];
     var tipo = annotazioneCorrente["tipo"];
     var oggetto = annotazioneCorrente["oggetto"];
-    alert("tipo: "+tipo+"\noggetto: "+oggetto)
+
     //TODO prendere tipo e oggetto
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
     // in base al tipo mostro l'oggetto dell'annotazione nell'apposito contenitore
@@ -405,13 +387,15 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
         $('#alertMessage').text("Nessun frammento selezionato.");
         $('#alertDoc').modal('show');
     }else{
+        //passo obj nell
+        oggettoSelezionato = obj;
         $("modalAnnotDoc textarea#selezione").html(obj.selezione);
-        $('#modalAnnotDoc').data("azione", "modifica");
+//        $('#modalAnnotDoc').data("azione", "modifica");
         $('#modalAnnotDoc').data("id", id);
-        $('#modalAnnotDoc').data("selezione", obj.selezione);
-        $('#modalAnnotDoc').data("path", obj.id);
-        $('#modalAnnotDoc').data("inizio", obj.inizio);
-        $('#modalAnnotDoc').data("fine", obj.fine);
+//        $('#modalAnnotDoc').data("selezione", obj.selezione);
+//        $('#modalAnnotDoc').data("path", obj.id);
+//        $('#modalAnnotDoc').data("inizio", obj.inizio);
+//        $('#modalAnnotDoc').data("fine", obj.fine);
 
         $("#confermaModificaSelezione").remove();
         $('#modalAnnotDoc').modal('show');
@@ -578,11 +562,13 @@ $(document).ready(function(){
 
                     listaNuoveAnnotazioni.annotazioni.push(annotazioneSingola);
                 }
+                annotazioniSessione.splice(i,1); //rimuove l'oggetto in locale contenente le annotazioni del documento
             }
         }
         console.log(listaNuoveAnnotazioni)
         sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
         $('#modalGestAnnotazioni').modal('hide');
+        // svuotare annotazioni sessione
     });
 
 
