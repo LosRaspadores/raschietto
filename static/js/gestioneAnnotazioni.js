@@ -234,7 +234,6 @@ $('#salvaInsert').on('click', function(){
                                 if(typeof(oggettoSelezionato.selezione) != 'undefined'){ //Il frammento è stato modificato
                                     annotazioniSessione[i].annotazioni[j].selezione = oggettoSelezionato.selezione;
                                     annotazioniSessione[i].annotazioni[j].idFrammento = oggettoSelezionato.id;
-                                    alert("oggettoSelezionato.idFrammento "+oggettoSelezionato.id)
                                     annotazioniSessione[i].annotazioni[j].start = oggettoSelezionato.inizio;
                                     annotazioniSessione[i].annotazioni[j].end = oggettoSelezionato.fine;
                                 }

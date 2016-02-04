@@ -488,39 +488,6 @@ span.glyphicon.glyphicon-remove{
     margin-bottom: 0px;
 }
 
-.tableAnnot{
-    margin: auto;
-    overflow:auto;
-    display: block;
-}
-
-.tableAnnot td, .tableAnnot th{
-    width: 173px;
-}
-
-.tableAnnot td{
-    padding-top: 5px;
-    padding-bottom: 5px;
-    word-wrap: break-word;
-    max-width: 500px;
-    overflow: auto;
-}
-
-.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
-    width: 66px;
-}
-
-thead{
-    border-bottom: 5px solid #44B78B;
-}
-
-.tableAnnot thead, .tableAnnot tbody { display: block; }
-
-.tableAnnot tbody {
-    max-height: 400px;       /* Just for the demo          */
-    overflow-y: auto;    /* Trigger vertical scroll    */
-    overflow-x: hidden;  /* Hide the horizontal scroll */
-}
 /* Start by setting display:none to make this hidden.
    Then we position it in relation to the viewport window
    with position:fixed. Width, height, top and left speak
@@ -551,13 +518,12 @@ body.loading {
 body.loading #loading {
     display: block;
 }
-
-
-
+/* Tabella nel modal di gestione delle annotazioni */
 .tableAnnot{
     margin: auto;
     overflow:auto;
     display: block;
+    /* word-break: break-all; */
 }
 
 .tableAnnot td, .tableAnnot th{
@@ -572,13 +538,20 @@ body.loading #loading {
     overflow: auto;
 }
 
-.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
-    width: 66px;
+.tableAnnot td:first-child, .tableAnnot th:first-child{
+    width: 180px;
+}
+.tableAnnot td:nth-child(3), .tableAnnot th:nth-child(3){
+    width: 390px;
 }
 
+
+
+/*
 thead{
     border-bottom: 5px solid #44B78B;
 }
+*/
 
 .tableAnnot thead, .tableAnnot tbody { display: block; }
 
@@ -647,3 +620,6 @@ div.tab-content{
 #divInsert{
     clear: both;
 }
+
+
+
