@@ -653,7 +653,6 @@ $(document).ready(function(){
     });
 
      /* Gestione dei tipi nel modal di inserimento di annotazioni */
-     //TODO capire perchè il bottone 'SALVA' resta disabilitato
      $('#autore').keyup(function() {
         if($(this).val().length != 0) {
            $('#salvaInsert').removeAttr('disabled', 'disabled');
@@ -703,6 +702,20 @@ $(document).ready(function(){
            $('#salvaInsert').attr('disabled', 'disabled');
         }
      });
+
+     /* Abilita il bottone di salvataggio quando si apre un modal e i campi sono gia riempiti */
+     $("#modalAnnotDoc").on('shown.bs.modal', function(){
+        var checkAutore = $('#autore').val().length != 0;
+        var checkAnno = $('#anno').find(":selected").text().length != 0;
+        var checkTitolo = $('#titolo').val().length != 0;
+        var checkUrl = $('#url').val() != '';
+        var checkDoi = $('#doi').val().length != 0;
+        var checkComm = $('#comm').val().length != 0;
+        var checkFun = $('#funcRet').find(":selected").text().length != 0;
+        if(checkAutore || checkAnno || checkTitolo || checkUrl || checkDoi || checkComm || checkFun){
+            $('#salvaInsert').removeAttr('disabled', 'disabled');
+        }
+    });
 
      /* Gestione citazioni -> abilita il bottone di salvataggio solo se è selezionata una citazione */
      $(document).on('change', '#selectCit', function(){
@@ -764,4 +777,6 @@ $(document).ready(function(){
         $(this).removeData('inizio');
         $(this).removeData('fine');
     });
+
+
 });
