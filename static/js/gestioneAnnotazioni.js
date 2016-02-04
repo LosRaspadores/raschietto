@@ -12,23 +12,23 @@ function verificaTab(){
     $('#modalAnnotDoc h3').html("Inserisci annotazione");
     if($("ul.nav.nav-tabs li.active a").attr("id") != 'homeTab'){
         $('button#bottonemodFramm').css("display", "none");
-        var oggettoSelezionato = verificaFrammento();
-        if(!oggettoSelezionato){
+        var frammentoSelezionato = verificaFrammento();
+        if(!frammentoSelezionato){
             $('#selezione').css('display', 'none');
             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',true);
             $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
 
-            $('#modalAnnotDoc').data("path", "pathSenzaFrammento");
-            $('#modalAnnotDoc').data("start", "startSenzaFrammento");
-            $('#modalAnnotDoc').data("end", "endSenzaFrammento");
+            $('#modalAnnotDoc').data("path", "document");
+            $('#modalAnnotDoc').data("start", "document");
+            $('#modalAnnotDoc').data("end", "document");
             $('#modalAnnotDoc').data("selezione", "document");
 
             $('#modalTipoAnnotazione').modal('show');
         }else{
-            path = oggettoSelezionato.id;
-            start = oggettoSelezionato.inizio;
-            end = oggettoSelezionato.fine;
-            selezione = oggettoSelezionato.selezione;
+            path = frammentoSelezionato.id;
+            start = frammentoSelezionato.inizio;
+            end = frammentoSelezionato.fine;
+            selezione = frammentoSelezionato.selezione;
             //apri modale per inserire annotazione sul frammento
             $('#selezione').css('display', 'block');
             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
@@ -222,26 +222,23 @@ $('#salvaInsert').on('click', function(){
 //            }
         } else{
             /* Modifica annotazione locale */
-            var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale
-            var nuovaSelezione = oggettoSelezionato.selezione;
-            var nuovoPath = oggettoSelezionato.idFrammento;
-            var nuovoStart = oggettoSelezionato.inizio;
-            var nuovoEnd = oggettoSelezionato.fine;
-
-            if(typeof(oggettoSelezionato.selezione) == 'undefined'){
-                nuovaSelezione = 'document';
-            }
+            var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale che sto modificando
 
             annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
             for(i = 0; i<annotazioniSessione.length; i++){
                 if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
                     for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                         if(annotazioniSessione[i].annotazioni[j].id == idAnn){
-                            annotazioniSessione[i].annotazioni[j].selezione = nuovaSelezione;
-                            annotazioniSessione[i].annotazioni[j].source = $("ul.nav.nav-tabs li.active a").attr("id");
-                            annotazioniSessione[i].annotazioni[j].idFrammento = nuovoPath;
-                            annotazioniSessione[i].annotazioni[j].start = nuovoStart;
-                            annotazioniSessione[i].annotazioni[j].end = nuovoEnd;
+
+                            if(oggettoSelezionato["frammento"] != 'document'){ //Modifica ann su frammento
+                                if(typeof(oggettoSelezionato.selezione) != 'undefined'){ //Il frammento è stato modificato
+                                    annotazioniSessione[i].annotazioni[j].selezione = oggettoSelezionato.selezione;
+                                    annotazioniSessione[i].annotazioni[j].idFrammento = oggettoSelezionato.id;
+                                    alert("oggettoSelezionato.idFrammento "+oggettoSelezionato.id)
+                                    annotazioniSessione[i].annotazioni[j].start = oggettoSelezionato.inizio;
+                                    annotazioniSessione[i].annotazioni[j].end = oggettoSelezionato.fine;
+                                }
+                            }
                             annotazioniSessione[i].annotazioni[j].oggetto = testo;
                             annotazioniSessione[i].annotazioni[j].tipo = tipo;
                             annotazioniSessione[i].annotazioni[j].data = getDateTime();
@@ -251,7 +248,7 @@ $('#salvaInsert').on('click', function(){
                             var classCSS = getClassNameType(tipo);
                             var col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
                             var tagTipo = '<td>'+col+' '+ tipo+'</td>'
-                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(1)').html(tagTipo);//TODO cambiare il tipo nel modal
+                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(1)').html(tagTipo);
                             $('#modalAnnotDoc').modal('hide');
                         }
                     }
@@ -340,9 +337,10 @@ function modificaAnnotazioneLocale(id){
                         } else {
                             $('div.form-group input').val(annotazioniSessione[i].annotazioni[j].oggetto);
                         }
-                        /* Se l'annotazione è su un frammento, lo mostra nel modal */
-                        //if(annotazioniSessione[i].annotazioni[j].selezione.length != 0){
-                        if(annotazioniSessione[i].annotazioni[j].selezione != 'document'){ //TODO controllare
+
+                        /* Modifica di un'annotazione con frammento */
+
+                        if(annotazioniSessione[i].annotazioni[j].selezione != 'document'){
 
                             if(annotazioniSessione[i].annotazioni[j].source.indexOf("_cited[") > -1){ //ann su cit
                                 $('textarea#selezione').css("display", "block");
@@ -359,7 +357,9 @@ function modificaAnnotazioneLocale(id){
                                 $('#modalAnnotDoc textarea').html(annotazioniSessione[i].annotazioni[j].selezione);
                             }
 
-                        }else{
+                        }else{ /* Modifica di un'annotazione sul documento */
+                            oggettoSelezionato["frammento"] = 'document';
+
                             $('textarea#selezione').css("display", "none");
                             $('button#bottonemodFramm').css("display", "none");
                             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',true);
@@ -367,7 +367,7 @@ function modificaAnnotazioneLocale(id){
                         }
 
                         $('#modalAnnotDoc h3').html("Modifica annotazione");
-                        $('#modalAnnotDoc').data('azione', "modifica");
+                        $('#modalAnnotDoc').data("azione", "modifica");
                         $('#modalAnnotDoc').data('id', id).modal('show');
 
                     }else{ //sto modificando una citazione (si apre il modal per le citazioni)
@@ -439,7 +439,7 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
 
     var tipo = annotazioneCorrente["tipo"];
     var oggetto = annotazioneCorrente["oggetto"];
-    alert("tipo: "+tipo+"\noggetto: "+oggetto)
+
     //prendere tipo e oggetto
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
     // in base al tipo mostro l'oggetto dell'annotazione nell'apposito contenitore
@@ -461,11 +461,6 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
         oggettoSelezionato = obj;
         $("modalAnnotDoc textarea#selezione").html(obj.selezione);
         $('#modalAnnotDoc').data("azione", "modifica");
-//        $('#modalAnnotDoc').data("id", id);
-//        $('#modalAnnotDoc').data("selezione", obj.selezione);
-//        $('#modalAnnotDoc').data("path", obj.id);
-//        $('#modalAnnotDoc').data("inizio", obj.inizio);
-//        $('#modalAnnotDoc').data("fine", obj.fine);
 
         if(typeof(annotazioneCorrente["id"]) != "undefined"){
             $('#modalAnnotDoc').data("id", annotazioneCorrente["id"]);
@@ -516,7 +511,6 @@ function costruisciAnnotazione(source, tipo, testo, idFrammento, start, end, sel
     singolaAnnotazione['id'] = idAnn;
     singolaAnnotazione['tipo'] = tipo;
     singolaAnnotazione['data'] = getDateTime();
-//    singolaAnnotazione['target'] = 'target'; //documento o frammento //TODO togliere ovunque
     singolaAnnotazione['selezione'] = selezione;
     singolaAnnotazione['oggetto'] = testo;
     singolaAnnotazione['source'] = source;
@@ -622,14 +616,6 @@ function cancellaAnnotGrafo(element){
 
 $(document).ready(function(){
 
-    //Elementi per la modifica delle annotazioni inserite dall'utente
-//    $("#modFunzioneRetorica").css("display", "none");
-//    $("#modAutore").css("display", "none");
-//    $("#modAnno").css("display", "none");
-//    $("#modDoi").css("display", "none");
-//    $("#modTitolo").css("display", "none");
-//    $("#modUrl").css("display", "none");
-//    $("#modCommento").css("display", "none");
 
     /* Salvare sul grafo annotazioni e citazioni inserite localmente */
     $("#salvaGest").click(function(){
@@ -642,7 +628,6 @@ $(document).ready(function(){
                     annotazioneSingola = {};
                     annotazioneSingola["tipo"] = annotazioniSessione[i].annotazioni[j].tipo;
                     annotazioneSingola["data"] = annotazioniSessione[i].annotazioni[j].data;
-//                    annotazioneSingola["target"] = annotazioniSessione[i].annotazioni[j].target;
                     annotazioneSingola["oggetto"] = annotazioniSessione[i].annotazioni[j].oggetto;
                     annotazioneSingola["source"] = annotazioniSessione[i].annotazioni[j].source;
                     annotazioneSingola["id"] = annotazioniSessione[i].annotazioni[j].idFrammento;
@@ -669,6 +654,7 @@ $(document).ready(function(){
     });
 
      /* Gestione dei tipi nel modal di inserimento di annotazioni */
+     //TODO capire perchè il bottone 'SALVA' resta disabilitato
      $('#autore').keyup(function() {
         if($(this).val().length != 0) {
            $('#salvaInsert').removeAttr('disabled', 'disabled');
@@ -731,6 +717,7 @@ $(document).ready(function(){
 
     /* Salva le citazioni inserite in locale */
     $("#salvaInsertCit").click(function(){
+
         /* Modifica citazione */
         if($("#modalAnnotCit").data('idCit') != undefined){
             var idCit = $("#modalAnnotCit").data('idCit');
@@ -750,7 +737,7 @@ $(document).ready(function(){
                             $('[data-id="' + idCit + '"]').children().filter(':nth-child(3)').html(annotazioniSessione[i].annotazioni[j].oggetto);
 
                             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-                            $('#modalAnnotCit').removeData('idCit'); //TODO da fare ?!
+                            $('#modalAnnotCit').removeData('idCit');
                             $('#modalAnnotCit').modal('hide');
                             $('#modalAnnotCit h3').html("Inserisci citazione");
                             break;
@@ -758,10 +745,8 @@ $(document).ready(function(){
                     }
                 }
             }
-//            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-//            $('#modalAnnotCit').removeData('idCit');
-//            $('#modalAnnotCit h3').html("Inserisci citazione");
-        }else{ /* Inserisci citazione */
+        }else{
+            /* Inserisci citazione */
             //costruisciAnnotazione(source, tipo, valore, idFrammento, start, end, testoSelezionato)
             costruisciAnnotazione($("ul.nav.nav-tabs li.active a").attr("id"), 'Citazione', $("#selectCit").find(":selected").text(), 'pathCitazione', 'startCitazione', 'endCitazione', 'testo citazione');
 

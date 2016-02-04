@@ -222,7 +222,6 @@ $(document).ready(function() {
                     for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                         tipo = annotazioniSessione[i].annotazioni[j].tipo;
                         data = annotazioniSessione[i].annotazioni[j].data.replace("T", " ");
-//                        target = annotazioniSessione[i].annotazioni[j].target;
                         selezione = annotazioniSessione[i].annotazioni[j].selezione;
                         oggetto = annotazioniSessione[i].annotazioni[j].oggetto;
 
