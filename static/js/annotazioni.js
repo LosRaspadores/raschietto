@@ -65,11 +65,12 @@ function get_annotazioni(query, urlDoc){
 
         dataType: "jsonp",
         success: function(result) {
-            lista_annotazioni = result["results"]["bindings"];
+            lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
             if(lista_annotazioni.length != 0){
                 salvaAnnotazioniJSON(urlDoc, lista_annotazioni);
                 for (i = 0; i < lista_annotazioni.length; i++) {
                     ann = lista_annotazioni[i];
+                    // alert('ann='+ann["url"]["value"]);
                     fragmentPath = ann["fs_value"]["value"];
                     if(fragmentPath == "" || fragmentPath == "document" || fragmentPath == "Document" || fragmentPath == "html/body/" || fragmentPath == "html/body"){
                         console.log("ANNOTAZIONE SUL DOCUMENTO SENZA FRAGMENT PATH");
@@ -82,10 +83,11 @@ function get_annotazioni(query, urlDoc){
                 displayAnnotazioni(lista_annotazioni); //modale
                 //annotDaGestire(urlDoc);
             } else {
-                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato. Avvio dello scraping automatico");
                 $('#alertDoc').modal('show');
+                scraper(lista_annotazioni,urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
-            scraper(lista_annotazioni,urlDoc);
+             //scraper(lista_annotazioni,urlDoc);
         },
         error: function(error) {
             $('#alertMessage').text("Errore nel caricamento delle annotazioni.");
@@ -95,8 +97,29 @@ function get_annotazioni(query, urlDoc){
 };
 
 
+function lancia_scraper(query, urlDoc){
+    uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
+    $.ajax({
+        url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
+        //url: "http://localhost:3030/data/query?query=" + uriQuery + "&format=json",
+
+        dataType: "jsonp",
+        success: function(result) {
+          lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
+
+          scraper(lista_annotazioni,urlDoc);
+
+        },
+        error: function(error) {
+            $('#alertMessage').text("Errore nell'esecuzione dello scraper");
+            $('#alertDoc').modal('show');
+        }
+    });
+};
+
+
+
 function scraper(anns,urlDoc){
-    alert('ciao2...'+urlDoc);
     $findTitle = false;
     $findAuthor = false;
     $findDoi = false;
@@ -166,7 +189,8 @@ function scraper(anns,urlDoc){
              type: 'GET',
              data: {url: urlDoc},
              success: function(result) {
-                   alert("scraping titolo="+result);
+                   alert("scraping titolo="+result)
+
              },
              error: function(error) {
                    alert("Error: " + error);
@@ -246,13 +270,7 @@ function scraper(anns,urlDoc){
 
     }
 
-
 }
-
-
-
-
-
 
 
 // modal
@@ -263,7 +281,7 @@ function displayAnnotazioni(anns) {
     var i;
     for (i = 0; i < anns.length; i++) {
         var ann = anns[i];
-        var subject = ann["body_s"]["value"];
+        var subject = ann["body_s"]["value"];   //es subject= http://dlib/september14/jettka/09jettka_ver1_cited1
         if(subject.indexOf("cited") != -1) {
             var ann_out = displaySingolaAnnotazione("Annotazione su citazione di tipo", ann);
         } else {
@@ -290,12 +308,8 @@ function displayAnnotazioni(anns) {
 function displaySingolaAnnotazione(str, ann){
     //tipo e contenuto
     var out = "";
-   // alert("tipe="+ann["type"]);
-    //alert("value="+ann["type"]["value"]);
-    console.log("pima di iffff="+ann["type"]+" str ="+str);
     if(typeof(ann["type"]) != "undefined"){
-        console.log("tipo="+ann["type"]["value"]);
-        var tipo_ann = gestioneTipoType(ann["type"]["value"]);
+        var tipo_ann = gestioneTipoType(ann["type"]["value"]);  //definiamo il tipo dell'annotazione con l'output
 
         if(tipo_ann != ""){
             out = '<div><span class ="filtri">' + str + " " + tipo_ann;
@@ -316,7 +330,7 @@ function displaySingolaAnnotazione(str, ann){
                 }
                 out += ".</p>";
             }
-            // provenance e dataora
+            // provenance e dataora    trovo la provenance indipendentemente dalla struttura con la quale è definita
             out += '<p>Inserita da: '
             if(typeof(ann["prov_label"]) != "undefined"){
                 out += ann["prov_label"]["value"] + " "
@@ -335,7 +349,7 @@ function displaySingolaAnnotazione(str, ann){
 
     else
     // if (typeof(ann["label"]) != "undefined"){
-        var tipo_ann = gestioneTipoLabel(ann["label"]["value"]);
+        var tipo_ann = gestioneTipoLabel(ann["label"]["value"]);  // definisce il tipo dell'annotazione in base al valore
         if(tipo_ann != ""){
             var out = '<div><span class="filtri">Annotazione di tipo ' + tipo_ann;
             if(ann["label"]["value"] == "Retorica" || ann["label"]["value"] == "Rhetoric"){
@@ -380,10 +394,10 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     var end = ann["end"]["value"];
 
     if(typeof(ann["type"]) != "undefined"){
-        var classCSS = getClassNameType(ann["type"]["value"]);
+        var classCSS = getClassNameType(ann["type"]["value"]);   //definisco il nome delle classe css in base al tipo di annotazione presente all'interno
     }
     else if (typeof(ann["label"]) != "undefined"){
-        var classCSS = getClassNameLabel(ann["label"]["value"]);
+        var classCSS = getClassNameLabel(ann["label"]["value"]);  //definisco il nome delle classe css in base al valore della label di annotazione presente all'interno
     }
 
     else {
@@ -426,6 +440,8 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         }
     }
 }
+
+
 
 function findCorrectNodo(nodo, start, end, classCSS, ann){
     var out;

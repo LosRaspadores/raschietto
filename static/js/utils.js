@@ -63,12 +63,12 @@ function setIRIautore(nome_autore){
 }
 
 /*
-console.log(setIRIautore(" Màrio  "));
-console.log(setIRIautore("Marìo   Rossi"));
-console.log(setIRIautore("Ma&rio Dè Rùssi  "));
-console.log(setIRIautore("M. Dé Rossi"));
+console.log(setIRIautore(" Mï¿½rio  "));
+console.log(setIRIautore("Marï¿½o   Rossi"));
+console.log(setIRIautore("Ma&rio Dï¿½ Rï¿½ssi  "));
+console.log(setIRIautore("M. Dï¿½ Rossi"));
 console.log(setIRIautore("M{ar}io De Rossi B*ian;chi"));
-console.log(setIRIautore("M[a]riò De Rossi Bianc.;h:i Vèrdi Gialli"));
+console.log(setIRIautore("M[a]riï¿½ De Rossi Bianc.;h:i Vï¿½rdi Gialli"));
 */
 
 

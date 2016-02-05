@@ -526,6 +526,9 @@ def main():
     do_query_post(sparql_endpoint_locale, query)
 
 
+
+
+
 """
     query = query_select_from_tuttigafi(lista)
     do_query_get(sparql_endpoint_locale, query)
