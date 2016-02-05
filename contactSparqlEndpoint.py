@@ -179,13 +179,14 @@ annotazione_prova_author = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:author a rdf:Statement;
-        rdfs:label "AUTORE = Robert R. Downs"^^xsd:string ;
+        rdfs:label "Robert R. Downs"^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs>;
         rdf:predicate dcterms:creator;
         rdf:object rsch:r-downs .
 
     rsch:r-downs a foaf:Person;
-        rdfs:label "Robert Downs".
+        rdfs:label "Robert Downs"^^xsd:string;
+        foaf:made <http://www.dlib.org/dlib/july15/downs/07downs.html> .
 
     <http://www.dlib.org/dlib/july15/downs/07downs.html> a fabio:item.
 
@@ -216,7 +217,7 @@ annotazione_prova_anno = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:year a rdf:Statement;
-        rdfs:label "ANNO = 2015"^^xsd:string ;
+        rdfs:label "2015"^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
         rdf:predicate fabio:hasPublicationYear ;
         rdf:object "2015"^^xsd:date .
@@ -246,7 +247,37 @@ annotazione_prova_title = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:title a rdf:Statement;
-        rdfs:label "TITOLO = Data Stewardship in the Earth Sciences"^^xsd:string ;
+        rdfs:label "Data Stewardship in the Earth Sciences"^^xsd:string ;
+        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
+        rdf:predicate dcterms:title ;
+        rdf:object "Data Stewardship in the Earth Sciences"^^xsd:string .
+
+    <http://www.dlib.org/dlib/july15/downs/07downs.html> a fabio:item.
+
+    <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression;
+        fabio:hasRepresentation <http://www.dlib.org/dlib/july15/downs/07downs.html>."""
+
+annotazione_prova_title_due = """
+    [] a oa:Annotation ;
+        rdfs:label "Titolo"^^xsd:string ;
+        rsch:type "hasTitle"^^xsd:string ;
+        oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
+        oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
+        oa:hasBody _:title ;
+        oa:hasTarget [ a oa:SpecificResource ;
+                oa:hasSelector [ a oa:FragmentSelector ;
+                        rdf:value "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_h32"^^xsd:string ;
+                        oa:start "0"^^xsd:nonNegativeInteger ;
+                        oa:end "28"^^xsd:nonNegativeInteger ] ;
+                oa:hasSource <http://www.dlib.org/dlib/july15/downs/07downs.html> ] .
+
+    <mailto:los.raspadores@gmail.com> a foaf:mbox ;
+        schema:email "los.raspadores@gmail.com" ;
+        foaf:name "LosRaspadores"^^xsd:string ;
+        rdfs:label "LosRaspadores"^^xsd:string .
+
+    _:title a rdf:Statement;
+        rdfs:label "Data Stewardship in the Earth Sciences"^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
         rdf:predicate dcterms:title ;
         rdf:object "Data Stewardship in the Earth Sciences"^^xsd:string .
@@ -276,7 +307,7 @@ annotazione_prova_commento = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:commento a rdf:Statement;
-        rdfs:label "COMMENTO = Il documento è interessantissimo"^^xsd:string ;
+        rdfs:label "Il documento è interessantissimo"^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1#form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_h32>;
         rdf:predicate schema:comment;
         rdf:object "Il documento è interessantissimo"^^xsd:string .
@@ -308,7 +339,7 @@ annotazione_prova_retorica = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:retoric a rdf:Statement;
-        rdfs:label "RETORICA = Introduction"^^xsd:string ;
+        rdfs:label "Introduction"^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1#form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_h33>;
         rdf:predicate sem:denotes ;
         rdf:object deo:Introduction.
@@ -339,7 +370,7 @@ annotazione_prova_multipla = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:cite a rdf:Statement;
-        rdfs:label "CITAZIONE = Between Memory and Paperbooks: Baconianism and Natural History in Seventeenth-Century England."^^xsd:string ;
+        rdfs:label "Between Memory and Paperbooks: Baconianism and Natural History in Seventeenth-Century England."^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
         rdf:predicate cito:cites ;
         rdf:object <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1>.
@@ -347,7 +378,8 @@ annotazione_prova_multipla = """
     <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression;
         fabio:hasRepresentation <http://www.dlib.org/dlib/july15/downs/07downs.html>.
 
-    <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> rdfs:label "[1] Yeo, Richard. 2007. Betwee...gland. History of Science 45 (March): 1—46"^^xsd:string .
+    g .
+<http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> rdfs:label "[1] Yeo, Richard. 2007. Betwee...gland. History of Science 45 (March): 1—46"^^xsd:strin
 
     [] a oa:Annotation ;
         rdfs:label "Titolo"^^xsd:string ;
@@ -364,7 +396,7 @@ annotazione_prova_multipla = """
                 oa:hasSource <http://www.dlib.org/dlib/july15/downs/07downs.html> ] .
 
         _:titolo a rdf:Statement ;
-            rdfs:label "TITOLO = Between Memory and Paperbooks: Baconianism and Natural History in Seventeenth-Century England"^^xsd:string ;
+            rdfs:label "Between Memory and Paperbooks: Baconianism and Natural History in Seventeenth-Century England"^^xsd:string ;
             rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> ;
             rdf:predicate dcterms:title ;
             rdf:object "Between Memory and Paperbooks: Baconianism and Natural History in Seventeenth-Century England"^^xsd:string .
@@ -403,6 +435,21 @@ def query_delete_file(nome_grafo, file):
                         GRAPH <%s>  { %s }
                     }""" % (nome_grafo, rdf_graph.serialize(format="nt"))
     return query
+
+
+def queryFRBRdocument(url_doc):
+    if url_doc.endswith(".html"):
+        url_nohtml = url_doc[:-len(".html")]
+    else:
+        url_nohtml = url_doc
+    query = "<" + url_doc + "> a fabio:item."\
+        "<" + url_nohtml + "_ver1> a fabio:Expression;"\
+        "fabio:hasRepresentation <" + url_doc + ">."\
+        "<" + url_nohtml + "> a fabio:Work;"\
+        "fabio:hasPortrayal <" + url_doc + ">;"\
+        "frbr:realization <" + url_nohtml + "_ver1>. "
+    return query
+
 
 
 # 'CLEAR GRAPH' per rimuovere le triple da un grafo
@@ -473,61 +520,78 @@ def query_annotazione(nome_grafo, annotazione):
     return query
 
 
+def rfrbDocToEndpoint(url_doc):
+    query = query_annotazione(nome_grafo_gruppo, queryFRBRdocument(url_doc))
+    do_query_post(sparql_endpoint_remoto, query)
+
+
 def main():
 
     """
     query = query_insert_file(nome_grafo_gruppo, "travel.owl")
     do_query_post(sparql_endpoint_locale, query)
 
-
     query = query_clear_graph(nome_grafo_gruppo)
     do_query_post(sparql_endpoint_locale, query)
+    """
 
-"""
     query = query_clear_graph(nome_grafo_gruppo)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
+
 
     url_doc = "http://www.dlib.org/dlib/july15/downs/07downs.html"
+
+    """
     query = query_delete_annotazioni_documento(url_doc)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_doi)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_url)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_anno)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_author)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_commento)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_title)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
+
+    query = query_annotazione(nome_grafo_gruppo, annotazione_prova_title_due)
+    do_query_post(sparql_endpoint_remoto, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_retorica)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
+    """
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_multipla)
     do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
+    query = query_annotazione(nome_grafo_gruppo, queryFRBRdocument(url_doc))
+    do_query_post(sparql_endpoint_remoto, query)
+    #do_query_post(sparql_endpoint_locale, query)
 
-
-
+"""
+    query = query_annotazione(nome_grafo_gruppo, annota)
+    do_query_post(sparql_endpoint_remoto, query)
+    #do_query_post(sparql_endpoint_locale, query)"""
 
 """
     query = query_select_from_tuttigafi(lista)
@@ -535,7 +599,8 @@ def main():
 
     query = query_select_all_grafo(nome_grafo_gruppo)
     do_query_get(sparql_endpoint_remoto, query)
-    """
+"""
+
 
 
 if __name__ == "__main__":

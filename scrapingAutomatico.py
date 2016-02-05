@@ -65,7 +65,7 @@ def scraping_titolo(urlDoc):
                     data['titolo'] = res.text
                     lista.append(data)
         elif parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
-            if len(parsed_uri[2]) > 2 and parsed_uri[2].find("article") != -1:
+            if  parsed_uri[2].find("article") != -1: #len(parsed_uri[2]) > 2 and
                 result = soup.find('div', {"id": "articleTitle"})
                 res = result.find('h3')
                 data = {}
@@ -86,10 +86,8 @@ def scraping_titolo(urlDoc):
             else:
                 data['titolo'] = title.string
             lista.append(data)
-
-
-    print json.dumps(lista)
     return json.dumps(lista)
+
 
 
 def scraping_automatico_titolo(url):
