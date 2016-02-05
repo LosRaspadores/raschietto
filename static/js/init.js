@@ -25,6 +25,10 @@ $(document).ready(function() {
     });
     $("#uriNuovoDoc").val("");
 
+    /////
+    $("#bottoniModificaSelezione").css('display', 'none');
+    ////
+
     $('#bottoniAnnotator').hide();
     $('#insertAutore').css('display', 'none');
     $('#insertAnnoPub').css('display', 'none');
@@ -90,10 +94,13 @@ $(document).ready(function() {
     }
 
     $('ul#bottoniAnnotator button').click(function(e){
-        if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
-            $('#alertMessage').text("Nessun documento selezionato.");
+        /* Il bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
+            $('#alertMessage').text("Nessun documento selezionato."); //TODO cambiare messaggio
             $('#alertDoc').modal('show');
             e.stopPropagation();
+        }else if($(this).attr("id") == "buttonAnnotDoc"){ //Il modal per l'inserimento delle annotazioni ha bisogno di verificare che ci sia o meno un frammento di testo selezionato
+            verificaTab()
         }
     });
 

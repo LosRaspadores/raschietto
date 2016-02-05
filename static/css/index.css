@@ -601,9 +601,27 @@ div.tab-content{
 }
 
 #confermaModificaSelezione {
+/*
     position: fixed;
     right: 20px;
     margin-top: 10px;
+    */
+    background-color: #44B78B;
+
+}
+
+
+.modificaSelezione{
+    width: inherit;
+    margin-top: 5px;
+}
+
+#bottoniModificaSelezione{
+    position: fixed;
+    right: 20px;
+    margin-top: 10px;
+    width: 200px;
+    float: left;
 }
 
 .glyphicon-plus:hover, .glyphicon-trash:hover, .glyphicon-edit:hover {

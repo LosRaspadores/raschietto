@@ -90,7 +90,7 @@
                     <ul class="nav navbar-nav navbar-right" id="bottoniAnnotator">
                         <li>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
-                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento" onclick="verificaTab()"><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento"><span class="glyphicon glyphicon-pencil"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonGest" data-tooltip="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create" data-toggle="modal" data-target="#modalGestAnnotazioni"><span class="glyphicon glyphicon-floppy-disk"></span></button>
                         </li>
@@ -253,6 +253,11 @@
             </div>
         </div>
 
+        <div id="bottoniModificaSelezione">
+            <button id='confermaModificaSelezione' class='btn btn-success modificaSelezione'>Conferma nuova selezione</button>
+            <button id='annullaModificaSelezione' class='btn btn-danger modificaSelezione'>Annulla modifica</button>
+        </div>
+
         <!-- Modal annotazione singola -->
         <div class="modal fade" id="modalAnnotazioneSingola" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -364,7 +369,7 @@
                     <form id="formAnnotazione">
                         <div class="modal-body">
                             <textarea class="form-control" rows="3" id="selezione" readonly></textarea>
-                            <button id="bottonemodFramm" type="button" class="btn btn-success" data-dismiss="modal" onclick="modificaSelezione()">Modifica Testo Selezionato</button>
+                            <button id="bottonemodFramm" type="button" class="btn btn-success" data-dismiss="modal">Modifica Testo Selezionato</button>
                             <!--<div id="modificaSelezioneFramm"></div>-->
                                 <div class="form-group" id="divInsert">
                                     <label for="selectTipoAnnot">Seleziona il tipo di annotazione</label>

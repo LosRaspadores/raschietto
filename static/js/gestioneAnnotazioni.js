@@ -90,7 +90,6 @@ function verificaFrammento(){
         }
         pathFrammento = url+'#'+originalPath+'_'+getElementPath($(container), d)
         idFrammento = originalPath+'_'+getElementPath($(container), d)
-        alert(idFrammento)
         obj = {"selezione": selection.toString(),
                 "source": url,
                 "id": idFrammento,
@@ -324,19 +323,18 @@ function modificaAnnotazioneLocale(id){
                 if(annotazioniSessione[i].annotazioni[j].id == id){
                     tipo = annotazioniSessione[i].annotazioni[j].tipo;
                     if(tipo != 'Citazione'){ //sto modificando un'annotazione
-
+                        var oggettoAnnotazione = annotazioniSessione[i].annotazioni[j].oggetto;
                         $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
                         // in base al tipo mostro l'oggetto dell'annotazione nell'apposito contenitore
                         if(tipo == "Funzione retorica"){
-                            $('select[id="funcRet"]').find('option:contains("'+annotazioniSessione[i].annotazioni[j].oggetto+'")').attr("selected",true);
+                            $('select[id="funcRet"]').find('option:contains("'+oggettoAnnotazione+'")').attr("selected",true);
                         } else if (tipo == "Anno pubblicazione"){
-                            $('select[id="anno"]').find('option:contains("'+annotazioniSessione[i].annotazioni[j].oggetto+'")').attr("selected",true);
+                            $('select[id="anno"]').find('option:contains("'+oggettoAnnotazione+'")').attr("selected",true);
                         } else if(tipo == "Commento" || tipo == "Titolo"){
-                            $('div.form-group textarea').text(annotazioniSessione[i].annotazioni[j].oggetto);
+                            $('div.form-group textarea').val(oggettoAnnotazione); //TODO sbarella
                         } else {
-                            $('div.form-group input').val(annotazioniSessione[i].annotazioni[j].oggetto);
+                            $('div.form-group input').val(oggettoAnnotazione);
                         }
-
                         /* Modifica di un'annotazione con frammento */
 
                         if(annotazioniSessione[i].annotazioni[j].selezione != 'document'){
@@ -431,13 +429,14 @@ function modificaSelezione(){
     $('#modalAnnotDoc').modal('hide');
 
     var idTab = $("ul.nav.nav-tabs li.active a").attr("href").substr(1);
-    $("#"+idTab).prepend("<button id='confermaModificaSelezione' class='btn btn-success' onclick='aggiornaAnnotazione()'>Conferma nuova selezione</button>")
+    $("#"+idTab).prepend($("#bottoniModificaSelezione"));
+    $("#bottoniModificaSelezione").css("display", "block");
 }
 
 function aggiornaAnnotazione(){ // bottone che sta fermo
 
     var tipo = annotazioneCorrente["tipo"];
-    var oggetto = annotazioneCorrente["oggetto"];
+    var oggetto = annotazioneCorrente["oggetto"]; //TODO è sbagliato ! prende la selezione anzichè l'oggetto
 
     //prendere tipo e oggetto
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
@@ -447,7 +446,7 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
     } else if (tipo == "Anno pubblicazione"){
         $('select[id="anno"]').find('option:contains("'+oggetto+'")').attr("selected",true);
     } else if(tipo == "Commento" || tipo == "Titolo"){
-        $('div.form-group textarea').text(oggetto);
+        $('div.form-group textarea').val(oggetto);
     } else {
         $('div.form-group input').val(oggetto);
     }
@@ -467,7 +466,7 @@ function aggiornaAnnotazione(){ // bottone che sta fermo
             $('#modalAnnotDoc').data("index", annotazioneCorrente["index"]);
             $('#modalAnnotDoc').data("indexDoc", annotazioneCorrente["indexDoc"]);
         }
-        $("#confermaModificaSelezione").remove();
+        $("#bottoniModificaSelezione").css("display", "none");
         $('#modalAnnotDoc').modal('show');
     }
 }
@@ -491,7 +490,6 @@ function annotaCitazione(idCit){
         }
     }
     $('button#bottonemodFramm').css("display", "none");
-//    $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
     $("#modalAnnotDoc").data("path", pathCit);
     $("#modalAnnotDoc").data("start", startCit);
@@ -592,7 +590,7 @@ function modificaAnnot(element){
     } else if (tipo == "Anno pubblicazione"){
         $('select[id="anno"]').find('option:contains("'+listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value+'")').attr("selected",true);
     } else if(tipo == "Commento" || tipo == "Titolo"){
-        $('div.form-group textarea').text(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
+        $('div.form-group textarea').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
     } else {
         $('div.form-group input').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
     }
@@ -614,6 +612,17 @@ function cancellaAnnotGrafo(element){
 
 
 $(document).ready(function(){
+
+    /* Bottoni associati alla modifica del frammento di un'annotazione */
+    $("#bottonemodFramm").click(function(){
+        modificaSelezione()
+    });
+    $("#confermaModificaSelezione").click(function(){
+        aggiornaAnnotazione()
+    });
+    $("#annullaModificaSelezione").click(function(){
+        $("#bottoniModificaSelezione").css("display", "none");
+    });
 
 
     /* Salvare sul grafo annotazioni e citazioni inserite localmente */
@@ -703,6 +712,7 @@ $(document).ready(function(){
         }
      });
 
+
      /* Abilita il bottone di salvataggio quando si apre un modal e i campi sono gia riempiti */
      $("#modalAnnotDoc").on('shown.bs.modal', function(){
         var checkAutore = $('#autore').val().length != 0;
@@ -776,6 +786,15 @@ $(document).ready(function(){
         $(this).removeData('path');
         $(this).removeData('inizio');
         $(this).removeData('fine');
+
+        //TODO svuotare i campi del modal quando si chiudono
+        $("#autore").val('').end();
+        $("#anno").val('').end();
+        $("#titolo").val('').end();
+        $("#url").val('').end();
+        $("#doi").val('').end();
+        $("#comm").val('').end();
+        $("#funcRet").val('').end();
     });
 
 
