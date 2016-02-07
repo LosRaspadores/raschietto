@@ -173,7 +173,7 @@ def scraping_documenti():
 
     #print json.dumps(lista_docs)
 
-    return json.dumps(lista_docs)
+    return lista_docs
 
 
 if __name__ == "__main__":

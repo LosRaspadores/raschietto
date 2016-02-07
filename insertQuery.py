@@ -22,17 +22,7 @@ from urlparse import urljoin
 import re
 import datetime
 from time import gmtime, strftime
-from bs4 import BeautifulSoup
-import mechanize
-import json
-import urlparse
-from lxml import etree, html
-import lxml
-import urllib
-from lxml.cssselect import CSSSelector
-import unicodedata
-from unidecode import unidecode
-from os import sys
+
 
 # endpoint
 sparql_endpoint_remoto = "http://tweb2015.cs.unibo.it:8080/data"
@@ -245,6 +235,19 @@ def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
 
+def get_fragment_path(path):
+    arr = path.split("_")
+    for i in range(len(arr)):
+        if not(contains_digits(arr[i])):
+            arr[i] = arr[i] + "1"
+        else:
+            if "h" in arr[i]:
+                if len(arr[i]) == 2:
+                    arr[i] = arr[i]+"1"
+    path = "_".join(arr)
+    path = path.replace("html1_body1_", "")
+    return path
+
 def main():
     """
     print(setIRIautore(" Màrio  "))
@@ -255,82 +258,82 @@ def main():
     print(setIRIautore("M[a]riò De Rossi Bianc.;h:i Vèrdi Gialli"))
     """
 
-    path = "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"
-    start = "0"
-    end = "20"
-    url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
-    # (urldoc, path, start, end, tipo, valore):
-
-    titolo = "Data Stewardship in the Earth Sciences"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasTitle", titolo)
-    #print ann
-    #query = query_annotazione(nome_grafo_gruppo, ann)
-    #do_query_post(sparql_endpoint_remoto, query)
-
-    #ann = costruisciAnnotazione(url, path, start, end, "hasUrl", url)
-    #print ann
-    autore = "Robert R. Downs"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasAuthor", autore)
-    #print ann
-    anno = "2015"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasPublicationYear", anno)
-    #print ann
-    doi = "10.1045/july2015-downs"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasDoi", doi)
-    #print ann
-
-
-
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
-
-    url = "http://rpd.unibo.it/article/view/5355"
-    pathgenerale = "/html/body/div/div/div[2]/div[3]/"
-    pathparziale = "div[2]/h3/text()"
-    titolo = "La valutazione"
-
-    """
-    #albero nodi metodo 1
-    br = mechanize.Browser()
-    response = br.open(url)
-    dochtml = response.read()  # raw html source code
-    albero = etree.HTML(dochtml)
-    nodo = albero.xpath(pathgenerale + pathparziale)
-    nodo = '\n'.join(nodo)
-    start = nodo.find(titolo)
-    end = start + len(titolo)
-    print start
-    print end
-    """
-    # open url metodo 2
-    url = "http://rpd.unibo.it/article/view/5355"
-    pathgenerale = "/html/body/div/div/div[2]/div[3]/"
-    pathparziale = "div[2]/h3/text()"
-    path = pathgenerale + pathparziale
-    albero = lxml.html.parse(url).getroot()
-    nodo = albero.xpath(pathgenerale + pathparziale)  # lista
-    start = nodo[0].find(titolo)  # indice del
-    if start == -1:
-        print "qualcosa non va"
-    end = start + len(titolo)
-    print path
-    path = path[11:-7]
-    path_step_list = path.split("/")
-    path = ""
-    for step in path_step_list:
-        if not contains_digits(step):
-            step += "[1]"
-        # h
-        path += step + "/"
-    path = path[:-1]
-    # mpath = '/'.join(path_step_list) not work
-    path = path.replace("[", "")
-    path = path.replace("]", "")
-    path = path.replace("/", "_")
-    print path
-    print start
-    print end
-
+    # path = "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"
+    # start = "0"
+    # end = "20"
+    # url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
+    # # (urldoc, path, start, end, tipo, valore):
+    #
+    # titolo = "Data Stewardship in the Earth Sciences"
+    # #ann = costruisciAnnotazione(url, path, start, end, "hasTitle", titolo)
+    # #print ann
+    # #query = query_annotazione(nome_grafo_gruppo, ann)
+    # #do_query_post(sparql_endpoint_remoto, query)
+    #
+    # #ann = costruisciAnnotazione(url, path, start, end, "hasUrl", url)
+    # #print ann
+    # autore = "Robert R. Downs"
+    # #ann = costruisciAnnotazione(url, path, start, end, "hasAuthor", autore)
+    # #print ann
+    # anno = "2015"
+    # #ann = costruisciAnnotazione(url, path, start, end, "hasPublicationYear", anno)
+    # #print ann
+    # doi = "10.1045/july2015-downs"
+    # #ann = costruisciAnnotazione(url, path, start, end, "hasDoi", doi)
+    # #print ann
+    #
+    #
+    #
+    # reload(sys)
+    # sys.setdefaultencoding("utf-8")
+    #
+    # url = "http://rpd.unibo.it/article/view/5355"
+    # pathgenerale = "/html/body/div/div/div[2]/div[3]/"
+    # pathparziale = "div[2]/h3/text()"
+    # titolo = "La valutazione"
+    #
+    # """
+    # #albero nodi metodo 1
+    # br = mechanize.Browser()
+    # response = br.open(url)
+    # dochtml = response.read()  # raw html source code
+    # albero = etree.HTML(dochtml)
+    # nodo = albero.xpath(pathgenerale + pathparziale)
+    # nodo = '\n'.join(nodo)
+    # start = nodo.find(titolo)
+    # end = start + len(titolo)
+    # print start
+    # print end
+    # """
+    # # open url metodo 2
+    # url = "http://rpd.unibo.it/article/view/5355"
+    # pathgenerale = "/html/body/div/div/div[2]/div[3]/"
+    # pathparziale = "div[2]/h3/text()"
+    # path = pathgenerale + pathparziale
+    # albero = lxml.html.parse(url).getroot()
+    # nodo = albero.xpath(pathgenerale + pathparziale)  # lista
+    # start = nodo[0].find(titolo)  # indice del
+    # if start == -1:
+    #     print "qualcosa non va"
+    # end = start + len(titolo)
+    # print path
+    # path = path[11:-7]
+    # path_step_list = path.split("/")
+    # path = ""
+    # for step in path_step_list:
+    #     if not contains_digits(step):
+    #         step += "[1]"
+    #     # h
+    #     path += step + "/"
+    # path = path[:-1]
+    # # mpath = '/'.join(path_step_list) not work
+    # path = path.replace("[", "")
+    # path = path.replace("]", "")
+    # path = path.replace("/", "_")
+    # print path
+    # print start
+    # print end
+    print get_fragment_path('html1_body1_div1_div3_div2_div3_div2_h3')
 
 if __name__ == "__main__":
     print "this script (contactSparqlEndpoint) is being run directly from %s" % __name__

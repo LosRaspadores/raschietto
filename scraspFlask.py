@@ -77,18 +77,31 @@ def return_auto_titolo():
     return data
 
 
-@app.route('/scrapingTitolo')    #prende il titolo dei docuemnti quando vengono caricati
+@app.route('/getDocumenti')    #prende il titolo dei documenti quando vengono caricati
 def return_titolo():
-    url = request.args.get('url')
-    item_list = json.loads(url)
+    #url = request.args.get('url')
+    #item_list = json.loads(url)
+    item_list = []
     read_file = open('cacheDoc.json', 'r')
     result = read_file.read()
     read_file.close()
     if (result):
         data = result
     else:
+        docFromScraping = scraping_documenti();
+        query = "PREFIX fabio: <http://purl.org/spar/fabio/> SELECT DISTINCT ?doc WHERE { ?doc a fabio:Item . FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'cited')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'Reference')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), '_ver')}}";
+        docFromSPARQL = do_query_get(sparql_endpoint_remoto, query)
+
+        for d in docFromScraping:
+            item_list.append(d['url'])
+
+        for doc in docFromSPARQL['results']['bindings']:
+            if doc['doc']['value'] in item_list:
+                continue
+            else:
+                item_list.append(doc['doc']['value'])
+
         data = scraping_titolo(item_list)
-        print "scraping completato"
         out_file = open('cacheDoc.json', 'w')
         out_file.write(data)
         out_file.close()
