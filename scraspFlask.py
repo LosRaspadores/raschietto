@@ -141,10 +141,13 @@ def check_Documento_In_Cache():
 
     return lista
 
+sparql_endpoint_loc = "http://localhost:3030/dataset1"
+
 @app.route('/salvaAnnotazioni')
 def salvaAnnotazioni():
     query = request.args.get('query')
-    do_query_post(sparql_endpoint_remoto, query)
+    ## do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_loc, query)
     print query
     return "ok"
 

@@ -21,7 +21,7 @@
 
         <!-- riferimenti css -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" href="/static/css/index.css">
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Exo:400,900">
         <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Roboto:400,900'>
@@ -445,6 +445,14 @@
                     </div>
                     <form>
                         <div class="modal-body">
+                            <form>
+                                <div class="form-group" id="insertCit"><label for="selectCit">Scegli un riferimento bibliografico</label>
+                                   <select class="form-control" id="selectCit">
+                                       <option value=""></option>
+                                   </select>
+                                </div>
+                            </form>
+
                         </div>
                         <div class="modal-footer">
                             <button id="annullaInsertCit" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>

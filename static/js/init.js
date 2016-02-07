@@ -25,9 +25,7 @@ $(document).ready(function() {
     });
     $("#uriNuovoDoc").val("");
 
-    /////
     $("#bottoniModificaSelezione").css('display', 'none');
-    ////
 
     $('#bottoniAnnotator').hide();
     $('#insertAutore').css('display', 'none');
@@ -37,7 +35,7 @@ $(document).ready(function() {
     $('#insertDOI').css('display', 'none');
     $('#insertComm').css('display', 'none');
     $('#insertfunzRet').css('display', 'none');
-    $('#salvaInsert').attr('disabled', 'disabled');
+    $('#salvaInsert').prop('disabled', 'disabled');
 
     $("#home").load("/static/homeText.txt");
 
@@ -90,13 +88,38 @@ $(document).ready(function() {
     var year = new Date().getFullYear();
     for(i = year; i >=  1800; i--){
         $('select#anno').append('<option value="'+i+'">'+i+'</option>');
-        $('select#annoMod').append('<option value="'+i+'">'+i+'</option>');
     }
 
+    //TODO prendere le citazioni dall'oggetto che le contiene
+    /*  getListaCitazioni(listaCitazioni) */
+    var listaCitazioni = []
+    var cit1 = {}
+    cit1["testo"] = "[2] Gabriel, Christoph. 2011. 'Corpus of Argentinean Spanish'. In: Hedeland, Hanna et al. (Eds.), Multilingual Resources and Multilingual Applications Proceedings of the Conference of the German Society for Computational Linguistics and Language Technology (GSCL) 2011. Hamburg: Universität. (Arbeiten zur Mehrsprachigkeit: Working Papers in Multilingualism; Folge B: Serie B; 96).";
+    cit1["numero"] = 2;
+    cit1["path"] = "form1_h2";
+    cit1["start"] = "0"
+    cit1["end"] = "130";
+    listaCitazioni.push(cit1)
+
+    var cit2 = {}
+    cit2["testo"] = "[3] Hedeland, Hanna et al. 2011. 'Multilingual Corpora at the Hamburg Centre for Language Corpora.' In: Hedeland, Hanna et al. (Eds.), Multilingual Resources and Multilingual Applications Proceedings of the Conference of the German Society for Computational Linguistics and Language Technology (GSCL) 2011. Hamburg: Universität. (Arbeiten zur Mehrsprachigkeit: Working Papers in Multilingualism; Folge B: Serie B; 96).";
+    cit2["numero"] = 3;
+    cit2["path"] = "form1_p2";
+    cit2["start"] = "0"
+    cit2["end"] = "90";
+    listaCitazioni.push(cit2)
+
+
     $('ul#bottoniAnnotator button').click(function(e){
-        /* Il bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
-            $('#alertMessage').text("Nessun documento selezionato."); //TODO cambiare messaggio
+            var mess = '';
+            if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
+                mess = "Nessun documento selezionato.";
+            }else if($("#bottoniModificaSelezione").css("display") == "block"){
+                mess = "Termina la modifica dell'annotazione per proseguire";
+            }
+            $('#alertMessage').text(mess);
             $('#alertDoc').modal('show');
             e.stopPropagation();
         }else if($(this).attr("id") == "buttonAnnotDoc"){ //Il modal per l'inserimento delle annotazioni ha bisogno di verificare che ci sia o meno un frammento di testo selezionato
@@ -109,8 +132,7 @@ $(document).ready(function() {
         var annot = $(this).val();
         switch (annot) {
             case "autore":
-//                $("#autore").val("");
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertAutore').css('display', 'block');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -120,8 +142,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "anno":
-//                $('#anno').find(":selected").text("")
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'block');
                 $('#insertTitolo').css('display', 'none');
@@ -131,8 +152,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "titolo":
-//                $("#titolo").val("");
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'block');
@@ -142,8 +162,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "url":
-//                $("#url").val("");
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -153,8 +172,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "doi":
-//                $("#doi").val("");
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -164,8 +182,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "commento":
-//                $("#comm").val("");
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -175,8 +192,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "funzione":
-//                $("#funcRet").val("");
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertComm').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -186,7 +202,7 @@ $(document).ready(function() {
                 $('#insertfunzRet').css('display', 'block');
                 break;
             case "":
-                $('#salvaInsert').attr('disabled', 'disabled');
+                $('#salvaInsert').prop('disabled', 'disabled');
                 $('#insertAutore').css('display', 'none');
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
@@ -198,12 +214,24 @@ $(document).ready(function() {
         }
    });
 
-    $('#buttonCit').click(function(){
+    $('#buttonCit').click(function(){ //TODO lo fa solo la prima volta
         var id = $("ul.nav.nav-tabs li.active a").attr("id");
         if(id != 'homeTab'){
             getCitazioni(id);
+            /*
+            var cit = '';
+            for(var i = 0; i < listaCitazioni.length; i++){
+                if(listaCitazioni[i].testo.length > 70){
+                    cit = listaCitazioni[i].testo.substring(0, 70)+'...';
+                    } else {
+                    cit = listaCitazioni[i].testo;
+                    }
+                $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>');
+            }
+            */
         }
     });
+
 
     /* Riempie modale di gestione delle annotazioni */
     $('#buttonGest').click(function(){
@@ -501,6 +529,7 @@ function citazioniWidget(lista_cit){
             $('#selectCit').append('<option value="">'+cit+'</option>');
         }
    }
+
 function getCitazioni(urlDoc){
         //var urlDoc = 'http://www.dlib.org/dlib/november14/brook/11brook.html';
         $.ajax({
