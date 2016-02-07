@@ -1,17 +1,3 @@
-/*
-function salvaAnnotazioniLocale(listaAnnotazioni){
-        var query = creaQueryInsertAnnotazioni(listaAnnotazioni);
-        $.ajax({
-            url: "/salvaAnnotazioni",
-            data: {"query": query},
-            success: function(result) {
-                $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
-                $('#alertDoc').modal('show');
-                //TODO svuotare l'oggetto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            }
-        });
-}
-*/
 function inviaQuery(listaQuery){
         $.ajax({
             url: "/salvaAnnotazioni",
@@ -60,10 +46,6 @@ function queryFRBRdocument(url_doc){
         'frbr:realization <' + url_nohtml + '_ver1>. ';
     return query;
 };
-
-//var url_doc = "http://www.dlib.org/dlib/july15/downs/07downs.html";
-//queryFRBRdocument(url_doc);
-
 
 /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
 function getDateTime(){

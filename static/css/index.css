@@ -462,6 +462,9 @@ span.glyphicon.glyphicon-remove::before{
         background-image: none;
         background-position: none;
     }
+    div .tab-content{
+        margin-top: 40px;
+    }
 }
 
 .nav-tabs>li>a:hover {
@@ -634,5 +637,8 @@ div.tab-content{
     clear: both;
 }
 
+#bottoniModificaSelezione{
+    display: none;
+}
 
 

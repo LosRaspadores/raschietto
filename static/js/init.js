@@ -25,8 +25,6 @@ $(document).ready(function() {
     });
     $("#uriNuovoDoc").val("");
 
-    $("#bottoniModificaSelezione").css('display', 'none');
-
     $('#bottoniAnnotator').hide();
     $('#insertAutore').css('display', 'none');
     $('#insertAnnoPub').css('display', 'none');
@@ -217,8 +215,8 @@ $(document).ready(function() {
     $('#buttonCit').click(function(){ //TODO lo fa solo la prima volta
         var id = $("ul.nav.nav-tabs li.active a").attr("id");
         if(id != 'homeTab'){
-            getCitazioni(id);
-            /*
+//            getCitazioni(id);
+
             var cit = '';
             for(var i = 0; i < listaCitazioni.length; i++){
                 if(listaCitazioni[i].testo.length > 70){
@@ -228,7 +226,7 @@ $(document).ready(function() {
                     }
                 $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>');
             }
-            */
+
         }
     });
 
@@ -289,8 +287,6 @@ $(document).ready(function() {
             var numTabs = $("ul.nav.nav-tabs").children().length;
             var mq = window.matchMedia("(min-width: 700px)");
             if(mq.matches){
-
-
                 if(numTabs <= 4){
                     var title = $(this).text()
                     $(this).addClass("active").siblings().removeClass("active");
