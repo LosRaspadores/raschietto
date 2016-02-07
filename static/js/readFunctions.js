@@ -78,13 +78,13 @@ function getDocFromScraping(){
 function getDocumenti(docAnnotati, docScraping){
     docTemp = [];
 
-    for(i = 0; i < docAnnotati.length; i++){
-        docTemp.push(docAnnotati[i].doc.value);
+    for(i = 0; i < docScraping.length; i++){
+        docTemp.push(docScraping[i].url);
     }
 
-    for(i = 0; i < docScraping.length; i++){
-        if(!($.inArray(docScraping[i].url, docAnnotati))){
-            docTemp.push(docScraping[i].url);
+    for(i = 0; i < docAnnotati.length; i++){
+        if(!($.inArray(docAnnotati[i].doc.value, docTemp))){
+            docTemp.push(docAnnotati[i].doc.value);
         }
     }
 
@@ -94,11 +94,17 @@ function getDocumenti(docAnnotati, docScraping){
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
-            res = JSON.parse(result);
-            $('#numDoc').html(res.length);
-            for(j = 0; j < res.length; j++){
-                $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
+            if ( result.length == 0 ){
+                $('#alertMessage').text("Nessun documento presente!");
+                $('#alertDoc').modal('show');
+            } else {
+                res = JSON.parse(result);
+                $('#numDoc').html(res.length);
+                for(j = 0; j < res.length; j++){
+                    $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
+                }
             }
+
         },
         error: function(){
             $('#alertMessage').text("Errore nel caricamento dei documenti!");

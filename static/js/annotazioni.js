@@ -549,25 +549,25 @@ function mostraAnnotGruppo(element){
 function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
-        case "sro:Abstract":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Abstract":
             out = "Abstract";
             break;
-        case "deo:Introduction":
+        case "http://purl.org/spar/deo/Introduction":
             out = "Introduction";
             break;
-        case "deo:Materials":
+        case "http://purl.org/spar/deo/Materials":
             out = "Materials";
             break;
-        case "deo:Methods":
+        case "http://purl.org/spar/deo/Methods":
             out = "Methods";
             break;
-        case "deo:Results":
+        case "http://purl.org/spar/deo/Results":
             out = "Results";
             break;
-        case "sro:Discussion":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Discussion":
             out = "Discussion";
             break;
-        case "sro:Conclusion":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Conclusion":
             out = "Conclusion";
             break;
     }

@@ -88,6 +88,7 @@ def return_titolo():
         data = result
     else:
         data = scraping_titolo(item_list)
+        print "scraping completato"
         out_file = open('cacheDoc.json', 'w')
         out_file.write(data)
         out_file.close()
@@ -144,8 +145,10 @@ def check_Documento_In_Cache():
 @app.route('/salvaAnnotazioni')
 def salvaAnnotazioni():
     query = request.args.get('query')
-    do_query_post(sparql_endpoint_remoto, query)
-    print query
+    lista_query = json.loads(query)
+    for q in lista_query:
+        print q
+        do_query_post(sparql_endpoint_remoto, q)
     return "ok"
 
 # launch app

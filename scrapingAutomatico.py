@@ -20,11 +20,9 @@ import mechanize
 import json
 from urlparse import urlparse
 
-
-
 # Browser mechanize
 br = mechanize.Browser()
-br.set_handle_robots(False) #
+br.set_handle_robots(False)
 br.set_handle_refresh(False)
 br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
@@ -36,6 +34,7 @@ def main():
     # scraping_anno()
 
 def scraping_titolo(urlDoc):
+    print "facendo scraping dei titoli.."
     lista = []
 
     for doc in urlDoc:
@@ -53,7 +52,7 @@ def scraping_titolo(urlDoc):
             for res in result:
                 if (res.text != 'D-Lib Magazine'):
                     data = {}
-                    data['url'] = doc;
+                    data['url'] = doc
                     data['titolo'] = res.text
                     lista.append(data)
         elif parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
@@ -78,6 +77,7 @@ def scraping_titolo(urlDoc):
             else:
                 data['titolo'] = title.string
             lista.append(data)
+    print json.dumps(lista)
     return json.dumps(lista)
 
 

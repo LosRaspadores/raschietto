@@ -37,8 +37,8 @@ $(document).ready(function() {
 
     function readerMode(){
         $('[data-toggle="tooltip"]').tooltip('destroy');
-        $("#modalitaToggleLabel").attr('title','Passa a modalità annotator');
         $('[data-toggle="tooltip"]').tooltip();
+        $("#modalitaToggleLabel").attr('title','Passa a modalità annotator');
         $('#utenteAutenticato').text("");
         $('#bottoniAnnotator').hide();
     }
