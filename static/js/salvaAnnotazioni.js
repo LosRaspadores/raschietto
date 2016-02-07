@@ -205,8 +205,8 @@ $(document).ready(function() {
         var url_nohtml = url.slice(0, -5);
         if (path == ""){
             path = "document";
-            start = 0;
-            end = 0;
+            start = "";
+            end = "";
         }
         var target = 'oa:hasTarget [ a oa:SpecificResource ;' +
                      'oa:hasSelector [ a oa:FragmentSelector ;' +
@@ -279,6 +279,12 @@ $(document).ready(function() {
                         'rdf:predicate prism:doi ;' +
                         'rdf:object "' + valore + '"^^xsd:string .';
         } else if (tipo == "Commento"){
+                var subject = "";
+                if(url != "document"){
+                    subject = 'rdf:subject <' + url + '#' + path + '-' + start + '-' + end +'> ;';
+                } else {
+                    subject = 'rdf:subject <' + url + '> ;';
+                }
                 annotazione = '[] a oa:Annotation ;' +
                     'rdfs:label "Commento"^^xsd:string ;' +
                     'rsch:type "hasComment"^^xsd:string ;' +
@@ -286,11 +292,16 @@ $(document).ready(function() {
                     'oa:annotatedBy <mailto:' + mailautore + '> ;' +
                     'oa:hasBody _:commento ;' + target +
                     '_:commento a rdf:Statement;' +
-                        'rdfs:label "' + valore + '"^^xsd:string ;' +
-                        'rdf:subject <' + url + '#' + path + '> ;' +
+                        'rdfs:label "' + valore + '"^^xsd:string ;' + subject +
                         'rdf:predicate schema:comment;' +
                         'rdf:object "' + valore + '"^^xsd:string .';
         } else if (tipo == "Funzione retorica"){
+                var subject = "";
+                if(url != "document"){
+                    subject = 'rdf:subject <' + url + '#' + path + '-' + start + '-' + end +'> ;';
+                } else {
+                    subject = 'rdf:subject <' + url + '> ;';
+                }
                 annotazione = '[] a oa:Annotation ;' +
                     'rdfs:label "Retorica"^^xsd:string ;' +
                     'rsch:type "denotesRhetoric"^^xsd:string ;' +
@@ -298,8 +309,7 @@ $(document).ready(function() {
                     'oa:annotatedBy <mailto:' + mailautore + '> ;' +
                     'oa:hasBody _:retoric ;' + target +
                     '_:retoric a rdf:Statement;' +
-                        'rdfs:label "' + valore + '"^^xsd:string ;' +
-                        'rdf:subject <' + url + '#' + path + '> ;' +
+                        'rdfs:label "' + valore + '"^^xsd:string ;' + subject +
                         'rdf:predicate sem:denotes ;' +
                         'rdf:object ' + switchRetorica(valore) + '.';
         } else if (tipo == "Citazione"){

@@ -2,22 +2,13 @@ $(document).ready(function() {
 
     filtriAttivi();
 
-    if( ($('#toggleTitolo').prop('checked') == false) || ($('#toggleAutore').prop('checked') == false) ||
-        ($('#toggleAnnoP').prop('checked') == false) || ($('#toggleDOI').prop('checked') == false) ||
-        ($('#toggleFunzRet').prop('checked') == false) || ($('#toggleCit').prop('checked') == false) ||
-        ($('#toggleURL').prop('checked') == false) || ($('#toggleComm').prop('checked') == false)){
-
-            $(".highlightMultipleTipoDiverso").css("background-color", "White");
-
-            $(".highlightMultipleTipoDiverso").css("border", "0px none white");
-            $(".highlightMultipleTipoUguale").css("border", "0px none white");
-    } else {
-        $(".highlightMultipleTipoDiverso").css("background-color", "#dae0e6");
-
-        $(".highlightMultipleTipoDiverso").css("border", "1px solid #989ca1");
-        $(".highlightMultipleTipoUguale").css("border", "1px solid #57595c");
-    };
-
+    $('')
+    /*
+    $('body').addClass("highlightMultipleTipoDiverso");
+    $('body').addClass("highlightMultipleTipoUguale");
+    $('body').removeClass("highlightMultipleTipoDiverso");
+    $('body').removeClass("highlightMultipleTipoDiverso");
+    */
     $('#toggleTitolo').change(function() {
         if ($("#toggleTitolo").prop('checked')) {
             $(".highlightTitle").css("background-color", "#48D1CC");

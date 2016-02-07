@@ -21,7 +21,6 @@ import json
 from urlparse import urlparse
 
 
-
 # Browser mechanize
 br = mechanize.Browser()
 br.set_handle_robots(False) #

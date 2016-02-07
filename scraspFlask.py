@@ -13,6 +13,7 @@ __author__ = 'Los Raspadores'
 
 from flask import Flask, render_template, request
 
+
 # script importati
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
@@ -29,10 +30,16 @@ app.config.update(
     DEBUG=True,
 )
 
+
 # controllers
 @app.route('/')
 def index(name=None):
     return render_template('index.html', name=name)
+
+
+@app.route('/hello')
+def hello():
+    return "Hello!"
 
 
 @app.route('/scrapingDocumenti')
@@ -46,11 +53,13 @@ def return_gruppi():
     data = scraping_gruppi()
     return data
 
+
 @app.route('/scrapingCitazioni')
 def return_citazioni():
     urlD = request.args.get('url')
     data = scraping_citazioni(urlD)
     return data
+
 
 @app.route('/scrapingAutomaticoAutore')
 def return_autore():
@@ -58,17 +67,20 @@ def return_autore():
      data = scarping_autore(urlD)
      return data
 
+
 @app.route('/scrapingAutomaticoDoi')
 def return_doi():
      urlD = request.args.get('url')
      data = scraping_doi(urlD)
      return data
 
+
 @app.route('/scrapingAutomaticoYears')
 def return_years():
      urlD = request.args.get('url')
      data = scraping_anno(urlD)
      return data
+
 
 @app.route('/scrapingAutomaticoTitolo')
 def return_auto_titolo():
@@ -77,21 +89,26 @@ def return_auto_titolo():
     return data
 
 
-@app.route('/scrapingTitolo')    #prende il titolo dei docuemnti quando vengono caricati
+@app.route('/scrapingTitolo', methods=['GET', 'POST'])    #prende il titolo dei docuemnti quando vengono caricati
 def return_titolo():
-    url = request.args.get('url')
-    item_list = json.loads(url)
+    url = request.args.get('url')  #  riceve: urlDoc = JSON.stringify(docTemp);
+    if url is not None:
+        item_list = json.loads(url)  # load s => stringa
+
     read_file = open('cacheDoc.json', 'r')
     result = read_file.read()
     read_file.close()
     if (result):
         data = result
     else:
-        data = scraping_titolo(item_list)
-        out_file = open('cacheDoc.json', 'w')
-        out_file.write(data)
-        out_file.close()
+        if url is not None:
+            data = scraping_titolo(item_list)
+            out_file = open('cacheDoc.json', 'w')
+            out_file.write(data)
+            out_file.close()
     return data
+
+
 
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
@@ -141,6 +158,7 @@ def check_Documento_In_Cache():
 
     return lista
 
+
 @app.route('/salvaAnnotazioni')
 def salvaAnnotazioni():
     query = request.args.get('query')
@@ -148,10 +166,11 @@ def salvaAnnotazioni():
     print query
     return "ok"
 
+
 # launch app
 if __name__ == "__main__":
     #app.run(host='bla', port=8080) host server
     app.run(host='127.0.0.1', port=5000) # host server (macchina local)
 
     # in locale: run on default port localhost:5000
-    app.run()
+    # app.run()

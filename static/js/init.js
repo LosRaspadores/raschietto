@@ -16,7 +16,6 @@ $(document).ready(function() {
     //gruppi
     getGruppi();
 
-
     //inizializzazione elementi layout
     $('[data-tooltip="tooltip"]').tooltip();
     $('[data-toggle="tooltip"]').tooltip();
@@ -32,7 +31,10 @@ $(document).ready(function() {
     $('#insertfunzRet').css('display', 'none');
     $('#salvaInsert').attr('disabled', 'disabled');
 
+
+    // gestione tab home
     $("#home").load("/static/homeText.txt");
+    $("#ann_sul_doc").html("<p>Nessun documento selezionato</p>");
 
     $("#toHomeTab").click(function(){
         $('#homeTab').trigger("click");
@@ -43,12 +45,10 @@ $(document).ready(function() {
         $(".in.active").removeClass("in active");
         $("#home").load("/static/homeText.txt");
         $("#home").addClass("in active");
+        $("#ann_sul_doc").html("<p>Nessun documento selezionato</p>");
     });
 
-    var year = new Date().getFullYear();
-    for(i = year; i >=  1800; i--){
-        $('select#anno').append('<option value="'+i+'">'+i+'</option>');
-    }
+
     // seconda nav fissa dopo lo scrolling della pagina
     var stickyNavTop = $('#secondnav').offset().top;
     var stickyNav = function(){
@@ -64,6 +64,10 @@ $(document).ready(function() {
         stickyNav();
     });
 
+    var year = new Date().getFullYear();
+    for(i = year; i >=  1800; i--){
+        $('select#anno').append('<option value="'+i+'">'+i+'</option>');
+    }
 
     $('#modalAnnotDoc').on('hide.bs.modal', function(e){
         $('#selectTipoAnnot').val('');
@@ -267,6 +271,7 @@ $(document).ready(function() {
                         query = query_all_annotazioni(urlDoc);
                         get_annotazioni(query, urlDoc);
                         filtriAttivi();
+                        annotazioniSuDoc(urlDoc);
                     },
                     error: function(error) {
                         $('#alertMessage').text("Errore nel caricamento del documento.");
@@ -336,6 +341,7 @@ $(document).ready(function() {
         if(urlNuovoDoc !== ""){
             if(isOpen(urlNuovoDoc)){
                 $("ul.nav.nav-tabs a[id='" + urlNuovoDoc + "']").tab("show");
+                annotazioniSuDoc();
             }else{
                 var numTabs = $("ul.nav.nav-tabs").children().length;
                 if(numTabs <= 4){
@@ -348,6 +354,7 @@ $(document).ready(function() {
                             query = query_all_annotazioni(urlNuovoDoc);
                             get_annotazioni(query, urlNuovoDoc);
                             filtriAttivi();
+                            annotazioniSuDoc(urlNuovoDoc);
                         },
                         error: function(error) {
                             $('#alertMessage').text("Impossibile aprire il documento cercato.");
@@ -400,12 +407,16 @@ function addTab(text, urlP, title){
     $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
     $("#"+url+"t").html(text);
 }
+
+
 function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
     $(element).parent().parent().remove(); //remove li of tab
     $(tabContentId).remove(); //remove respective tab content
     $('ul.nav.nav-tabs a:last').tab('show'); // Select first tab
-    if($(".in .active").length==0){
+
+    var numTabs = $("ul.nav.nav-tabs").children().length;
+    if(numTabs == 1){
         $('#homeTab').trigger("click");
     };
 }
