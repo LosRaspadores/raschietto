@@ -1,5 +1,6 @@
-/* funzioni per recuperare e visualizzare le annotazioni */
+/* funzioni annotazioni */
 
+//globale
 prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
             'PREFIX frbr: <http://purl.org/vocab/frbr/core#> '+
             'PREFIX cito: <http://purl.org/spar/cito/> '+
@@ -68,9 +69,12 @@ function get_annotazioni(query, urlDoc){
                 stileAnnotazioniMultiple();
 
             } else {
-                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato. Avvio dello scraping automatico");
                 $('#alertDoc').modal('show');
             };
+                scraper(lista_annotazioni,urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
+            }
+             //scraper(lista_annotazioni,urlDoc);
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -86,8 +90,29 @@ function get_annotazioni(query, urlDoc){
 };
 
 
+function lancia_scraper(query, urlDoc){
+    uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
+    $.ajax({
+        url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
+        //url: "http://localhost:3030/data/query?query=" + uriQuery + "&format=json",
+
+        dataType: "jsonp",
+        success: function(result) {
+          lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
+
+          scraper(lista_annotazioni,urlDoc);
+
+        },
+        error: function(error) {
+            $('#alertMessage').text("Errore nell'esecuzione dello scraper");
+            $('#alertDoc').modal('show');
+        }
+    });
+};
+
+
+
 function scraper(anns,urlDoc){
-    alert('ciao2...'+urlDoc);
     $findTitle = false;
     $findAuthor = false;
     $findDoi = false;
@@ -253,11 +278,13 @@ function gestioneAnnotazioni(lista_annotazioni, urlDoc) {
     };
 };
 
+
 // formattazione singola annotazione da visualizzare
 function displaySingolaAnnotazione(str, ann){
+
     var out = "";
     if(typeof(ann["type"]) != "undefined"){
-        var tipo_ann = gestioneTipoType(ann["type"]["value"]);
+        var tipo_ann = typeToIta(ann["type"]["value"]);
         var classCSS = getClassNameType(ann["type"]["value"]);
         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
         if(tipo_ann != ""){
@@ -311,12 +338,14 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
     }else {
+        console.log("annotazione scartata" + ann);
         //l'annotazione viene scartata
         var classCSS = "";
     }
     if(classCSS != ""){
         //fragmentPath trasformato in XPath (del documento originale)
         var path = getXPath(fragmentPath);
+        console.log("path originale " + path);
 
         //XPath (del documento originale) trasformato in xPath locale
         var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
@@ -325,6 +354,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
+        //TODO perchè //table/ e non /table/
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
@@ -339,12 +369,11 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
         //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
+        console.log("path locale app " + path);
         try {
             //The expression is a legal expression.
             var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             if (nodo != null){
-                console.log("path " + path + "start " + start + "end " + end);
-                //findCorrectNodo(nodo, start, end, classCSS, ann);
                 setRange(nodo, start, end, classCSS, ann);
             };
         } catch (ex) {
@@ -466,36 +495,6 @@ function getClassNameType(type){
     return classCSS;
 };
 
-function gestioneTipoType(type){
-    out = "";
-    switch(type){
-        case "hasURL":
-            out = 'URL';
-            break;
-        case "hasTitle":
-            out = 'Titolo';
-            break;
-        case "hasPublicationYear":
-            out = 'Anno pubblicazione';
-            break;
-        case "hasDOI":
-            out = 'DOI';
-            break;
-        case "hasAuthor":
-            out = 'Autore';
-            break;
-        case "hasComment":
-            out = 'Commento';
-            break;
-        case "denotesRhetoric":
-            out = 'Funzione retorica';
-            break;
-        case "cites":
-            out = 'Citazione';
-            break;
-    }
-    return out;
-};
 
 /* parse formato data e ora YYYY-MM-DDTHH:mm */
 function parseDatetime(dataAnn){
@@ -558,8 +557,6 @@ function setRange(nodo, start, end, classCSS, ann) {
                 $('#infoAnnotazione').append(out_ann);
             };
             rangeObject.surroundContents(spanHighligth);
-
-
             break;
         } else {
             if(start >= lunghezzaNodoCorrente){
@@ -593,11 +590,9 @@ function setRange(nodo, start, end, classCSS, ann) {
                     $('#infoAnnotazione').append(out_ann);
                 };
                 rangeObject.surroundContents(spanHighligth);
-
             }
         }
     }
-
     //TODO!!!!!!!!!!!!!!!!!! per silvia!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     var rangeContent = rangeObject.toString();
     console.log("range content: " + rangeContent);
@@ -720,6 +715,7 @@ function annotazioniSuDoc(url_doc){
         $("#ann_sul_doc").html("<p>Non ci sono annotazioni sull' intero documento</p>");
     }
 }
+
 
 $( document ).ready(function() {
     //Quando il modal per vedere le annotazioni di un frammento viene chiuso allora viene svuotato

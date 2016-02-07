@@ -15,7 +15,7 @@ $(document).ready(function() {
     } else {
         $('#modalitaToggle').prop('checked', true);
         annotatorMode();
-        $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
+        $('#utenteAutenticato').text(sessionStorage.nomecognome);
     }
 
     /* Passaggio da modalità reader a modalità annotator e viceversa */
@@ -30,21 +30,25 @@ $(document).ready(function() {
             readerMode();
             sessionStorage.removeItem("nomecognome");
             sessionStorage.removeItem("email");
+            sessionStorage.removeItem("annotazioniSessione");
+            sessionStorage.removeItem("annotModificSessione");
         }
     });
 
+
     function readerMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
+
+        $('#modalitaToggleLabel').tooltip('destroy');
         $("#modalitaToggleLabel").attr('title','Passa a modalità annotator');
-        $('[data-toggle="tooltip"]').tooltip();
+        $('#modalitaToggleLabel').tooltip();
         $('#utenteAutenticato').text("");
         $('#bottoniAnnotator').hide();
     }
 
     function annotatorMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $('#modalitaToggleLabel').tooltip('destroy');
         $("#modalitaToggleLabel").attr('title','Passa a modalità reader');
-        $('[data-toggle="tooltip"]').tooltip();
+        $('#modalitaToggleLabel').tooltip();
         $('#bottoniAnnotator').show();
     }
 
@@ -54,6 +58,8 @@ $(document).ready(function() {
         var regexEmail = /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|it|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
         var nomecognome = $("#nomecognome").val();
         var email = $("#email").val();
+        var annotazioniSessione = [];
+        var annotModificSessione = [];
         if(nomecognome==""){
             $('#messaggioErrore').text("Il campo nome e cognome è obbligatorio.");
             $("#nomecognome").val("");
@@ -78,10 +84,14 @@ $(document).ready(function() {
             //I dati dell'utente vengono salvati nella sessionStorage
             sessionStorage.nomecognome = nomecognome;
             sessionStorage.email = email;
-            $('#utenteAutenticato').text(sessionStorage.nomecognome + " - " + sessionStorage.email);
+            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
+            $('#utenteAutenticato').text(sessionStorage.nomecognome);
+            sessionStorage.annotModificSessione = JSON.stringify(annotModificSessione);
+            $('#utenteAutenticato').text(sessionStorage.nomecognome);
             annotatorMode();
-        };
+        }
     });
+
 
     /* Gestione della chiusura del modal autenticazione: si ritorna alla modalità reader */
     $('#modalAutenticazione button.close').click(function (){

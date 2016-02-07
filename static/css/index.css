@@ -8,6 +8,7 @@
 body {
     overflow: auto;
     font-family: Arial, Helvetica, 'Exo' sans-serif;
+    padding-right: 0px !important;
 }
 
 
@@ -448,10 +449,24 @@ span.glyphicon.glyphicon-remove::before{
 
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
     color: #0C3C26;
-    background: transparent url(../uiTabsArrow.png) no-repeat bottom center;
+    background: transparent;
+    background-image: url(../uiTabsArrow.png);
+    background-position: bottom center;
+    background-repeat : no-repeat;
     border: none;
     height: 40px;
 }
+
+@media only screen and (max-width: 700px) and (min-width: 0px){
+    .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+        background-image: none;
+        background-position: none;
+    }
+    div .tab-content{
+        margin-top: 40px;
+    }
+}
+
 .nav-tabs>li>a:hover {
     border-color: #eee #eee #ddd;
     height: 40px;
@@ -505,12 +520,15 @@ thead{
 .tableAnnot thead, .tableAnnot tbody { display: block; }
 
 .tableAnnot tbody {
-    max-height: 400px;   /* Just for the demo          */
+    max-height: 400px;       /* Just for the demo          */
     overflow-y: auto;    /* Trigger vertical scroll    */
     overflow-x: hidden;  /* Hide the horizontal scroll */
 }
-
-
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
 #loading {
     display: none;
     position: absolute;
@@ -529,10 +547,13 @@ body.loading #loading {
     display: block;
 }
 
+
+
 .tableAnnot{
     margin: auto;
     overflow:auto;
     display: block;
+    /* word-break: break-all; */
 }
 
 .tableAnnot td, .tableAnnot th{
@@ -547,13 +568,18 @@ body.loading #loading {
     overflow: auto;
 }
 
-.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
-    width: 66px;
+.tableAnnot td:first-child, .tableAnnot th:first-child{
+    width: 180px;
+}
+.tableAnnot td:nth-child(3), .tableAnnot th:nth-child(3){
+    width: 390px;
 }
 
+/*
 thead{
     border-bottom: 5px solid #44B78B;
 }
+*/
 
 .tableAnnot thead, .tableAnnot tbody { display: block; }
 
@@ -581,6 +607,7 @@ div.tab-content{
 
 #selezione {
    resize: none;
+   margin-bottom:5px;
 }
 
 #didascaliaModal{
@@ -589,6 +616,57 @@ div.tab-content{
 
 #modificaAnnotazione{
     cursor: pointer;
+}
+
+/*#modificaSelezione{
+    padding: 5px 5px 5px 5px;
+    text-align: right;
+}*/
+
+#confermaModificaSelezione{
+    position: relative;
+    float: right;
+}
+
+#confermaModificaSelezione {
+    background-color: #44B78B;
+
+}
+
+
+.modificaSelezione{
+    width: inherit;
+    margin-top: 5px;
+}
+
+#bottoniModificaSelezione{
+    position: fixed;
+    right: 20px;
+    margin-top: 10px;
+    width: 200px;
+    float: left;
+}
+
+.glyphicon-plus:hover, .glyphicon-trash:hover, .glyphicon-edit:hover {
+    cursor: pointer;
+    color: #44B78B;
+}
+
+#bottonemodFramm{
+    /*margin-top: 5px;*/
+    margin-bottom: 5px;
+    float: right;
+}
+
+#divInsert{
+    clear: both;
+}
+
+#bottoniModificaSelezione{
+    display: none;
+}
+
+
 }
 
 #ann_sul_doc{

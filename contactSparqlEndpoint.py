@@ -607,7 +607,9 @@ def main():
     """
     query = query_delete_all_doc_nostraprovenance(url_doc)
     do_query_post(sparql_endpoint_remoto, query)
-    """
+    #do_query_post(sparql_endpoint_locale, query)
+
+
 
     annota = """
     [] a oa:Annotation ;
@@ -638,6 +640,20 @@ def main():
 
     <http://rivista-statistica.unibo.it/article/view/4594_ver1> a fabio:Expression;
         fabio:hasRepresentation <http://rivista-statistica.unibo.it/article/view/4594.html>."""
+
+"""
+    query = query_annotazione(nome_grafo_gruppo, annota)
+    do_query_post(sparql_endpoint_remoto, query)
+    #do_query_post(sparql_endpoint_locale, query)"""
+
+"""
+    query = query_select_from_tuttigafi(lista)
+    do_query_get(sparql_endpoint_locale, query)
+
+    query = query_select_all_grafo(nome_grafo_gruppo)
+    do_query_get(sparql_endpoint_remoto, query)
+"""
+
 
 
 if __name__ == "__main__":
