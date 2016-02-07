@@ -86,7 +86,7 @@ function get_annotazioni(query, urlDoc){
                 $('#alertDoc').modal('show');
                 scraper(lista_annotazioni,urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
-             //scraper(lista_annotazioni,urlDoc);
+             scraper(lista_annotazioni,urlDoc);
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -138,7 +138,7 @@ function scraper(anns,urlDoc){
         // alert('ann='+ann);
         ann_out = displaySingolaAnnotazione("",ann);
         if(typeof(ann["type"]) !== "undefined"){
-           tipo_ann = gestioneTipoType(ann["type"]["value"]);
+           tipo_ann = typeToIta(ann["type"]["value"]);
            //console.log("tipo ann="+ann["type"]["value"]);
 
            if(ann["type"]["value"]=="hasTitle"){
@@ -197,6 +197,29 @@ function scraper(anns,urlDoc){
              data: {url: urlDoc},
              success: function(result) {
                    alert("scraping titolo="+result);
+                   tmp = result.split(', "&&&", ');
+                   path=tmp[0];
+                   path=path.replace('[','');
+                   path=path.replace('[','');
+                   path=path.replace('"','');
+                   path=path.replace('"','');
+                   alert(path);
+                   titolo=tmp[1]
+                   titolo=titolo.replace('"','');
+                   titolo=titolo.replace('"','');
+                   alert(titolo);
+                   start=tmp[2];
+                   alert(start);
+                   end=tmp[3];
+                   end=end.replace(']','');
+                   end=end.replace(']','');
+                   alert(end)
+                   fragmentPath=path
+                   ann={};
+                   ann['start']=start;
+                   ann['end']=end;
+                   //ann['type']="hasTitle";
+                   highligthFragment(fragmentPath, ann, urlDoc);
              },
              error: function(error) {
                    alert("Error: " + error);
@@ -207,14 +230,31 @@ function scraper(anns,urlDoc){
 
      if($findAuthor == false){
         console.log($findTitle);
-        console.log("chiamare scraper autore");
+        console.log("chiamarta scraper autore");
 
         $.ajax({
              url: '/scrapingAutomaticoAutore',
              type: 'GET',
              data: {url: urlDoc},
              success: function(result) {
-                   alert("scraping autore="+result);
+//                   alert("scraping autore111111....="+result);
+//                   tmp = result.split(', "&&&", ');
+//                   path=tmp[0];
+//                   path=path.replace('[','');
+//                   path=path.replace('[','');
+//                   path=path.replace('"','');
+//                   path=path.replace('"','');
+//                   alert(path);
+//                   doi=tmp[1]
+//                   doi=doi.replace('"','');
+//                   doi=doi.replace('"','');
+//                   alert(doi);
+//                   start=tmp[2];
+//                   alert(start);
+//                   end=tmp[3];
+//                   end=end.replace(']','');
+//                   end=end.replace(']','');
+//                   alert(end)
              },
              error: function(error) {
                    alert("Error: " + error);
@@ -233,6 +273,27 @@ function scraper(anns,urlDoc){
              data: {url: urlDoc},
              success: function(result) {
                    alert("scraping Doi="+result);
+                   tmp = result.split(', "&&&", ');
+                   path=tmp[0];
+                   path=path.replace('[','');
+                   path=path.replace('[','');
+                   path=path.replace('"','');
+                   path=path.replace('"','');
+                   alert(path);
+                   doi=tmp[1]
+                   doi=doi.replace('"','');
+                   doi=doi.replace('"','');
+                   alert(doi);
+                   start=tmp[2];
+                   alert(start);
+                   end=tmp[3];
+                   end=end.replace(']','');
+                   end=end.replace(']','');
+                   alert(end)
+                   fragmentPath=path
+                   ann={};
+                   ann['start']=start;
+                   ann['end']=end;
              },
              error: function(error) {
                    alert("Error: " + error);
@@ -250,6 +311,27 @@ function scraper(anns,urlDoc){
              data: {url: urlDoc},
              success: function(result) {
                    alert("scraping anno="+result);
+                   tmp = result.split(', "&&&", ');
+                   path=tmp[0];
+                   path=path.replace('[','');
+                   path=path.replace('[','');
+                   path=path.replace('"','');
+                   path=path.replace('"','');
+                   alert(path);
+                   anno=tmp[1]
+                   anno=anno.replace('"','');
+                   anno=anno.replace('"','');
+                   alert(anno);
+                   start=tmp[2];
+                   alert(start);
+                   end=tmp[3];
+                   end=end.replace(']','');
+                   end=end.replace(']','');
+                   alert(end)
+                   fragmentPath=path
+                   ann={};
+                   ann['start']=start;
+                   ann['end']=end;
              },
              error: function(error) {
                    alert("Error: " + error);

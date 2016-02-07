@@ -104,7 +104,7 @@ function verificaFrammento(){
 function getElementPath($element, d){
     var tag = $element[0].tagName.toLowerCase()
     var target = $($element[0]);
-    //Se seleziona uno span con classe che inzia con 'highlight' -> è un frammento già annotato !
+    //Se seleziona uno span con classe che inzia con 'highlight' -> ï¿½ un frammento giï¿½ annotato !
     //Esclude gli <span> dal path del frammento
     while(tag == 'span' && (target.is($("span[class^='highlight']")))){
         $element = $element.parent();
@@ -230,7 +230,7 @@ $('#salvaInsert').on('click', function(){
                         if(annotazioniSessione[i].annotazioni[j].id == idAnn){
 
                             if(oggettoSelezionato["frammento"] != 'document'){ //Modifica ann su frammento
-                                if(typeof(oggettoSelezionato.selezione) != 'undefined'){ //Il frammento è stato modificato
+                                if(typeof(oggettoSelezionato.selezione) != 'undefined'){ //Il frammento ï¿½ stato modificato
                                     annotazioniSessione[i].annotazioni[j].selezione = oggettoSelezionato.selezione;
                                     annotazioniSessione[i].annotazioni[j].idFrammento = oggettoSelezionato.id;
                                     annotazioniSessione[i].annotazioni[j].start = oggettoSelezionato.inizio;
@@ -271,7 +271,7 @@ $('#salvaInsert').on('click', function(){
         }
         var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione);
 
-        /* Se l'annotazione è su una citazioni, la inserisco dinamicamente nel modal */
+        /* Se l'annotazione ï¿½ su una citazioni, la inserisco dinamicamente nel modal */
         if(typeof($('#modalAnnotDoc').data("annotaCitazione")) != "undefined"){
             alert("INSERT ANNOT SU CIT - idCit dev essere un numero: "+$('#modalAnnotDoc').data("id"))
             //var idCit = $('#modalAnnotDoc').data("id");
@@ -436,7 +436,7 @@ function modificaSelezione(){
 function aggiornaAnnotazione(){ // bottone che sta fermo
 
     var tipo = annotazioneCorrente["tipo"];
-    var oggetto = annotazioneCorrente["oggetto"]; //TODO è sbagliato ! prende la selezione anzichè l'oggetto
+    var oggetto = annotazioneCorrente["oggetto"]; //TODO ï¿½ sbagliato ! prende la selezione anzichï¿½ l'oggetto
 
     //prendere tipo e oggetto
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
@@ -494,7 +494,7 @@ function annotaCitazione(idCit){
     $("#modalAnnotDoc").data("path", pathCit);
     $("#modalAnnotDoc").data("start", startCit);
     $("#modalAnnotDoc").data("end", endCit);
-    $("#modalAnnotDoc").data("selezione", 'qui andrà il testo della citazione');
+    $("#modalAnnotDoc").data("selezione", 'qui andrï¿½ il testo della citazione');
     $("#modalAnnotDoc").data("annotaCitazione", idCit); //passo questo parametro cosi capisco che sto annotando una citazione
 
     $('#modalAnnotDoc h3').html("Inserisci annotazione");
@@ -519,7 +519,7 @@ function costruisciAnnotazione(source, tipo, testo, idFrammento, start, end, sel
     /* Verifica che non ci sia gia l'entry per il documento */
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
     if(annotazioniSessione.length == 0){
-        //l'oggetto è vuoto -> inserisco l'annotazione
+        //l'oggetto ï¿½ vuoto -> inserisco l'annotazione
         var annotazioniDoc = {};
         annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
         annotazioniDoc['annotazioni'] = [];
@@ -569,7 +569,7 @@ function modificaAnnot(element){
     var tipo = typeToIta(listaAnnotGrafo1537[indexDoc].annotazioni[index].type.value);
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').attr("selected",true).change();
 
-    // se l'annotazione è stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
+    // se l'annotazione ï¿½ stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
     if(listaAnnotGrafo1537[indexDoc].annotazioni[index].fs_value.value != "document"){
         $('textarea#selezione').css("display", "block");
         $('button#bottonemodFramm').css("display", "block");
@@ -727,7 +727,7 @@ $(document).ready(function(){
         }
     });
 
-     /* Gestione citazioni -> abilita il bottone di salvataggio solo se è selezionata una citazione */
+     /* Gestione citazioni -> abilita il bottone di salvataggio solo se ï¿½ selezionata una citazione */
      $(document).on('change', '#selectCit', function(){
          if($("#selectCit").find(":selected").text().length != 0){
             $("#salvaInsertCit").removeAttr('disabled', 'disabled');
