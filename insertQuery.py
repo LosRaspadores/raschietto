@@ -46,7 +46,7 @@ nome_grafo_gruppo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
 # provenance gruppo
 PROVENANCE = """<mailto:los.raspadores@gmail.com> a foaf:mbox ;
-            schema:email los.raspadores@gmail.com ;
+            schema:email "los.raspadores@gmail.com" ;
             foaf:name "LosRaspadores"^^xsd:string ;
             rdfs:label "LosRaspadores"^^xsd:string ."""
 
@@ -72,8 +72,7 @@ prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
                 PREFIX sem:   <http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#>
                 PREFIX skos:  <http://www.w3.org/2009/08/skos-reference/skos.html>
                 PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>
-                PREFIX deo:   <http://purl.org/spar/deo/>
-                PREFIX foaf: <http://xmlns.com/foaf/0.1/> """
+                PREFIX deo:   <http://purl.org/spar/deo/>"""
 
 
 # gestione nomi autori articoli per IRI
@@ -147,84 +146,107 @@ def tripleFRBRdocument(url_doc):
 
 
 # urldoc, path, end, start, tipo, valore("bla") # titolo url autore anno doi
-def costruisciAnnotazione(urldoc, path, start, end, tipo, valore):
-    data = getDateTime() #formatted
-    documentFRBR = tripleFRBRdocument(urldoc)
+def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
+    data = getDateTime()  # formatted
     urlnohtml = urldoc[:-len(".html")]
-    target = """oa:hasTarget [ a oa:SpecificResource ;
-                    oa:hasSelector [ a oa:FragmentSelector ;
-                            rdf:value """ + path + """^^xsd:string ;
-                            oa:start """ + start +"""^^xsd:nonNegativeInteger ;
-                            oa:end """ + end + """^^xsd:nonNegativeInteger ] ;
-                    oa:hasSource <""" + urldoc + """> ] ."""
+    target = "oa:hasTarget [ a oa:SpecificResource ;"\
+                "oa:hasSelector [ a oa:FragmentSelector ;"\
+                    "rdf:value \"" + path + "\"^^xsd:string ;"\
+                    "oa:start \"" + start + "\"^^xsd:nonNegativeInteger ;"\
+                    "oa:end  \"" + end + "\"^^xsd:nonNegativeInteger ] ;"\
+                "oa:hasSource <" + urldoc + "> ] ."
+
     if tipo == "hasTitle":
         ann = """[] a oa:Annotation ;
             rdfs:label "Titolo"^^xsd:string ;
             rsch:type "hasTitle"^^xsd:string ;
-            oa:annotatedAt """ + data + """^^xsd:dateTime ;
-            oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
-            oa:hasBody _:title ;""" + target +  """
-        _:title a rdf:Statement;
-            rdfs:label "TITOLO = """ + valore + """"^^xsd:string ;
+            oa:annotatedAt \"""" + data + """\"^^xsd:dateTime ;
+            oa:annotatedBy <mailto:los.raspadores@gmail.com> ;
+            oa:hasBody _:title ; """ + target + """
+            _:title a rdf:Statement;
+            rdfs:label \"""" + valore + """\"^^xsd:string ;
             rdf:subject <""" + urlnohtml + """_ver1> ;
             rdf:predicate dcterms:title ;
-            rdf:object """ + valore + """^^xsd:string ."""
-
+            rdf:object \"""" + valore + """\"^^xsd:string ."""
     elif tipo == "hasAuthor":
         author = setIRIautore(valore)
         ann = """[] a oa:Annotation ;
             rdfs:label "Autore"^^xsd:string ;
             rsch:type "hasAuthor"^^xsd:string ;
-            oa:annotatedAt """ + data + """^^xsd:dateTime ;
+            oa:annotatedAt \"""" + data + """\"^^xsd:dateTime ;
             oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
-            oa:hasBody _:author ;""" + target +  """
+            oa:hasBody _:author ; """ + target + """
         _:author a rdf:Statement;
-            rdfs:label "AUTORE = """ + valore + """"^^xsd:string ;
+            rdfs:label \"""" + valore + """\"^^xsd:string ;
             rdf:subject  <""" + urlnohtml + """_ver1> ;
             rdf:predicate dcterms:creator;
-            rdf:object <""" + author + """>.""" + author + """ a foaf:Person ;
-            rdfs:label """ + '"' + valore + '"' + """^^xsd:string ;
+            rdf:object <""" + author + """>. <""" + author + """> a foaf:Person ;
+            rdfs:label \"""" + valore + """\"^^xsd:string ;
             foaf:made <""" + urldoc + """> ."""
     elif tipo == "hasPublicationYear":
         ann = """[] a oa:Annotation ;
             rdfs:label "Anno di pubblicazione"^^xsd:string ;
             rsch:type "hasPublicationYear"^^xsd:string ;
-            oa:annotatedAt """ + data + """^^xsd:dateTime ;
+            oa:annotatedAt \"""" + data + """\"^^xsd:dateTime ;
             oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
-            oa:hasBody _:year ;""" + target +  """
+            oa:hasBody _:year ; """ + target + """
         _:year a rdf:Statement;
-            rdfs:label "ANNO = """ + valore + """"^^xsd:string ;
-            rdf:subject  <""" + urlnohtml + """_ver1> ;
+            rdfs:label \"""" + valore + """\"^^xsd:string ;
+            rdf:subject <""" + urlnohtml + """_ver1> ;
             rdf:predicate fabio:hasPublicationYear ;
-            rdf:object """ + valore + """^^xsd:date ."""
+            rdf:object \"""" + valore + """\"^^xsd:date ."""
     elif tipo == "hasDOI":
         ann = """[] a oa:Annotation ;
                 rdfs:label "DOI"^^xsd:string ;
                 rsch:type "hasDOI"^^xsd:string ;
-                oa:annotatedAt """ + data + """^^xsd:dateTime ;
-                oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
-                oa:hasBody _:doi ;""" + target +  """
-            _:doi a rdf:Statement;
-                rdfs:label "DOI = """ + valore + """"^^xsd:string ;
-                rdf:subject  <""" + urlnohtml + """_ver1> ;
-                rdf:predicate prism:doi ;
-                rdf:object """ + valore + """"^^xsd:string ."""
-    else:
-        ann = """[] a oa:Annotation ;
-            rdfs:label "URl"^^xsd:string ;
-            rsch:type "hasURL"^^xsd:string ;
-            oa:annotatedAt """ + data + """^^xsd:dateTime ;
+                oa:annotatedAt \"""" + data + """\"^^xsd:dateTime ;
             oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
-            oa:hasBody _:url ;""" + target +  """
+                oa:hasBody _:doi ; """ + target + """
+            _:doi a rdf:Statement;
+                rdfs:label \"""" + valore + """\"^^xsd:string ;
+                rdf:subject <""" + urlnohtml + """_ver1> ;
+                rdf:predicate prism:doi ;
+                rdf:object \"""" + valore + """\"^^xsd:date ."""
+    elif tipo == "hasURL":
+        ann = """[] a oa:Annotation ;
+            rdfs:label "URL"^^xsd:string ;
+            rsch:type "hasURL"^^xsd:string ;
+            oa:annotatedAt \"""" + data + """\"^^xsd:dateTime ;
+            oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
+            oa:hasBody _:url ; """ + target + """
         _:url a rdf:Statement;
-            rdfs:label "URL = """ + urldoc + """"^^xsd:string ;
+            rdfs:label \"""" + urldoc + """\"^^xsd:string ;
             rdf:subject  <""" + urlnohtml + """_ver1> ;
             rdf:predicate fabio:hasURL ;
-            rdf:object """ + urldoc + """^^xsd:anyURL ."""
-
-    ann = ann + PROVENANCE + documentFRBR
+            rdf:object \"""" + urldoc + """\"^^xsd:anyURL ."""
+    elif tipo == "cites":  # citazione
+        ann = """[] a oa:Annotation ;
+            rdfs:label "Citazione"^^xsd:string ;
+            rsch:type "cites"^^xsd:string ;
+            oa:annotatedAt \"""" + data + """\"^^xsd:dateTime ;
+            oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
+            oa:hasBody _:cite ; """ + target + """
+        _:cite a rdf:Statement;
+            rdfs:label \"""" + valore + """\"^^xsd:string ;
+            rdf:subject  <""" + urlnohtml + """_ver1> ;
+            rdf:predicate cito:cites ;
+            rdf:object <""" + urldoc + "ver1_cited""" + str(numcit) + """>.
+        <""" + urlnohtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
     return ann
 
+
+def get_fragment_path(path):
+    arr = path.split("_")
+    for i in range(len(arr)):
+        if not(contains_digits(arr[i])):
+            arr[i] = arr[i] + "1"
+        else:
+            if "h" in arr[i]:
+                if len(arr[i]) == 2:
+                    arr[i] = arr[i]+"1"
+    path = "_".join(arr)
+    path = path.replace("1_html1_body1_", "")
+    return path
 
 # per query insert e delete
 def do_query_post(endpoint, query):
@@ -238,6 +260,22 @@ def query_annotazione(nome_grafo, annotazione):
                 INSERT DATA {
                     GRAPH <%s> { %s }
                 }""" % (nome_grafo, annotazione)
+    return query
+
+
+
+def query_delete_all_doc_nostraprovenance(url_doc):
+    query = prefissi + " WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> " \
+                    " DELETE {?a ?p ?o. ?body ?bp ?bo. ?target ?tp ?to. ?fragment ?fsp ?fso.} WHERE { "\
+                    "?a ?p ?o. "\
+                    "?a oa:hasBody ?body. "\
+                    "?body ?bp ?bo. "\
+                    "?a oa:annotatedBy <mailto:los.raspadores@gmail.com>. "\
+                    "?a oa:hasTarget ?target. "\
+                    "?target oa:hasSelector ?fragment. "\
+                    "?target ?tp ?to. "\
+                    "?fragment ?fsp ?fso. "\
+                    "?target oa:hasSource <" + url_doc + ">.}"
     return query
 
 
@@ -261,35 +299,55 @@ def main():
     url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
     # (urldoc, path, start, end, tipo, valore):
 
+    triple = ""
+
     titolo = "Data Stewardship in the Earth Sciences"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasTitle", titolo)
-    #print ann
+    ann = costruisciAnnotazione(url, path, start, end, "hasTitle", titolo, -1)
+    triple += ann
     #query = query_annotazione(nome_grafo_gruppo, ann)
     #do_query_post(sparql_endpoint_remoto, query)
 
-    #ann = costruisciAnnotazione(url, path, start, end, "hasUrl", url)
-    #print ann
+    ann = costruisciAnnotazione(url, path, start, end, "hasURL", url, -1)
+    triple += ann
+
     autore = "Robert R. Downs"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasAuthor", autore)
-    #print ann
+    ann = costruisciAnnotazione(url, path, start, end, "hasAuthor", autore, -1)
+    #triple += ann
+
     anno = "2015"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasPublicationYear", anno)
-    #print ann
+    ann = costruisciAnnotazione(url, path, start, end, "hasPublicationYear", anno, -1)
+    triple += ann
+
     doi = "10.1045/july2015-downs"
-    #ann = costruisciAnnotazione(url, path, start, end, "hasDoi", doi)
-    #print ann
+    ann = costruisciAnnotazione(url, path, start, end, "hasDOI", doi, -1)
+    triple += ann
+
+    cit = "Between Memory and Paperbooks: Baconianism and Natural History in Sevent"
+    ann = costruisciAnnotazione(url, path, start, end, "cites", cit, 1)
+    triple += ann
+
+
+    # per ogni cosa trovata dallo scraper
+
+    # triple relative al documento
+    documentFRBR = tripleFRBRdocument(url)
+    triple += PROVENANCE + documentFRBR
+
+    query = query_delete_all_doc_nostraprovenance(url)
+    do_query_post(sparql_endpoint_locale, query)
+
+    query = query_annotazione(nome_grafo_gruppo, triple)
+    do_query_post(sparql_endpoint_locale, query)
 
 
 
+    """
     reload(sys)
     sys.setdefaultencoding("utf-8")
-
     url = "http://rpd.unibo.it/article/view/5355"
     pathgenerale = "/html/body/div/div/div[2]/div[3]/"
     pathparziale = "div[2]/h3/text()"
     titolo = "La valutazione"
-
-    """
     #albero nodi metodo 1
     br = mechanize.Browser()
     response = br.open(url)
@@ -301,9 +359,9 @@ def main():
     end = start + len(titolo)
     print start
     print end
-    """
     # open url metodo 2
     url = "http://rpd.unibo.it/article/view/5355"
+    url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
     pathgenerale = "/html/body/div/div/div[2]/div[3]/"
     pathparziale = "div[2]/h3/text()"
     path = pathgenerale + pathparziale
@@ -330,6 +388,7 @@ def main():
     print path
     print start
     print end
+    """
 
 
 if __name__ == "__main__":

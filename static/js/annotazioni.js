@@ -84,9 +84,9 @@ function get_annotazioni(query, urlDoc){
             } else {
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato. Avvio dello scraping automatico");
                 $('#alertDoc').modal('show');
-                scraper(lista_annotazioni,urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
+                scraper(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
-             scraper(lista_annotazioni,urlDoc);
+
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -126,240 +126,25 @@ function lancia_scraper(query, urlDoc){
 
 
 
-function scraper(anns,urlDoc){
-    $findTitle = false;
-    $findAuthor = false;
-    $findDoi = false;
-    $findYears = false;
-    $findCitazioni = false;
 
-     for (i = 0; i < anns.length; i++) {
-        ann = anns[i];
-        // alert('ann='+ann);
-        ann_out = displaySingolaAnnotazione("",ann);
-        if(typeof(ann["type"]) !== "undefined"){
-           tipo_ann = typeToIta(ann["type"]["value"]);
-           //console.log("tipo ann="+ann["type"]["value"]);
-
-           if(ann["type"]["value"]=="hasTitle"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                console.log("annot titolo="+ann_out);
-                $findTitle = true;
-               }
-             }
-           }
-           if(ann["type"]["value"]== "hasAuthor"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annot autore="+ann_out);
-                    $findAuthor = true;
-               }
-             }
-           }
-           if(ann["type"]["value"]== "hasDOI"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annotazione doi="+ann_out);
-                    $findDoi = true;
-               }
-             }
-           }
-           if(ann["type"]["value"]== "hasPublicationYear"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annotazione anno="+ann_out);
-                    $findYears = true;
-               }
-             }
-           }
-
-            if(ann["type"]["value"]== "cites"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annotazione anno="+ann_out);
-                    $findYears = true;
-               }
-             }
-           }
-
+  function scraper(urlDoc){
+    $.ajax({
+        url: '/scrapingAutomatico',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result){
+            var url = $("ul.nav.nav-tabs li.active a").attr("id");
+            res = JSON.parse(result);
+            query_all_annotazioni(url);
+            allAnnotazioni = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            get_annotazioni(allAnnotazioni,url)
+        },
+        error: function(){
 
         }
-    }
+    });
+  }
 
-    if($findTitle == false){
-        console.log($findTitle);
-        console.log("chiamare scraper titolo");
-
-        $.ajax({
-             url: '/scrapingAutomaticoTitolo',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping titolo="+result);
-                   tmp = result.split(', "&&&", ');
-                   path=tmp[0];
-                   path=path.replace('[','');
-                   path=path.replace('[','');
-                   path=path.replace('"','');
-                   path=path.replace('"','');
-                   alert(path);
-                   titolo=tmp[1]
-                   titolo=titolo.replace('"','');
-                   titolo=titolo.replace('"','');
-                   alert(titolo);
-                   start=tmp[2];
-                   alert(start);
-                   end=tmp[3];
-                   end=end.replace(']','');
-                   end=end.replace(']','');
-                   alert(end)
-                   fragmentPath=path
-                   ann={};
-                   ann['start']=start;
-                   ann['end']=end;
-                   //ann['type']="hasTitle";
-                   highligthFragment(fragmentPath, ann, urlDoc);
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-     if($findAuthor == false){
-        console.log($findTitle);
-        console.log("chiamarta scraper autore");
-
-        $.ajax({
-             url: '/scrapingAutomaticoAutore',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-//                   alert("scraping autore111111....="+result);
-//                   tmp = result.split(', "&&&", ');
-//                   path=tmp[0];
-//                   path=path.replace('[','');
-//                   path=path.replace('[','');
-//                   path=path.replace('"','');
-//                   path=path.replace('"','');
-//                   alert(path);
-//                   doi=tmp[1]
-//                   doi=doi.replace('"','');
-//                   doi=doi.replace('"','');
-//                   alert(doi);
-//                   start=tmp[2];
-//                   alert(start);
-//                   end=tmp[3];
-//                   end=end.replace(']','');
-//                   end=end.replace(']','');
-//                   alert(end)
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-    if ($findDoi ==false) {
-       console.log($findDoi);
-       console.log("chiamare scraper doi");
-
-       $.ajax({
-             url: '/scrapingAutomaticoDoi',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping Doi="+result);
-                   tmp = result.split(', "&&&", ');
-                   path=tmp[0];
-                   path=path.replace('[','');
-                   path=path.replace('[','');
-                   path=path.replace('"','');
-                   path=path.replace('"','');
-                   alert(path);
-                   doi=tmp[1]
-                   doi=doi.replace('"','');
-                   doi=doi.replace('"','');
-                   alert(doi);
-                   start=tmp[2];
-                   alert(start);
-                   end=tmp[3];
-                   end=end.replace(']','');
-                   end=end.replace(']','');
-                   alert(end)
-                   fragmentPath=path
-                   ann={};
-                   ann['start']=start;
-                   ann['end']=end;
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-    }
-
-    if($findYears == false){
-        console.log($findYears);
-        console.log("chiamare scraper anno");
-
-        $.ajax({
-             url: '/scrapingAutomaticoYears',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping anno="+result);
-                   tmp = result.split(', "&&&", ');
-                   path=tmp[0];
-                   path=path.replace('[','');
-                   path=path.replace('[','');
-                   path=path.replace('"','');
-                   path=path.replace('"','');
-                   alert(path);
-                   anno=tmp[1]
-                   anno=anno.replace('"','');
-                   anno=anno.replace('"','');
-                   alert(anno);
-                   start=tmp[2];
-                   alert(start);
-                   end=tmp[3];
-                   end=end.replace(']','');
-                   end=end.replace(']','');
-                   alert(end)
-                   fragmentPath=path
-                   ann={};
-                   ann['start']=start;
-                   ann['end']=end;
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-        if($findCitazioni == false){
-        console.log($findCitazioni);
-        console.log("chiamare scraper citazioni");
-
-        $.ajax({
-             url: '/scrapingCitazioni',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping citazioni="+result);
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-
-}
 
 
 // modal

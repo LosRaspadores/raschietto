@@ -20,6 +20,8 @@ from scrapingSingoloDocumento import scraping_singolo_documento
 from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto, rfrbDocToEndpoint
 import json
 from scrapingAutomatico import scraping_titolo, scarping_autore, scraping_doi, scraping_anno, scraping_citazioni, scraping_automatico_titolo
+from insertQuery import *
+
 
 # inizializzazione applicazione
 app = Flask(__name__)
@@ -46,52 +48,56 @@ def return_gruppi():
     data = scraping_gruppi()
     return data
 
-@app.route('/scrapingCitazioni')
-def return_citazioni():
-    urlD = request.args.get('url')
-    data = scraping_citazioni(urlD)
-    return data
-
-@app.route('/scrapingAutomaticoAutore')
-def return_autore():
+@app.route('/scrapingAutomatico')
+def scrapingAutomatico():
+     listaAnnotazioni=[]
      urlD = request.args.get('url')
-     data = scarping_autore(urlD)
-     return data
+     doi = scraping_doi(urlD)   #dict
+     print doi
+     anno = scraping_anno(urlD)
+     autore = scarping_autore(urlD)
+     citazioni = scraping_citazioni(urlD)
+     titolo = scraping_automatico_titolo(urlD)
+     # annDoi = costruisciAnnotazione(urlD,get_fragment_path(doi["xpath"]),doi["start"],doi["end"],"hasDOI",doi["doi"], 0)
+     # query_doi=query_annotazione(nome_grafo_gruppo,annDoi)
+     # do_query_post(sparql_endpoint_remoto,query_doi)
+     # listaAnnotazioni.append(annDoi)
+     annAnno = costruisciAnnotazione(urlD,get_fragment_path(anno["xpath"]),anno["start"],anno["end"],"hasPublicationYear",anno["anno"], 0)
+     query_Anno=query_annotazione(nome_grafo_gruppo,annAnno)
+     do_query_post(sparql_endpoint_remoto,query_Anno)
+     listaAnnotazioni.append(annAnno)
+     annAutore = costruisciAnnotazione(urlD,get_fragment_path(autore["path"]),autore["start"],autore["end"],"hasAuthor",autore["autori"], 0)
+     query_autore=query_annotazione(nome_grafo_gruppo,annAutore)
+     do_query_post(sparql_endpoint_remoto,query_autore)
+     listaAnnotazioni.append(annAutore)
+     annTitolo = costruisciAnnotazione(urlD,get_fragment_path(titolo["path"]),titolo["start"],titolo["end"],"hasTitle",titolo["titolo"], 0)
+     query_titolo=query_annotazione(nome_grafo_gruppo,annTitolo)
+     do_query_post(sparql_endpoint_remoto,query_titolo)
+     listaAnnotazioni.append(annTitolo)
+     for i in range(len(citazioni)):
+         annCitazione=costruisciAnnotazione(urlD,get_fragment_path(citazioni[i]["xpath"]),citazioni[i]["inizio"],citazioni[i]["fine"],"cites",citazioni[i]["object"], i+1)
+         query_citazione=query_annotazione(nome_grafo_gruppo,annCitazione)
+         do_query_post(sparql_endpoint_remoto,query_citazione)
+         listaAnnotazioni.append(annCitazione)
 
-# @app.route('/scrapingAutomatico')
-# def return_scrapingAuto():
-#     urlD = request.args.get('url')
-#     auto = []
-#     data =scarping_autore(urlD)
-#     data1 = scraping_automatico_titolo(urlD)
-#     data2 = scraping_doi(urlD)
-#     data3 = scraping_anno(urlD)
-#     data4 = scraping_citazioni(urlD)
-#     auto.append(data)
-#     auto.append(data1)
-#     auto.append(data2)
-#     auto.append(data3)
-#     auto.append(data4)
-#     return data
+
+     result={}
+     result["numero"]=len(listaAnnotazioni)
+     return json.dumps(result)
 
 
-@app.route('/scrapingAutomaticoDoi')
-def return_doi():
+
+
+@app.route('/scrapingAutomaticoForzato')
+def scrapingAutomaticoForzato():
      urlD = request.args.get('url')
-     data = scraping_doi(urlD)
-     return data
+     doi = scraping_doi(urlD)
+     anno = scraping_anno(urlD)
+     autore = scarping_autore(urlD)
+     citazioni = scraping_citazioni(urlD)
+     titolo = scraping_automatico_titolo(urlD)
+     #return data
 
-@app.route('/scrapingAutomaticoYears')
-def return_years():
-     urlD = request.args.get('url')
-     data = scraping_anno(urlD)
-     return data
-
-@app.route('/scrapingAutomaticoTitolo')
-def return_auto_titolo():
-    urlD = request.args.get('url')
-    data = scraping_automatico_titolo(urlD)
-    return data
 
 
 @app.route('/scrapingTitolo')    #prende il titolo dei docuemnti quando vengono caricati

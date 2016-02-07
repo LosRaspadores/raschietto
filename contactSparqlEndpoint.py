@@ -502,6 +502,21 @@ def do_query_post(endpoint, query):
     sparql_endpoint.setMethod('POST')
     sparql_endpoint.query()
 
+# per cancellare tutte le annotazioni con la nostra provenance
+def query_delete_all_doc_nostraprovenance(url_doc):
+    query = prefissi + " WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> " \
+                    " DELETE {?a ?p ?o. ?body ?bp ?bo. ?target ?tp ?to. ?fragment ?fsp ?fso.} WHERE { "\
+                    "?a ?p ?o. "\
+                    "?a oa:hasBody ?body. "\
+                    "?body ?bp ?bo. "\
+                    "?a oa:annotatedBy <mailto:los.raspadores@gmail.com>. "\
+                    "?a oa:hasTarget ?target. "\
+                    "?target oa:hasSelector ?fragment. "\
+                    "?target ?tp ?to. "\
+                    "?fragment ?fsp ?fso. "\
+                    "?target oa:hasSource <" + url_doc + ">.}"
+    return query
+
 
 # per query select
 def do_query_get(endpoint, query):
