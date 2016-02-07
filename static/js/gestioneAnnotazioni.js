@@ -666,7 +666,7 @@ $(document).ready(function(){
 //        salvaAnnotazioniLocale(listaNuoveAnnotazioni)
         var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
         listaQueryDaInviare.push(query);
-        inviaQuery(listaQuery)
+//        inviaQuery(listaQuery)
         $('#modalGestAnnotazioni').modal('hide');
     });
 
