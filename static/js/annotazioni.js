@@ -1,5 +1,6 @@
 /* funzioni annotazioni */
 
+//globale
 prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
         'PREFIX frbr: <http://purl.org/vocab/frbr/core#> '+
         'PREFIX cito: <http://purl.org/spar/cito/> '+
@@ -81,10 +82,11 @@ function get_annotazioni(query, urlDoc){
                 stileAnnotazioniMultiple();
 
             } else {
-                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato. Avvio dello scraping automatico");
                 $('#alertDoc').modal('show');
-            };
-            //scraper(lista_annotazioni,urlDoc);
+                scraper(lista_annotazioni,urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
+            }
+             //scraper(lista_annotazioni,urlDoc);
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -102,8 +104,29 @@ function get_annotazioni(query, urlDoc){
 };
 
 
+function lancia_scraper(query, urlDoc){
+    uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
+    $.ajax({
+        url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
+        //url: "http://localhost:3030/data/query?query=" + uriQuery + "&format=json",
+
+        dataType: "jsonp",
+        success: function(result) {
+          lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
+
+          scraper(lista_annotazioni,urlDoc);
+
+        },
+        error: function(error) {
+            $('#alertMessage').text("Errore nell'esecuzione dello scraper");
+            $('#alertDoc').modal('show');
+        }
+    });
+};
+
+
+
 function scraper(anns,urlDoc){
-    alert('ciao2...'+urlDoc);
     $findTitle = false;
     $findAuthor = false;
     $findDoi = false;
@@ -255,6 +278,7 @@ function scraper(anns,urlDoc){
 
 
 }
+
 
 // modal
 function displayAnnotazioni(anns) {

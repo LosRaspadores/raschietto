@@ -119,7 +119,7 @@ annotazione_prova_doi = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:doi a rdf:Statement;
-        rdfs:label "10.1045/july2015-downs"^^xsd:string ;
+        rdfs:label "DOI = 10.1045/july2015-downs"^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
         rdf:predicate prism:doi ;
         rdf:object "10.1045/july2015-downs"^^xsd:string .
@@ -131,7 +131,7 @@ annotazione_prova_doi = """
 
 annotazione_prova_url = """
     [] a oa:Annotation ;
-        rdfs:label "URL"^^xsd:string ;
+        rdfs:label "URl"^^xsd:string ;
         rsch:type "hasURL"^^xsd:string ;
         oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
         oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
@@ -149,7 +149,7 @@ annotazione_prova_url = """
         rdfs:label "LosRaspadores"^^xsd:string .
 
     _:url a rdf:Statement;
-        rdfs:label "http://www.dlib.org/dlib/july15/downs/07downs.html"^^xsd:string ;
+        rdfs:label "URL = http://www.dlib.org/dlib/july15/downs/07downs.html"^^xsd:string ;
         rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1> ;
         rdf:predicate fabio:hasURL ;
         rdf:object "http://www.dlib.org/dlib/july15/downs/07downs.html"^^xsd:anyURL .
@@ -587,38 +587,6 @@ def main():
     query = query_annotazione(nome_grafo_gruppo, queryFRBRdocument(url_doc))
     do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
-
-
-
-    annota = """
-    [] a oa:Annotation ;
-        rdfs:label "Titolo"^^xsd:string ;
-        rsch:type "hasTitle"^^xsd:string ;
-        oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
-        oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
-        oa:hasBody _:title ;
-        oa:hasTarget [ a oa:SpecificResource ;
-                oa:hasSelector [ a oa:FragmentSelector ;
-                        rdf:value "div1_div1_div2_div3_div2_h3"^^xsd:string ;
-                        oa:start "0"^^xsd:nonNegativeInteger ;
-                        oa:end "67"^^xsd:nonNegativeInteger ] ;
-                oa:hasSource <http://rivista-statistica.unibo.it/article/view/4594> ] .
-
-    <mailto:los.raspadores@gmail.com> a foaf:mbox ;
-        schema:email "los.raspadores@gmail.com" ;
-        foaf:name "LosRaspadores"^^xsd:string ;
-        rdfs:label "LosRaspadores"^^xsd:string .
-
-    _:title a rdf:Statement;
-        rdfs:label "titolo"^^xsd:string ;
-        rdf:subject <http://rivista-statistica.unibo.it/article/view/4594_ver1> ;
-        rdf:predicate dcterms:title ;
-        rdf:object "titolo"^^xsd:string .
-
-    <http://rivista-statistica.unibo.it/article/view/4594.html> a fabio:item.
-
-    <http://rivista-statistica.unibo.it/article/view/4594_ver1> a fabio:Expression;
-        fabio:hasRepresentation <http://rivista-statistica.unibo.it/article/view/4594.html>."""
 
 """
     query = query_annotazione(nome_grafo_gruppo, annota)

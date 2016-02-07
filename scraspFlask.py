@@ -58,6 +58,23 @@ def return_autore():
      data = scarping_autore(urlD)
      return data
 
+# @app.route('/scrapingAutomatico')
+# def return_scrapingAuto():
+#     urlD = request.args.get('url')
+#     auto = []
+#     data =scarping_autore(urlD)
+#     data1 = scraping_automatico_titolo(urlD)
+#     data2 = scraping_doi(urlD)
+#     data3 = scraping_anno(urlD)
+#     data4 = scraping_citazioni(urlD)
+#     auto.append(data)
+#     auto.append(data1)
+#     auto.append(data2)
+#     auto.append(data3)
+#     auto.append(data4)
+#     return data
+
+
 @app.route('/scrapingAutomaticoDoi')
 def return_doi():
      urlD = request.args.get('url')
@@ -96,6 +113,7 @@ def return_titolo():
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
     url = request.args.get('url')
+    #print("url=="+url)
     data = scraping_singolo_documento(url)
     return data
 
