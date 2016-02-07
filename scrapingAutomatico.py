@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
-import lxml
-import re
-from lxml import etree, html
-import unicodedata
 
 __author__ = 'Los Raspadores'
 
@@ -23,9 +19,11 @@ from bs4 import BeautifulSoup
 import mechanize
 import json
 import urllib2
+import re
 from urllib2 import urlopen
 from urlparse import urlparse
 from lxml import etree, html
+import unicodedata
 
 # Browser mechanize
 br = mechanize.Browser()

@@ -254,8 +254,10 @@ $(document).ready(function() {
                 var find = false;
                 var deleted = false;
                 var index = 0;
+                var indexDoc = 0;
                 for(k = 0; k < annotazioniGrafoSessione.length; k++){
                     if(annotazioniGrafoSessione[k].url == id){
+                        indexDoc = k;
                         for(j = 0; j < annotazioniGrafoSessione[k].annot.length; j++){ // si controlla se le annotazioni sono state modificate o cancellate in locale
                             if(annotazioniGrafoSessione[k].annot[j].provenance.value == annot_gest[i].provenance.value && annotazioniGrafoSessione[k].annot[j].date.value == annot_gest[i].date.value && annotazioniGrafoSessione[k].annot[j].type.value == annot_gest[i].type.value && annotazioniGrafoSessione[k].annot[j].body_s.value == annot_gest[i].body_s.value){
                                 find = true; // annotazione modificata
@@ -269,27 +271,27 @@ $(document).ready(function() {
                 }
                 if(!deleted){ // se l'annotazione non e' stata cancellata localmente
                     if(find){
-                        if(typeof(annotazioniGrafoSessione[k].annot[index].update.data_mod) != "undefined"){
-                            data = parseDatetime(annotazioniGrafoSessione[k].annot[index].update.data_mod);
+                        if(typeof(annotazioniGrafoSessione[indexDoc].annot[index].update.data_mod) != "undefined"){
+                            data = parseDatetime(annotazioniGrafoSessione[indexDoc].annot[index].update.data_mod);
                         } else {
-                            data = parseDatetime(annotazioniGrafoSessione[k].annot[index].date.value);
+                            data = parseDatetime(annotazioniGrafoSessione[indexDoc].annot[index].date.value);
                         }
-                        if(typeof(annotazioniGrafoSessione[k].annot[index].update.tipo) != "undefined"){
-                            tipo = annotazioniGrafoSessione[k].annot[index].update.tipo;
+                        if(typeof(annotazioniGrafoSessione[indexDoc].annot[index].update.tipo) != "undefined"){
+                            tipo = annotazioniGrafoSessione[indexDoc].annot[index].update.tipo;
                             classe = getClassNameType(tipo).substring(9, getClassNameType(tipo).length);
                         } else {
-                            tipo = typeToIta(annotazioniGrafoSessione[k].annot[index].type.value);
+                            tipo = typeToIta(annotazioniGrafoSessione[indexDoc].annot[index].type.value);
                             classe = getClassNameType(typeToIta(annot_gest[i].type.value)).substring(9, getClassNameType(typeToIta(annot_gest[i].type.value)).length);
                         }
-                        if(typeof(annotazioniGrafoSessione[k].annot[index].update.oggetto) != "undefined"){
-                            oggetto = annotazioniGrafoSessione[index].update.oggetto;
+                        if(typeof(annotazioniGrafoSessione[indexDoc].annot[index].update.oggetto) != "undefined"){
+                            oggetto = annotazioniGrafoSessione[indexDoc].annot[index].update.oggetto;
                         } else { // se l'oggetto non e' stato modificato
                             if(tipo == "Funzione retorica"){
-                                oggetto = gestioneRetoriche(annotazioniGrafoSessione[k].annot[index].body_o.value);
+                                oggetto = gestioneRetoriche(annotazioniGrafoSessione[indexDoc].annot[index].body_o.value);
                             } else if(tipo == "Citazione" || tipo == "Autore"){
-                                oggetto = annotazioniGrafoSessione[k].annot[index].body_ol.value;
+                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_ol.value;
                             } else {
-                                oggetto = annotazioniGrafoSessione[k].annot[index].body_o.value;
+                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_o.value;
                             }
                         }
                     } else { // se l'annotazione non e' stata ne modificata e ne cancellata
