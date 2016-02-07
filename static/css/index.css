@@ -11,7 +11,6 @@ body {
     padding-right: 0px !important;
 }
 
-
 /* prima navbar con logo, descrizione e info */
 .navbar {
     background-color: #0C3C26;
@@ -39,7 +38,6 @@ body {
 /* descrizione applicazione */
 .navbar .navbar-text{
     color: #44b78b;
-    font-weight: bold;
 }
 
 /* link info e help*/
@@ -491,64 +489,7 @@ span.glyphicon.glyphicon-remove{
     margin-bottom: 0px;
 }
 
-.tableAnnot{
-    margin: auto;
-    overflow:auto;
-    display: block;
-}
-
-.tableAnnot td, .tableAnnot th{
-    width: 173px;
-}
-
-.tableAnnot td{
-    padding-top: 5px;
-    padding-bottom: 5px;
-    word-wrap: break-word;
-    max-width: 500px;
-    overflow: auto;
-}
-
-.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
-    width: 66px;
-}
-
-thead{
-    border-bottom: 5px solid #44B78B;
-}
-
-.tableAnnot thead, .tableAnnot tbody { display: block; }
-
-.tableAnnot tbody {
-    max-height: 400px;       /* Just for the demo          */
-    overflow-y: auto;    /* Trigger vertical scroll    */
-    overflow-x: hidden;  /* Hide the horizontal scroll */
-}
-/* Start by setting display:none to make this hidden.
-   Then we position it in relation to the viewport window
-   with position:fixed. Width, height, top and left speak
-   for themselves. Background we set to 80% white with
-   our animation centered, and no-repeating */
-#loading {
-    display: none;
-    position: absolute;
-    top: 60px;
-    background: rgba( 255, 255, 255, .8 ) /* 80% white */
-                url('/static/ico/loader.gif')
-                50% 0% /* centrato orizzontalmente (50%) e in alto (0%) */
-                no-repeat;
-}
-
-body.loading {
-    overflow: hidden;
-}
-
-body.loading #loading {
-    display: block;
-}
-
-
-
+/* Tabella nel modal di gestione delle annotazioni */
 .tableAnnot{
     margin: auto;
     overflow:auto;
@@ -575,11 +516,9 @@ body.loading #loading {
     width: 390px;
 }
 
-/*
 thead{
     border-bottom: 5px solid #44B78B;
 }
-*/
 
 .tableAnnot thead, .tableAnnot tbody { display: block; }
 
@@ -593,9 +532,6 @@ thead{
     font-size: 20px;
 }
 
-#modalGestAnnotazioni thead{
-    border-bottom: 5px solid #44B78B;
-}
 
 #modalGestAnnotazioni table span.glyphicon {
     padding-left: 15px;
@@ -618,19 +554,11 @@ div.tab-content{
     cursor: pointer;
 }
 
-/*#modificaSelezione{
-    padding: 5px 5px 5px 5px;
-    text-align: right;
-}*/
 
 #confermaModificaSelezione{
     position: relative;
     float: right;
-}
-
-#confermaModificaSelezione {
     background-color: #44B78B;
-
 }
 
 
@@ -640,6 +568,7 @@ div.tab-content{
 }
 
 #bottoniModificaSelezione{
+    display: none;
     position: fixed;
     right: 20px;
     margin-top: 10px;
@@ -653,7 +582,6 @@ div.tab-content{
 }
 
 #bottonemodFramm{
-    /*margin-top: 5px;*/
     margin-bottom: 5px;
     float: right;
 }
@@ -662,12 +590,6 @@ div.tab-content{
     clear: both;
 }
 
-#bottoniModificaSelezione{
-    display: none;
-}
-
-
-}
 
 #ann_sul_doc{
     word-wrap: break-word;
@@ -678,4 +600,23 @@ div.tab-content{
 .divAnnSulDoc{
     border-top: 1px solid #44b78b;
     padding-top: 20px;
+}
+
+
+#loading {
+    display: none;
+    position: absolute;
+    top: 60px;
+    background: rgba( 255, 255, 255, .8 )
+                url('/static/ico/loader.gif')
+                50% 0%
+                no-repeat;
+}
+
+body.loading {
+    overflow: hidden;
+}
+
+body.loading #loading {
+    display: block;
 }

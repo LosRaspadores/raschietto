@@ -117,7 +117,7 @@ $(document).ready(function() {
 
 
     $('ul#bottoniAnnotator button').click(function(e){
-        /* I bottoni della nav bar non sono funzionali se non c'� un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
             var mess = '';
             if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
@@ -223,20 +223,18 @@ $(document).ready(function() {
     $('#buttonCit').click(function(){ //TODO lo fa solo la prima volta
         var id = $("ul.nav.nav-tabs li.active a").attr("id");
         if(id != 'homeTab'){
-//            getCitazioni(id);
-
+            //getCitazioni(id);
             var cit = '';
             for(var i = 0; i < listaCitazioni.length; i++){
                 if(listaCitazioni[i].testo.length > 70){
                     cit = listaCitazioni[i].testo.substring(0, 70)+'...';
-                    } else {
-                    cit = listaCitazioni[i].testo;
-                    }
+                } else {
+                cit = listaCitazioni[i].testo;
+                }
                 $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>');
-            }
-        });
-    }
-
+            };
+        };
+    });
 
 
     /* Riempie modale di gestione delle annotazioni */
@@ -292,6 +290,7 @@ $(document).ready(function() {
 
         if(isOpen(urlDoc)){
             $("ul.nav.nav-tabs a[id='" + urlDoc + "']").tab("show");
+            annotazioniSuDoc(urlDoc);
         }else{
             var numTabs = $("ul.nav.nav-tabs").children().length;
             if(numTabs <= 4){
@@ -324,7 +323,6 @@ $(document).ready(function() {
                             addTab(result, urlDoc, title);
                             query = query_all_annotazioni(urlDoc);
                             get_annotazioni(query, urlDoc);
-
                             filtriAttivi();
                         },
                         error: function(error) {
@@ -462,17 +460,11 @@ function closeTab(element){
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         console.log(listaAllAnnotazioni[j].url);
     }
-    if($(".in .active").length==0){
-        $('#homeTab').trigger("click");
-    };
-    
     
     var numTabs = $("ul.nav.nav-tabs").children().length;
     if(numTabs == 1){
         $('#homeTab').trigger("click");
     };
-    
-    
 }
 
 function mostraAnnotGruppo(element){

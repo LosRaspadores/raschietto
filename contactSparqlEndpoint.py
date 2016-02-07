@@ -97,6 +97,7 @@ prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
                 PREFIX deo:   <http://purl.org/spar/deo/>
                 PREFIX foaf: <http://xmlns.com/foaf/0.1/> """
 
+
 annotazione_prova_doi = """
     [] a oa:Annotation ;
         rdfs:label "DOI"^^xsd:string ;
@@ -608,11 +609,10 @@ def main():
     query = query_delete_all_doc_nostraprovenance(url_doc)
     do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
+    """
 
 
-
-    annota = """
-    [] a oa:Annotation ;
+    annota = """[] a oa:Annotation ;
         rdfs:label "Titolo"^^xsd:string ;
         rsch:type "hasTitle"^^xsd:string ;
         oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
@@ -653,7 +653,6 @@ def main():
     query = query_select_all_grafo(nome_grafo_gruppo)
     do_query_get(sparql_endpoint_remoto, query)
 """
-
 
 
 if __name__ == "__main__":

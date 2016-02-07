@@ -1,32 +1,14 @@
 function inviaQuery(listaQuery){
-        $.ajax({
-            url: "/salvaAnnotazioni",
-            data: {"query": listaQuery},
-            success: function(result) {
-                $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
-                $('#alertDoc').modal('show');
-                //TODO svuotare l'oggetto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            }
-        });
+    $.ajax({
+        url: "/salvaAnnotazioni",
+        data: {"query": listaQuery},
+        success: function(result) {
+            $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
+            $('#alertDoc').modal('show');
+            //TODO svuotare l'oggetto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+    });
 }
-
-//globale
-prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
-    'PREFIX frbr: <http://purl.org/vocab/frbr/core#> '+
-    'PREFIX cito: <http://purl.org/spar/cito/> '+
-    'PREFIX fabio: <http://purl.org/spar/fabio/> '+
-    'PREFIX sro: <http://salt.semanticauthoring.org/ontologies/sro#> '+
-    'PREFIX dcterms: <http://purl.org/dc/terms/> '+
-    'PREFIX schema: <http://schema.org/> '+
-    'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> '+
-    'PREFIX oa: <http://www.w3.org/ns/oa#> '+
-    'PREFIX rsch: <http://vitali.web.cs.unibo.it/raschietto/> '+
-    'PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> '+
-    'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> '+
-    'PREFIX sem: <http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#> '+
-    'PREFIX skos: <http://www.w3.org/2009/08/skos-reference/skos.html> '+
-    'PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/> '+
-    'PREFIX deo: <http://purl.org/spar/deo/> ';
 
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -235,5 +217,3 @@ function switchRetorica(valore){
     }
     return valore;
 }
-
-});

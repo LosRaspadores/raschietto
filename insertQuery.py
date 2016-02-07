@@ -242,13 +242,13 @@ def do_query_post(endpoint, query):
     sparql_endpoint.setMethod('POST')
     sparql_endpoint.query()
 
+
 def query_annotazione(nome_grafo, annotazione):
     query = prefissi + """
                 INSERT DATA {
                     GRAPH <%s> { %s }
                 }""" % (nome_grafo, annotazione)
     return query
-
 
 
 def query_delete_all_doc_nostraprovenance(url_doc):

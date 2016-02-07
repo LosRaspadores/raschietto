@@ -1,7 +1,7 @@
 /* funzioni annotazioni */
 
 //globale
-prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
+prefissi =  'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
             'PREFIX frbr: <http://purl.org/vocab/frbr/core#> '+
             'PREFIX cito: <http://purl.org/spar/cito/> '+
             'PREFIX fabio: <http://purl.org/spar/fabio/> '+
@@ -28,7 +28,7 @@ function query_all_annotazioni(url_documento){
     for (i=0; i<listaGruppiCompleta.length; i++){
         query += 'FROM NAMED <' + listaGruppiCompleta[i].url + '> ';
     };
-    //query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
+    // query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
     query += 'WHERE {'+
             'GRAPH ?graph {?a a oa:Annotation. '+
             'OPTIONAL {?a rdfs:label ?label} '+
@@ -67,14 +67,12 @@ function get_annotazioni(query, urlDoc){
                 salvaAnnotazioniJSON(urlDoc, lista_annotazioni);
                 gestioneAnnotazioni(lista_annotazioni, urlDoc);
                 stileAnnotazioniMultiple();
-
+                annotazioniSuDoc(urlDoc);
             } else {
-                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato. Avvio dello scraping automatico");
+                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
-            };
-                scraper(lista_annotazioni,urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
+                //scraper(lista_annotazioni, urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
-             //scraper(lista_annotazioni,urlDoc);
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -98,9 +96,8 @@ function lancia_scraper(query, urlDoc){
 
         dataType: "jsonp",
         success: function(result) {
-          lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
-
-          scraper(lista_annotazioni,urlDoc);
+            lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
+            scraper(lista_annotazioni,urlDoc);
 
         },
         error: function(error) {
@@ -110,9 +107,8 @@ function lancia_scraper(query, urlDoc){
     });
 };
 
-
-
-function scraper(anns,urlDoc){
+/*
+function scraper(anns, urlDoc){
     $findTitle = false;
     $findAuthor = false;
     $findDoi = false;
@@ -122,7 +118,7 @@ function scraper(anns,urlDoc){
      for (i = 0; i < anns.length; i++) {
         ann = anns[i];
         // alert('ann='+ann);
-        ann_out = displaySingolaAnnotazione("",ann);
+        ann_out = displaySingolaAnnotazione("", ann);
         if(typeof(ann["type"]) !== "undefined"){
            tipo_ann = gestioneTipoType(ann["type"]["value"]);
            //console.log("tipo ann="+ann["type"]["value"]);
@@ -263,7 +259,7 @@ function scraper(anns,urlDoc){
     }
 
 
-}
+}*/
 
 function gestioneAnnotazioni(lista_annotazioni, urlDoc) {
     for (i = 0; i < lista_annotazioni.length; i++) {
@@ -369,7 +365,6 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
         //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
-        console.log("path locale app " + path);
         try {
             //The expression is a legal expression.
             var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -653,7 +648,7 @@ function controllofiglio(nodo, classe){
 function displayAnnSuDoc(ann){
     var out = "";
     if(typeof(ann["type"]) != "undefined"){
-        var tipo_ann = gestioneTipoType(ann["type"]["value"]);
+        var tipo_ann = typeToIta(ann["type"]["value"]);
         var classCSS = getClassNameType(ann["type"]["value"]);
         if(tipo_ann != ""){
             out += '<div class="divAnnSulDoc">';
@@ -697,14 +692,17 @@ function annotazioniSuDoc(url_doc){
     var numAnn = 0;
     for(var i=0; i<listaAllAnnotazioni.length; i++){
         if(listaAllAnnotazioni[i].url == url_doc){
-            $("#ann_sul_doc").html('<p>Annotazioni sul documento</p>');
+            $("#ann_sul_doc").html("<p>Annotazioni sul documento</p>");
             for(var j=0; j<listaAllAnnotazioni[i].listaGrafi.length; j++){
                 for(var z=0; z<listaAllAnnotazioni[i].listaGrafi[j].annotazioni.length; z++){
                     var fragmentPath = listaAllAnnotazioni[i].listaGrafi[j].annotazioni[z]["fs_value"]["value"];
+                    // se l'annotazione non ha fragment path (= se e' sull intero documento)
                     if(fragmentPath == "" || fragmentPath == "document" || fragmentPath == "Document" || fragmentPath == "html/body/" || fragmentPath == "html/body"){
                         var out = displayAnnSuDoc(listaAllAnnotazioni[i].listaGrafi[j].annotazioni[z]);
-                        $("#ann_sul_doc").append(out);
-                        numAnn++;
+                        if (out != ""){
+                            $("#ann_sul_doc").append(out);
+                            numAnn++;
+                        }
                     }
                 }
             }
@@ -728,10 +726,10 @@ $( document ).ready(function() {
     $(document).on("click", "ul.nav.nav-tabs>li>a", function(){
         //vengono visualizzate nel pannello le annotazioni senza fragment path del doc corrente
         var url_doc_corrente = $(this).attr("id");
-            if(url_doc_corrente != "homeTab"){
+        if(url_doc_corrente != "homeTab"){
             annotazioniSuDoc(url_doc_corrente);
         } else {
-            // la tab active e' la tab home
+            // la tab attiva e' la tab home
             $("#ann_sul_doc").html('<p>Nessun documento selezionato</p>');
         }
     });
