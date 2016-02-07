@@ -13,7 +13,6 @@ __author__ = 'Los Raspadores'
     tramite selettori CSS
 """
 
-
 # moduli importati
 import json
 from bs4 import BeautifulSoup
@@ -46,3 +45,4 @@ if __name__ == "__main__":
     main()
 else:
     print "this script (scrapingGruppi) is being imported into another module"
+

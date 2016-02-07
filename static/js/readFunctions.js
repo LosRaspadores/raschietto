@@ -63,16 +63,16 @@ function getDocFromSparql(){
     urlQuery = encodeURIComponent(query); // rende la query parte dell'uri
     urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
     return $.ajax({
-                url: urlG,
-                dataType: 'jsonp',
-            });
+        url: urlG,
+        dataType: 'jsonp',
+    });
 }
 
 function getDocFromScraping(){
     return $.ajax({
-                url: '/scrapingDocumenti',
-                type: 'GET'
-            });
+        url: '/scrapingDocumenti',
+        type: 'GET'
+    });
 }
 
 //function getDocumenti(docAnnotati, docScraping){

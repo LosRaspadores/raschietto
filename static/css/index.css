@@ -11,7 +11,6 @@ body {
     padding-right: 0px !important;
 }
 
-
 /* prima navbar con logo, descrizione e info */
 .navbar {
     background-color: #0C3C26;
@@ -336,7 +335,6 @@ button.button-lg:active {
 
 .highlightMultipleTipoDiverso{
     background-color: #dae0e6;
-    border: 1px solid #989ca1;
 }
 
 .highlightMultipleTipoUguale{
@@ -462,6 +460,9 @@ span.glyphicon.glyphicon-remove::before{
         background-image: none;
         background-position: none;
     }
+    div .tab-content{
+        margin-top: 40px;
+    }
 }
 
 .nav-tabs>li>a:hover {
@@ -488,10 +489,12 @@ span.glyphicon.glyphicon-remove{
     margin-bottom: 0px;
 }
 
+/* Tabella nel modal di gestione delle annotazioni */
 .tableAnnot{
     margin: auto;
     overflow:auto;
     display: block;
+    /* word-break: break-all; */
 }
 
 .tableAnnot td, .tableAnnot th{
@@ -506,74 +509,11 @@ span.glyphicon.glyphicon-remove{
     overflow: auto;
 }
 
-.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
-    width: 66px;
+.tableAnnot td:first-child, .tableAnnot th:first-child{
+    width: 180px;
 }
-
-thead{
-    border-bottom: 5px solid #44B78B;
-}
-
-.tableAnnot thead, .tableAnnot tbody { display: block; }
-
-.tableAnnot tbody {
-    max-height: 400px;       /* Just for the demo          */
-    overflow-y: auto;    /* Trigger vertical scroll    */
-    overflow-x: hidden;  /* Hide the horizontal scroll */
-}
-/* Start by setting display:none to make this hidden.
-   Then we position it in relation to the viewport window
-   with position:fixed. Width, height, top and left speak
-   for themselves. Background we set to 80% white with
-   our animation centered, and no-repeating */
-#loading {
-    display: none;
-    position: fixed;
-    left: 33%;
-    top: 33%;
-    height: 100px;
-    width: 300px;
-    margin: auto;
-    background: rgba( 255, 255, 255, .8 )
-                url('/static/ico/loader.gif')
-                50% 50%
-                no-repeat;
-}
-
-/* When the body has the loading class, we turn
-   the scrollbar off with overflow:hidden */
-body.loading {
-    overflow: hidden;
-}
-
-/* Anytime the body has the loading class, our
-   modal element will be visible */
-body.loading #loading {
-    display: block;
-}
-
-
-
-.tableAnnot{
-    margin: auto;
-    overflow:auto;
-    display: block;
-}
-
-.tableAnnot td, .tableAnnot th{
-    width: 173px;
-}
-
-.tableAnnot td{
-    padding-top: 5px;
-    padding-bottom: 5px;
-    word-wrap: break-word;
-    max-width: 500px;
-    overflow: auto;
-}
-
-.tableAnnot td:fisrtChild(), .tableAnnot th:fisrtChild(){
-    width: 66px;
+.tableAnnot td:nth-child(3), .tableAnnot th:nth-child(3){
+    width: 390px;
 }
 
 thead{
@@ -592,9 +532,6 @@ thead{
     font-size: 20px;
 }
 
-#modalGestAnnotazioni thead{
-    border-bottom: 5px solid #44B78B;
-}
 
 #modalGestAnnotazioni table span.glyphicon {
     padding-left: 15px;
@@ -617,20 +554,26 @@ div.tab-content{
     cursor: pointer;
 }
 
-/*#modificaSelezione{
-    padding: 5px 5px 5px 5px;
-    text-align: right;
-}*/
 
 #confermaModificaSelezione{
     position: relative;
     float: right;
+    background-color: #44B78B;
 }
 
-#confermaModificaSelezione {
+
+.modificaSelezione{
+    width: inherit;
+    margin-top: 5px;
+}
+
+#bottoniModificaSelezione{
+    display: none;
     position: fixed;
     right: 20px;
     margin-top: 10px;
+    width: 200px;
+    float: left;
 }
 
 .glyphicon-plus:hover, .glyphicon-trash:hover, .glyphicon-edit:hover {
@@ -639,11 +582,41 @@ div.tab-content{
 }
 
 #bottonemodFramm{
-    /*margin-top: 5px;*/
     margin-bottom: 5px;
     float: right;
 }
 
 #divInsert{
     clear: both;
+}
+
+
+#ann_sul_doc{
+    word-wrap: break-word;
+    height: 350px;
+    overflow-y: auto;
+}
+
+.divAnnSulDoc{
+    border-top: 1px solid #44b78b;
+    padding-top: 20px;
+}
+
+
+#loading {
+    display: none;
+    position: absolute;
+    top: 60px;
+    background: rgba( 255, 255, 255, .8 )
+                url('/static/ico/loader.gif')
+                50% 0%
+                no-repeat;
+}
+
+body.loading {
+    overflow: hidden;
+}
+
+body.loading #loading {
+    display: block;
 }

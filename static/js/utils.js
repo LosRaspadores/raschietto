@@ -283,3 +283,8 @@ function typeToIng(type){
     return out;
 }
 
+
+/* Sostituire tutte le occorrenze di un carattere */
+String.prototype.replaceAll = function(target, replacement) {
+  return this.split(target).join(replacement);
+};

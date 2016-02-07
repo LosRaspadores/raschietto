@@ -77,10 +77,14 @@ def return_auto_titolo():
     return data
 
 
-@app.route('/getDocumenti')    #prende il titolo dei documenti quando vengono caricati
+@app.route('/getDocumenti', methods=['GET', 'POST'])    #prende il titolo dei documenti quando vengono caricati
 def return_titolo():
     #url = request.args.get('url')
     #item_list = json.loads(url)
+    # url = request.args.get('url')  #  riceve: urlDoc = JSON.stringify(docTemp);
+    # if url is not None:
+    #     item_list = json.loads(url)  # load s => stringa
+
     item_list = []
     read_file = open('cacheDoc.json', 'r')
     result = read_file.read()
@@ -100,7 +104,7 @@ def return_titolo():
                 continue
             else:
                 item_list.append(doc['doc']['value'])
-
+        #if url is not None:
         data = scraping_titolo(item_list)
         out_file = open('cacheDoc.json', 'w')
         out_file.write(data)
@@ -170,4 +174,4 @@ if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5000) # host server (macchina local)
 
     # in locale: run on default port localhost:5000
-    app.run()
+    # app.run()

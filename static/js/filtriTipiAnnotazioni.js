@@ -2,29 +2,14 @@ $(document).ready(function() {
 
     filtriAttivi();
 
-    if( ($('#toggleTitolo').prop('checked') == false) || ($('#toggleAutore').prop('checked') == false) ||
-        ($('#toggleAnnoP').prop('checked') == false) || ($('#toggleDOI').prop('checked') == false) ||
-        ($('#toggleFunzRet').prop('checked') == false) || ($('#toggleCit').prop('checked') == false) ||
-        ($('#toggleURL').prop('checked') == false) || ($('#toggleComm').prop('checked') == false)){
-
-            $(".highlightMultipleTipoDiverso").css("background-color", "White");
-
-            $(".highlightMultipleTipoDiverso").css("border", "0px none white");
-            $(".highlightMultipleTipoUguale").css("border", "0px none white");
-    } else {
-        $(".highlightMultipleTipoDiverso").css("background-color", "#dae0e6");
-
-        $(".highlightMultipleTipoDiverso").css("border", "1px solid #989ca1");
-        $(".highlightMultipleTipoUguale").css("border", "1px solid #57595c");
-    };
-
     $('#toggleTitolo').change(function() {
         if ($("#toggleTitolo").prop('checked')) {
             $(".highlightTitle").css("background-color", "#48D1CC");
         }else{
             $('#toggleTitolo').prop('checked', false);
             $(".highlightTitle").css("background-color", "White");
-        };
+        }
+        filtriMultiple();
     });
 
     $('#toggleURL').change(function() {
@@ -34,6 +19,7 @@ $(document).ready(function() {
             $('#toggleURL').prop('checked', false);
             $(".highlightURL").css("background-color", "White");
         }
+        filtriMultiple();
     });
 
     $('#toggleAutore').change(function() {
@@ -43,6 +29,7 @@ $(document).ready(function() {
             $('#toggleAutore').prop('checked', false);
             $(".highlightAuthor").css("background-color", "White");
         }
+        filtriMultiple();
     });
 
     $('#toggleAnnoP').change(function() {
@@ -52,6 +39,7 @@ $(document).ready(function() {
             $('#toggleAnnoP').prop('checked', false);
             $(".highlightPublicationYear").css("background-color", "White");
         }
+        filtriMultiple();
     });
 
     $('#toggleDOI').change(function() {
@@ -61,6 +49,7 @@ $(document).ready(function() {
             $('#toggleDOI').prop('checked', false);
             $(".highlightDOI").css("background-color", "White");
         }
+        filtriMultiple();
     });
 
     $('#toggleFunzRet').change(function() {
@@ -70,6 +59,7 @@ $(document).ready(function() {
             $('#toggleFunzRet').prop('checked', false);
             $(".highlightDenotesRhetoric").css("background-color", "White");
         }
+        filtriMultiple();
     });
 
     $('#toggleCit').change(function() {
@@ -79,6 +69,7 @@ $(document).ready(function() {
             $('#toggleCit').prop('checked', false);
             $(".highlightCites").css("background-color", "White");
         }
+        filtriMultiple();
     });
 
     $('#toggleComm').change(function() {
@@ -88,20 +79,10 @@ $(document).ready(function() {
             $('#toggleComm').prop('checked', false);
             $(".highlightComment").css("background-color", "White");
         }
+        filtriMultiple();
     });
-
-
-    /*
-        prop() // attr()
-        con le checkboxes uso prop(), attr() potrebbe dare risultati indesiderati
-    */
-
 });
 
-
-/*
-    fuori da $(document).ready(function(){ .. }) in modo da poterlo richiamare in altri file js
-*/
 function filtriAttivi(){
     $('#toggleTitolo').prop('checked', true);
     $('#toggleURL').prop('checked', true);
@@ -113,4 +94,21 @@ function filtriAttivi(){
     $('#toggleComm').prop('checked', true);
 };
 
+function filtriMultiple(){
+    var filtri = false;
+    $.each($("input[id^='toggle']"), function(){
+        if(!$(this).prop('checked')){
+            filtri = true;
+            return false;  // break loop
+        }
+    });
 
+    // se almeno un filtro è disattivato
+    if(filtri){
+        $(".highlightMultipleTipoDiverso").css("background-color", "White");
+        $(".highlightMultipleTipoUguale").css("border", "none");
+    } else {
+        $(".highlightMultipleTipoDiverso").css("background-color", "#dae0e6");
+        $(".highlightMultipleTipoUguale").css("border", "1px solid #57595c");
+    };
+}

@@ -12,7 +12,6 @@ __author__ = 'Los Raspadores'
 
     CONTENT TYPE dei risultati ritornati(select):JSON O XML;  CONTENT TYPE del grafo inserito(graph):TURTLE, N3
 
-
     *** SPARQL Service - endpoint ufficiale del progetto = triplestore che si occupa di memorizzare le annotazioni ***
         SPARQL endpoint (server Apache Jena Fuseki) URL >>> http://tweb2015.cs.unibo.it:8080/
         endpoint dataset name = "data"   >>> http://tweb2015.cs.unibo.it:8080/data/
@@ -41,10 +40,9 @@ __author__ = 'Los Raspadores'
     http://*host*/dataset/query  -- SPARQL query endpoint, metodo GET >>> per le query
     http://*host*/dataset/sparql -- SPARQL query endpoint, metodo GET >>> per le query
 
-    http://*host*/dataset/update -- SPARQL Update endpoint, metodo POST >>> per inserire o eliminare dati (grafi)
+    http://*host*/dataset/update -- SPARQL Update endpoint, metodo POST >>> per INSERT, DELETE-INSERT o eliminare dati (grafi)
 
     http://*host*/dataset/upload -- SPARQL endpoint per l'upload di >>> file
-    http://*host*/dataset/delete -- delete the endpoint? o grafo?
 
 """
 
@@ -98,6 +96,7 @@ prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
                 PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/>
                 PREFIX deo:   <http://purl.org/spar/deo/>
                 PREFIX foaf: <http://xmlns.com/foaf/0.1/> """
+
 
 annotazione_prova_doi = """
     [] a oa:Annotation ;
@@ -308,7 +307,7 @@ annotazione_prova_commento = """
 
     _:commento a rdf:Statement;
         rdfs:label "Il documento è interessantissimo"^^xsd:string ;
-        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1#form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_h32>;
+        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1#form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p6-0-200>;
         rdf:predicate schema:comment;
         rdf:object "Il documento è interessantissimo"^^xsd:string .
 
@@ -340,7 +339,7 @@ annotazione_prova_retorica = """
 
     _:retoric a rdf:Statement;
         rdfs:label "Introduction"^^xsd:string ;
-        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1#form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_h33>;
+        rdf:subject <http://www.dlib.org/dlib/july15/downs/07downs_ver1#form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_h33-0-8>;
         rdf:predicate sem:denotes ;
         rdf:object deo:Introduction.
 
@@ -378,14 +377,13 @@ annotazione_prova_multipla = """
     <http://www.dlib.org/dlib/july15/downs/07downs_ver1> a fabio:Expression;
         fabio:hasRepresentation <http://www.dlib.org/dlib/july15/downs/07downs.html>.
 
-    g .
-<http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> rdfs:label "[1] Yeo, Richard. 2007. Betwee...gland. History of Science 45 (March): 1—46"^^xsd:strin
+    <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> rdfs:label "[1] Yeo, Richard. 2007. Betwee...gland. History of Science 45 (March): 1—46"^^xsd:string .
 
     [] a oa:Annotation ;
         rdfs:label "Titolo"^^xsd:string ;
         rsch:type "hasTitle"^^xsd:string ;
         oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
-        oa:annotatedBy <mailto:los.raspadores@gmail.com>  ;
+        oa:annotatedBy <mailto:alice.graziosi@gmail.com>  ;
         oa:hasBody _:titolo;
         oa:hasTarget [ a oa:SpecificResource ;
                 oa:hasSelector [ a oa:FragmentSelector ;
@@ -401,7 +399,12 @@ annotazione_prova_multipla = """
             rdf:predicate dcterms:title ;
             rdf:object "Between Memory and Paperbooks: Baconianism and Natural History in Seventeenth-Century England"^^xsd:string .
 
-    <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> a fabio:Expression. """
+    <http://www.dlib.org/dlib/july15/downs/07downs_ver1_cited1> a fabio:Expression.
+
+    <mailto:alice.graziosi@gmail.com> a foaf:mbox ;
+        schema:email "alice.graziosi@gmail.com" ;
+        foaf:name "Alice Graziosi"^^xsd:string ;
+        rdfs:label "Alice Graziosi"^^xsd:string . """
 
 
 # funzione per visualizzare le triple presenti in un grafo RDF
@@ -462,6 +465,21 @@ def query_delete_annotazioni_documento(url_doc):
     query = prefissi + " WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537>" \
                        " DELETE { ?a ?p ?o } WHERE { ?a oa:hasTarget ?target. " \
                        " ?target oa:hasSource <" + url_doc + ">.} "
+    return query
+
+
+def query_delete_all_doc_nostraprovenance(url_doc):
+    query = prefissi + " WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> " \
+                    " DELETE {?a ?p ?o. ?body ?bp ?bo. ?target ?tp ?to. ?fragment ?fsp ?fso.} WHERE { "\
+                    "?a ?p ?o. "\
+                    "?a oa:hasBody ?body. "\
+                    "?body ?bp ?bo. "\
+                    "?a oa:annotatedBy <mailto:los.raspadores@gmail.com>. "\
+                    "?a oa:hasTarget ?target. "\
+                    "?target oa:hasSelector ?fragment. "\
+                    "?target ?tp ?to. "\
+                    "?fragment ?fsp ?fso. "\
+                    "?target oa:hasSource <" + url_doc + ">.}"
     return query
 
 
@@ -536,62 +554,65 @@ def main():
     """
 
     query = query_clear_graph(nome_grafo_gruppo)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
 
     url_doc = "http://www.dlib.org/dlib/july15/downs/07downs.html"
 
-    """
-    query = query_delete_annotazioni_documento(url_doc)
-    do_query_post(sparql_endpoint_remoto, query)
+
+    #query = query_delete_annotazioni_documento(url_doc)
+    #do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_doi)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_url)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_anno)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_author)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_commento)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_title)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_title_due)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, annotazione_prova_retorica)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
+
+    query = query_annotazione(nome_grafo_gruppo, annotazione_prova_multipla)
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
+
+    query = query_annotazione(nome_grafo_gruppo, queryFRBRdocument(url_doc))
+    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_locale, query)
+
+    """
+    query = query_delete_all_doc_nostraprovenance(url_doc)
     do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
     """
 
-    query = query_annotazione(nome_grafo_gruppo, annotazione_prova_multipla)
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
 
-    query = query_annotazione(nome_grafo_gruppo, queryFRBRdocument(url_doc))
-    do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)
-
-
-
-    annota = """
-    [] a oa:Annotation ;
+    annota = """[] a oa:Annotation ;
         rdfs:label "Titolo"^^xsd:string ;
         rsch:type "hasTitle"^^xsd:string ;
         oa:annotatedAt "2015-11-10T16:31"^^xsd:dateTime ;
@@ -632,7 +653,6 @@ def main():
     query = query_select_all_grafo(nome_grafo_gruppo)
     do_query_get(sparql_endpoint_remoto, query)
 """
-
 
 
 if __name__ == "__main__":
