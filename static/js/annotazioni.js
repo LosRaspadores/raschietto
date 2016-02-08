@@ -455,9 +455,7 @@ function setRange(nodo, start, end, classCSS, ann) {
             }
         }
     }
-    //TODO!!!!!!!!!!!!!!!!!! per silvia!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     var rangeContent = rangeObject.toString();
-    console.log("range content: " + rangeContent);
 }
 
 

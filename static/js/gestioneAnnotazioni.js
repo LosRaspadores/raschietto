@@ -16,7 +16,7 @@ function verificaTab(){
         $('button#bottonemodFramm').css("display", "none");
         var frammentoSelezionato = verificaFrammento();
         if(!frammentoSelezionato){
-            $('#selezione').css('display', 'none');
+            $('textarea#selezione').css('display', 'none');
             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',true);
             $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',true);
 
@@ -32,8 +32,8 @@ function verificaTab(){
             end = frammentoSelezionato.fine;
             selezione = frammentoSelezionato.selezione;
             //apri modale per inserire annotazione sul frammento
-            $('#selezione').html(selezione)
-            $('#selezione').css('display', 'block');
+            $('textarea#selezione').val(selezione)
+            $('textarea#selezione').css('display', 'block');
             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
             $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
 
@@ -56,6 +56,7 @@ function getHostname(url) {
 function verificaFrammento(){
     selection = rangy.getSelection();
     if(selection.toString() != ""){
+        alert(selection.toString());
         var range = selection.getRangeAt(0);
         var bookmark = selection.getBookmark(range.commonAncestorContainer).rangeBookmarks[0]; //getBookmark->obj con start e end - commonAncestorContainer->nodo più in profondità
         var container = bookmark.containerNode; //nodo contenente la selezione
@@ -310,15 +311,16 @@ function aggiornaAnnotazione(azione){ // funzione che viene richiamata quando vi
             $('#alertDoc').modal('show');
         }else{
             oggettoSelezionato = obj;
-            $("textarea#selezione").html(obj.selezione);
+            $("textarea#selezione").val(obj.selezione);
             $('#modalAnnotDoc').data("azione", "modifica");
 
-            if(typeof(annotazioneCorrente["id"]) != "undefined"){
-                $('#modalAnnotDoc').data("id", annotazioneCorrente["id"]);
-            } else {
-                $('#modalAnnotDoc').data("index", annotazioneCorrente["index"]);
-                $('#modalAnnotDoc').data("indexDoc", annotazioneCorrente["indexDoc"]);
+            if(typeof(annotInfoTemp["id"]) != "undefined"){
+                $('#modalAnnotDoc').data("id", annotInfoTemp["id"]);
             }
+//            } else {
+//                $('#modalAnnotDoc').data("index", annotInfoTemp["index"]);
+//                $('#modalAnnotDoc').data("indexDoc", annotInfoTemp["indexDoc"]);
+//            }
             $("#bottoniModificaSelezione").css("display", "none");
             $('#modalAnnotDoc').modal('show');
         }
@@ -419,38 +421,68 @@ function modificaAnnot(element){
     $('button#bottonemodFramm').css("display", "none");
 
     var indexDoc = 0;
+    var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
     for(i = 0; i < listaAnnotGrafo1537.length; i++){
-        if(listaAnnotGrafo1537[i].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+        if(listaAnnotGrafo1537[i].url == urlDoc){
             indexDoc = i;
         }
     }
 
     annotazioneModificata = listaAnnotGrafo1537[indexDoc].annotazioni[index];
-    annotazioneModificata['index'] = index;
-    annotazioneModificata['indexRiga'] = indexRiga;
+
     $('#modalAnnotDoc').data('azione', 'modifica');
 
+    for(i = 0; i < annotazioniGrafoSessione.length; i++){
+        if(annotazioniGrafoSessione[i].url == urlDoc){
+            for(j = 0; j < annotazioniGrafoSessione[i].annot.length; j++){
+                if(annotazioniGrafoSessione[i].annot[j].provenance.value == annotazioneModificata.provenance.value && annotazioniGrafoSessione[i].annot[j].date.value == annotazioneModificata.date.value && annotazioniGrafoSessione[i].annot[j].type.value == annotazioneModificata.type.value && annotazioniGrafoSessione[i].annot[j].body_s.value == annotazioneModificata.body_s.value){
+                    annotazioneModificata = annotazioniGrafoSessione[i].annot[j];
+                }
+            }
+        }
+    }
+
+    annotazioneModificata['index'] = index;
+    annotazioneModificata['indexRiga'] = indexRiga;
     // controllo il tipo dell'annotazione, in base a quello seleziono l'opzione di quel tipo
-    var tipo = typeToIta(listaAnnotGrafo1537[indexDoc].annotazioni[index].type.value);
-    var oggetto = listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value;
+    var tipo = typeToIta(annotazioneModificata.type.value);
+    var oggetto = annotazioneModificata.body_o.value;
+    var path = annotazioneModificata.fs_value.value;;
+    var start = annotazioneModificata.start.value;
+    var end = annotazioneModificata.end.value;
+    var frammentoSelezionato = "";
+
     if(tipo == "Funzione retorica"){
-        oggetto = gestioneRetoriche(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
+        oggetto = gestioneRetoriche(annotazioneModificata.body_o.value);
     }
 
-    if(typeof(listaAnnotGrafo1537[indexDoc].annotazioni[index].update) != "undefined"){
-        if(typeof(listaAnnotGrafo1537[indexDoc].annotazioni[index].update.tipo) != "undefined"){
-            tipo = listaAnnotGrafo1537[indexDoc].annotazioni[index].update.tipo;
+    if(typeof(annotazioneModificata.update) != "undefined"){
+        if(typeof(annotazioneModificata.update.tipo) != "undefined"){
+            tipo = annotazioneModificata.update.tipo;
         }
 
-        if(typeof(listaAnnotGrafo1537[indexDoc].annotazioni[index].update.oggetto) != "undefined"){
-            oggetto = listaAnnotGrafo1537[indexDoc].annotazioni[index].update.oggetto;
+        if(typeof(annotazioneModificata.update.oggetto) != "undefined"){
+            oggetto = annotazioneModificata.update.oggetto;
+        }
+
+        if(typeof(annotazioneModificata.update.path) != "undefined"){
+//            path = annotazioneModificata.update.path;
+//            start = annotazioneModificata.start_fragm;
+//            end = annotazioneModificata.end_fragm;
+            frammentoSelezionato = annotazioneModificata.update.selezione;
         }
     }
+
+    if(frammentoSelezionato == ""){
+        frammentoSelezionato = getRangeContent(path, start, end, urlDoc);
+    }
+
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').prop("selected",true).change();
 
     // se l'annotazione è stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
-    if(listaAnnotGrafo1537[indexDoc].annotazioni[index].fs_value.value != "document"){
+    if(frammentoSelezionato != ""){
         $('textarea#selezione').css("display", "block");
+        $('textarea#selezione').val(frammentoSelezionato);
         $('button#bottonemodFramm').css("display", "block");
         $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
         $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
@@ -468,11 +500,9 @@ function modificaAnnot(element){
     } else if (tipo == "Anno pubblicazione"){
         $('select[id="anno"]').find('option:contains("'+ oggetto +'")').prop("selected",true);
     } else if(tipo == "Commento" || tipo == "Titolo"){
-        $('div.form-group textarea').text(oggetto);
+        $('div.form-group textarea').val(oggetto);
     } else if (tipo == "Anno pubblicazione"){
-        $('select[id="anno"]').find('option:contains("'+listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value+'")').prop("selected",true);
-    } else if(tipo == "Commento" || tipo == "Titolo"){
-        $('div.form-group textarea').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_o.value);
+        $('select[id="anno"]').find('option:contains("'+oggetto+'")').prop("selected",true);
     } else {
         $('div.form-group input').val(oggetto);
     }
@@ -543,19 +573,6 @@ function eliminaAnnotazioneGrafo(){
         }
     }
 
-//    var find = false;
-//    for(j = 0; j < annotazioniGrafoSessione.length; j++){
-//        if(annotazioniGrafoSessione[j].prov_email.value == annotazioneModificata.prov_email.value && annotazioniGrafoSessione[j].date.value == annotazioneModificata.date.value && annotazioniGrafoSessione[j].type.value == annotazioneModificata.type.value && annotazioniGrafoSessione[j].body_s.value == annotazioneModificata.body_s.value){
-//            find = true;
-//            annotazioniGrafoSessione[j]['delete'] = "delete";
-//        }
-//    }
-//
-//    if(!find){
-//        annotazioneModificata['delete'] = "delete";
-//        annotazioniGrafoSessione.push(annotazioneModificata);
-//    }
-
     sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
 }
 
@@ -572,7 +589,7 @@ function annotaCitazioneGrafo(element){
     $('button#bottonemodFramm').css("display", "none");
     $('#modalAnnotDoc h3').html("Inserisci annotazione");
     $('textarea#selezione').css('display', 'block');
-    $('textarea#selezione').html(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_ol.value);
+    $('textarea#selezione').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_ol.value);
 
     annotazioneCitazione = listaAnnotGrafo1537[indexDoc].annotazioni[index];
     $("#modalAnnotDoc").modal("show");
@@ -668,6 +685,7 @@ $(document).ready(function(){
                     annot['update']['path'] = oggettoSelezionato.id;
                     annot['update']['start_fragm'] = oggettoSelezionato.inizio;
                     annot['update']['end_fragm'] = oggettoSelezionato.fine;
+                    annot['update']['selezione'] = oggettoSelezionato.selezione;
                 }
                 annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
                 var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
@@ -839,6 +857,22 @@ $(document).ready(function(){
         }
         annotazioniGrafoSessione.splice(indexDoc, 1);
         sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
+        $('#modalGestAnnotazioni').modal('hide');
+        inviaQuery(JSON.stringify(listaQueryDaInviare));
+
+        for(j = 0; j < listaAllAnnotazioni.length; j++){
+            if(listaAllAnnotazioni[j].url == urlDoc){
+                listaAllAnnotazioni.splice(j, 1);
+            }
+        }
+//        if(numeroAnnot != 0){
+//        salvaAnnotazioniLocale(listaNuoveAnnotazioni) //<----- NO
+//            var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
+//            listaQueryDaInviare.push(query);
+//        inviaQuery(listaQuery) //<------- giusto
+//            inviaQuery(query)
+        //}
+
         $('#modalGestAnnotazioni').modal('hide');
     });
 

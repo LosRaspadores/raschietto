@@ -164,7 +164,7 @@ def salvaAnnotazioni():
     query = request.args.get('query')
     lista_query = json.loads(query)
     for q in lista_query:
-        print q
+        #print q
         do_query_post(sparql_endpoint_remoto, q)
     return "ok"
 
