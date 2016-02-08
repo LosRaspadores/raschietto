@@ -75,34 +75,52 @@ function getDocFromScraping(){
             });
 }
 
-function getDocumenti(docAnnotati, docScraping){
-    docTemp = [];
-
-    for(i = 0; i < docAnnotati.length; i++){
-        docTemp.push(docAnnotati[i].doc.value);
-    }
-
-    for(i = 0; i < docScraping.length; i++){
-        if(!($.inArray(docScraping[i].url, docAnnotati))){
-            docTemp.push(docScraping[i].url);
-        }
-    }
-
-    urlDoc = JSON.stringify(docTemp);
+//function getDocumenti(docAnnotati, docScraping){
+//    docTemp = [];
+//
+//    for(i = 0; i < docAnnotati.length; i++){
+//        docTemp.push(docAnnotati[i].doc.value);
+//    }
+//
+//    for(i = 0; i < docScraping.length; i++){
+//        if(!($.inArray(docScraping[i].url, docAnnotati))){
+//            docTemp.push(docScraping[i].url);
+//        }
+//    }
+//
+//    urlDoc = JSON.stringify(docTemp);
+//    $.ajax({
+//        url: '/scrapingTitolo',
+//        type: 'GET',
+//        data: {url: urlDoc},
+//        success: function(result){
+//            res = JSON.parse(result);
+//            $('#numDoc').html(res.length);
+//            for(j = 0; j < res.length; j++){
+//                $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
+//            }
+//        },
+//        error: function(){
+//            $('#alertMessage').text("Errore nel caricamento dei documenti!");
+//            $('#alertDoc').modal('show');
+//        }
+//    });
+//}
+function getDocumenti(){
     $.ajax({
-        url: '/scrapingTitolo',
-        type: 'GET',
-        data: {url: urlDoc},
-        success: function(result){
-            res = JSON.parse(result);
-            $('#numDoc').html(res.length);
-            for(j = 0; j < res.length; j++){
-                $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
-            }
-        },
-        error: function(){
-            $('#alertMessage').text("Errore nel caricamento dei documenti!");
-            $('#alertDoc').modal('show');
+    url:'/getDocumenti',
+    type: 'GET',
+    success: function(result){
+        res = JSON.parse(result);
+        $('#numDoc').html(res.length);
+        for(j = 0; j < res.length; j++){
+            $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
         }
-    });
+    },
+    error: function(){
+        $('#alertMessage').text("Errore nel caricamento dei documenti!");
+        $('#alertDoc').modal('show');
+    }
+});
 }
+

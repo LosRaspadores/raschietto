@@ -7,7 +7,7 @@
 
 body {
     overflow: auto;
-    font-family: Arial, Helvetica, 'Exo' sans-serif;
+    font-family: Arial, Helvetica, 'Exo', sans-serif;
     padding-right: 0px !important;
 }
 
@@ -142,7 +142,7 @@ input.cmn-toggle-yes-no + label:after {
     bottom: 0;
     right: 0;
     color: white;
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, Helvetica, 'Exo', sans-serif;
     font-size: 18px;
     text-align: center;
     line-height: 50px;
@@ -419,10 +419,11 @@ button.button-lg:active {
 }
 
 /* Visualizzazione documento */
-#singoloDocumento{
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 14px;
+div.tab-content{
+    font-family: 'Open Sans', sans-serif;
+    font-size: small;
 }
+
 
 .tabList{
     max-width: 100px;
@@ -548,13 +549,9 @@ body.loading #loading {
     width: 390px;
 }
 
-
-
-/*
 thead{
     border-bottom: 5px solid #44B78B;
 }
-*/
 
 .tableAnnot thead, .tableAnnot tbody { display: block; }
 
@@ -568,16 +565,9 @@ thead{
     font-size: 20px;
 }
 
-#modalGestAnnotazioni thead{
-    border-bottom: 5px solid #44B78B;
-}
 
 #modalGestAnnotazioni table span.glyphicon {
     padding-left: 15px;
-}
-
-div.tab-content{
-    font-family: "Candara";
 }
 
 #selezione {
@@ -593,19 +583,11 @@ div.tab-content{
     cursor: pointer;
 }
 
-/*#modificaSelezione{
-    padding: 5px 5px 5px 5px;
-    text-align: right;
-}*/
 
 #confermaModificaSelezione{
     position: relative;
     float: right;
-}
-
-#confermaModificaSelezione {
     background-color: #44B78B;
-
 }
 
 
@@ -615,6 +597,7 @@ div.tab-content{
 }
 
 #bottoniModificaSelezione{
+    display: none;
     position: fixed;
     right: 20px;
     margin-top: 10px;
@@ -628,7 +611,6 @@ div.tab-content{
 }
 
 #bottonemodFramm{
-    /*margin-top: 5px;*/
     margin-bottom: 5px;
     float: right;
 }
@@ -637,8 +619,5 @@ div.tab-content{
     clear: both;
 }
 
-#bottoniModificaSelezione{
-    display: none;
-}
 
 

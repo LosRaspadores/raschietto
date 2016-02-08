@@ -154,151 +154,12 @@ function getTextNodes(node) { //=container.parentNode
     return textNodes;
 }
 
-/* Inserimento annotazione sul documento */
-$('#salvaInsert').on('click', function(){
-    var tipoAnnotazione = $('#selectTipoAnnot').find(":selected").text();
-    var testo = '';
-    var tipo = '';
-    switch (tipoAnnotazione) {
-            case "Autore":
-                testo = $('#autore').val();
-                tipo = "Autore";
-                break;
-            case "Anno pubblicazione":
-                testo = $('#anno').find(":selected").text();
-                tipo = "Anno pubblicazione";
-                break;
-            case "DOI":
-                testo = $('#doi').val();
-                tipo = "DOI";
-                break;
-            case "Titolo":
-                testo = $('#titolo').val();
-                tipo = "Titolo";
-                break;
-            case "URL":
-                testo = $('#url').val();
-                tipo = "URL";
-                break;
-            case "Commento":
-                testo = $('#comm').val();
-                tipo = "Commento";
-                break;
-            case "Funzione retorica":
-                testo = $('#funcRet').find(":selected").text();
-                tipo = "Funzione retorica";
-                break;
-    }
-
-    if($('#modalAnnotDoc').data("azione") == "modifica"){ // mettere come parametro "azione" - "modifica" per la modifica delle annotazioni sia locali che del grafo
-        if(typeof($('#modalAnnotDoc').data("indexDoc")) != "undefined"){ // modifica annotazioni del grafo
-            var index = $('#modalAnnotDoc').data("index");
-            var indexDoc = $('#modalAnnotDoc').data("indexDoc");
-            var annot = listaAnnotGrafo1537[indexDoc].annotazioni[index];
-
-            if(typeof(annot['update']) == "undefined"){
-                annot['update'] = {};
-            }
-
-            annot['update']['autore'] = "<mailto:" + sessionStorage.email + ">";
-            annot['update']['data_mod'] = getDateTime();
-
-            if(tipo != typeToIta(annot.type.value)){
-                annot['update']['tipo'] = tipo;
-                annot['update']['label_tipo'] = tipo;
-            }
-
-            if(tipo == "Funzione retorica" || typeToIta(annot.type.value) == "Funzione retorica"){
-                var arr = annot[index].body_o.value.split("#");
-                var arrTemp = annot.body_o.value.split('#');
-                if(arr[arr.length-1] != arrTemp[arrTemp.length-1]){
-                    annot['update']['oggetto'] = testo;
-                }
-            } else {
-                if(testo != annot.body_o.value){
-                    annot['update']['oggetto'] = testo;
-                }
-            }
-
-            if(typeof(oggettoSelezionato.id) != "undefined"){
-                annot['update']['path'] = oggettoSelezionato.id;
-                annot['update']['start_fragm'] = oggettoSelezionato.inizio;
-                annot['upgrade']['end_fragm'] = oggettoSelezionato.fine;
-            }
-            annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
-//            for(i = 0; i < annotazioniGrafoSessione; i++){
-//                if(annotazioniGrafoSessione[i].)
-//            }
-        } else{
-            /* Modifica annotazione locale */
-            var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale che sto modificando
-
-            annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-            for(i = 0; i<annotazioniSessione.length; i++){
-                if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
-                    for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
-                        if(annotazioniSessione[i].annotazioni[j].id == idAnn){
-
-                            /* Se il frammento è stato modificato, aggiorno i dati */
-                            if(typeof(oggettoSelezionato.selezione) != 'undefined'){
-                                annotazioniSessione[i].annotazioni[j].selezione = oggettoSelezionato.selezione;
-                                annotazioniSessione[i].annotazioni[j].idFrammento = oggettoSelezionato.id;
-                                annotazioniSessione[i].annotazioni[j].start = oggettoSelezionato.inizio;
-                                annotazioniSessione[i].annotazioni[j].end = oggettoSelezionato.fine;
-                            }
-                            annotazioniSessione[i].annotazioni[j].oggetto = testo;
-                            annotazioniSessione[i].annotazioni[j].tipo = tipo;
-                            annotazioniSessione[i].annotazioni[j].data = getDateTime();
-
-                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(2)').html(annotazioniSessione[i].annotazioni[j].data.replace("T", " "));
-                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(3)').html(testo);
-                            var classCSS = getClassNameType(tipo);
-                            var col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
-                            var tagTipo = '<td>'+col+' '+ tipo+'</td>'
-                            $('[data-id="' + idAnn + '"]').children().filter(':nth-child(1)').html(tagTipo);
-                            $('#modalAnnotDoc').modal('hide');
-                        }
-                    }
-                }
-            }
-            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-       }
-       oggettoSelezionato = {}; //svuota l'oggetto dopo la modifica
-
-    } else {
-
-        /* Inserimento di un'annotazione o di un'annotazione su una citazione */
-        var source = $('.active a').attr('id');
-        var idFrammento = infoAnnotazioneDaInserire["path"];
-        var startOffset = infoAnnotazioneDaInserire["start"];
-        var endOffset = infoAnnotazioneDaInserire["end"];
-        var selezione = infoAnnotazioneDaInserire["selezione"];
-
-
-        if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined"){
-            source += '_ver1_cited[n]' //TODO passargli queste cose <---------------------------------
-        }
-        var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione);
-
-        /* Se l'annotazione è su una citazioni, la inserisco dinamicamente nel modal */
-        if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined"){
-            classCSS = getClassNameType(tipo);
-            col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
-            tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+classCSS.substring(9, classCSS.length)+'</td><td>'+getDateTime().replace("T", " ")+'</td><td>'+testo+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
-
-            $('#modalGestAnnotazioni div#annotazioniInserite tbody').append(tr);
-        }
-        infoAnnotazioneDaInserire = []; //svuota oggetto
-    }
-    $('#modalAnnotDoc').modal('hide');
-});
-
-/* Rimuove annotazioni inserite e non ancora salvate */ //TODO PER ANNOTAZIONI PRESENTI
+/* Rimuove annotazioni inserite e non ancora salvate */
 function eliminaAnnotazioneLocale(id){
     $('#modalConfermaEliminazione').data('id', id).modal('show');
 }
 
-function eliminaAnnotazione(id){ // TODO PER ANNOTAZIONI PRESENTI
+function eliminaAnnotazione(id){
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
     for(i = 0; i<annotazioniSessione.length; i++){
         if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
@@ -367,7 +228,7 @@ function modificaAnnotazioneLocale(id){
                         $('#modalAnnotDoc').data('id', id).modal('show');
 
                     }else{ //sto modificando una citazione (si apre il modal per le citazioni)
-                        getCitazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+                        //getCitazioni($("ul.nav.nav-tabs li.active a").attr("id"));
                         $("#modalAnnotCit h3").html("Modifica citazione");
                         $("#modalAnnotCit").data('idCit', id).modal("show");
                     }
@@ -485,17 +346,22 @@ function aggiornaAnnotazione(azione){ // bottone che sta fermo
 /* Metodo per annotare una citazione */
 function annotaCitazione(idCit){
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-    //TODO prendere queste cose
-    var pathCit = 'pathCit';
-    var startCit = 0;
-    var endCit = 0;
-//    var oggettoCitazione = '';
+    var pathCit = '';
+    var startCit = '';
+    var endCit = '';
+    var selezione = '';
+    var indiceCitazione = '';
     for(var i = 0; i < annotazioniSessione.length; i++){
         if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
             for(var j = 0; j < annotazioniSessione[i].annotazioni.length; j++){
                 if(annotazioniSessione[i].annotazioni[j].id == idCit){
                     $('textarea#selezione').html(annotazioniSessione[i].annotazioni[j].oggetto);
-//                    oggettoCitazione = annotazioniSessione[i].annotazioni[j].oggetto; //TODO cos'è ?!?!
+                    pathCit = annotazioniSessione[i].annotazioni[j].idFrammento;
+                    startCit = annotazioniSessione[i].annotazioni[j].start;
+                    endCit = annotazioniSessione[i].annotazioni[j].end;
+                    var ogg = annotazioniSessione[i].annotazioni[j].oggetto;
+                    selezione = ogg.substring(0, (ogg.length)-1);
+                    indiceCitazione = ogg.substring((ogg.length)-1, ogg.length);
                 }
             }
         }
@@ -507,8 +373,8 @@ function annotaCitazione(idCit){
     infoAnnotazioneDaInserire["path"] = pathCit;
     infoAnnotazioneDaInserire["start"] = startCit;
     infoAnnotazioneDaInserire["end"] = endCit;
-    infoAnnotazioneDaInserire["selezione"] = "qui andrà il testo della citazione";
-    infoAnnotazioneDaInserire["annotaCitazione"] = idCit; //passo questo parametro cosi capisco che sto annotando una citazione
+    infoAnnotazioneDaInserire["selezione"] = selezione;
+    infoAnnotazioneDaInserire["annotaCitazione"] = indiceCitazione; //passo questo parametro cosi capisco che sto annotando una citazione
 
     $('#modalAnnotDoc h3').html("Inserisci annotazione");
     $("#modalAnnotDoc").modal("show");
@@ -618,8 +484,15 @@ function cancellaAnnotGrafo(element){
             indexDoc = i;
         }
     }
+}
 
-
+function prendiInfoCitazioni(indice){ //indice è la posizione della cit nella lista, quello che poi sarà n
+    var infoCitazione = {};
+    infoCitazione["testo"] = listaCitazioni[indice-1].testo;
+    infoCitazione["path"] = listaCitazioni[indice-1].path;
+    infoCitazione["start"] = listaCitazioni[indice-1].start;
+    infoCitazione["end"] = listaCitazioni[indice-1].end;
+    return infoCitazione;
 }
 
 
@@ -636,15 +509,154 @@ $(document).ready(function(){
         aggiornaAnnotazione('annullaModifica')
     });
 
+    /* Inserimento annotazione sul documento */
+    $('#salvaInsert').on('click', function(){
+        var tipoAnnotazione = $('#selectTipoAnnot').find(":selected").text();
+        var testo = '';
+        var tipo = '';
+        switch (tipoAnnotazione) {
+                case "Autore":
+                    testo = $('#autore').val();
+                    tipo = "Autore";
+                    break;
+                case "Anno pubblicazione":
+                    testo = $('#anno').find(":selected").text();
+                    tipo = "Anno pubblicazione";
+                    break;
+                case "DOI":
+                    testo = $('#doi').val();
+                    tipo = "DOI";
+                    break;
+                case "Titolo":
+                    testo = $('#titolo').val();
+                    tipo = "Titolo";
+                    break;
+                case "URL":
+                    testo = $('#url').val();
+                    tipo = "URL";
+                    break;
+                case "Commento":
+                    testo = $('#comm').val();
+                    tipo = "Commento";
+                    break;
+                case "Funzione retorica":
+                    testo = $('#funcRet').find(":selected").text();
+                    tipo = "Funzione retorica";
+                    break;
+        }
+
+        if($('#modalAnnotDoc').data("azione") == "modifica"){ // mettere come parametro "azione" - "modifica" per la modifica delle annotazioni sia locali che del grafo
+            if(typeof($('#modalAnnotDoc').data("indexDoc")) != "undefined"){ // modifica annotazioni del grafo
+                var index = $('#modalAnnotDoc').data("index");
+                var indexDoc = $('#modalAnnotDoc').data("indexDoc");
+                var annot = listaAnnotGrafo1537[indexDoc].annotazioni[index];
+
+                if(typeof(annot['update']) == "undefined"){
+                    annot['update'] = {};
+                }
+
+                annot['update']['autore'] = "<mailto:" + sessionStorage.email + ">";
+                annot['update']['data_mod'] = getDateTime();
+
+                if(tipo != typeToIta(annot.type.value)){
+                    annot['update']['tipo'] = tipo;
+                    annot['update']['label_tipo'] = tipo;
+                }
+
+                if(tipo == "Funzione retorica" || typeToIta(annot.type.value) == "Funzione retorica"){
+                    var arr = annot[index].body_o.value.split("#");
+                    var arrTemp = annot.body_o.value.split('#');
+                    if(arr[arr.length-1] != arrTemp[arrTemp.length-1]){
+                        annot['update']['oggetto'] = testo;
+                    }
+                } else {
+                    if(testo != annot.body_o.value){
+                        annot['update']['oggetto'] = testo;
+                    }
+                }
+
+                if(typeof(oggettoSelezionato.id) != "undefined"){
+                    annot['update']['path'] = oggettoSelezionato.id;
+                    annot['update']['start_fragm'] = oggettoSelezionato.inizio;
+                    annot['upgrade']['end_fragm'] = oggettoSelezionato.fine;
+                }
+                annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
+    //            for(i = 0; i < annotazioniGrafoSessione; i++){
+    //                if(annotazioniGrafoSessione[i].)
+    //            }
+            } else{
+                /* Modifica annotazione locale */
+                var idAnn = $('#modalAnnotDoc').data("id"); //id annotazione locale che sto modificando
+
+                annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
+                for(i = 0; i<annotazioniSessione.length; i++){
+                    if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
+                        for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
+                            if(annotazioniSessione[i].annotazioni[j].id == idAnn){
+
+                                /* Se il frammento è stato modificato, aggiorno i dati */
+                                if(typeof(oggettoSelezionato.selezione) != 'undefined'){
+                                    annotazioniSessione[i].annotazioni[j].selezione = oggettoSelezionato.selezione;
+                                    annotazioniSessione[i].annotazioni[j].idFrammento = oggettoSelezionato.id;
+                                    annotazioniSessione[i].annotazioni[j].start = oggettoSelezionato.inizio;
+                                    annotazioniSessione[i].annotazioni[j].end = oggettoSelezionato.fine;
+                                }
+                                annotazioniSessione[i].annotazioni[j].oggetto = testo;
+                                annotazioniSessione[i].annotazioni[j].tipo = tipo;
+                                annotazioniSessione[i].annotazioni[j].data = getDateTime();
+
+                                $('[data-id="' + idAnn + '"]').children().filter(':nth-child(2)').html(annotazioniSessione[i].annotazioni[j].data.replace("T", " "));
+                                $('[data-id="' + idAnn + '"]').children().filter(':nth-child(3)').html(testo);
+                                var classCSS = getClassNameType(tipo);
+                                var col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
+                                var tagTipo = '<td>'+col+' '+ tipo+'</td>'
+                                $('[data-id="' + idAnn + '"]').children().filter(':nth-child(1)').html(tagTipo);
+                                $('#modalAnnotDoc').modal('hide');
+                            }
+                        }
+                    }
+                }
+                sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
+           }
+           oggettoSelezionato = {}; //svuota l'oggetto dopo la modifica
+
+        } else {
+
+            /* Inserimento di un'annotazione o di un'annotazione su una citazione */
+            var source = $('.active a').attr('id');
+            var idFrammento = infoAnnotazioneDaInserire["path"];
+            var startOffset = infoAnnotazioneDaInserire["start"];
+            var endOffset = infoAnnotazioneDaInserire["end"];
+            var selezione = infoAnnotazioneDaInserire["selezione"];
+
+            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined"){ //invece di annotaCitazione posso passare il numero della cit (o il value di option)
+                source += '_ver1_cited['+infoAnnotazioneDaInserire["annotaCitazione"]+']'
+            }
+            var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione);
+
+            /* Se l'annotazione è su una citazioni, la inserisco dinamicamente nel modal */
+            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined"){
+                classCSS = getClassNameType(tipo);
+                col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
+                tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+classCSS.substring(9, classCSS.length)+'</td><td>'+getDateTime().replace("T", " ")+'</td><td>'+testo+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
+
+                $('#modalGestAnnotazioni div#annotazioniInserite tbody').append(tr);
+            }
+            infoAnnotazioneDaInserire = []; //svuota oggetto
+        }
+        $('#modalAnnotDoc').modal('hide');
+    });
 
     /* Salvare sul grafo annotazioni e citazioni inserite localmente */
     $("#salvaGest").click(function(){
+        var numeroAnnot = '';
         /* Invia annotazioni DEL DOCUMENTO corrente da salvare */
         var listaNuoveAnnotazioni = {"annotazioni":[]};
         annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
         for(i = 0; i<annotazioniSessione.length; i++){
             if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
                 for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
+                    numeroAnnot = annotazioniSessione[i].annotazioni.length;
                     annotazioneSingola = {};
                     annotazioneSingola["tipo"] = annotazioniSessione[i].annotazioni[j].tipo;
                     annotazioneSingola["data"] = annotazioniSessione[i].annotazioni[j].data;
@@ -655,7 +667,9 @@ $(document).ready(function(){
                     annotazioneSingola["end"] = annotazioniSessione[i].annotazioni[j].end;
                     annotazioneSingola["provenance"] = annotazioniSessione[i].annotazioni[j].autore;
 
-
+                    if(annotazioniSessione[i].annotazioni[j].tipo == 'Citazione'){
+                        annotazioneSingola["valore"] = annotazioneSingola["valore"].substring(0, (annotazioneSingola["valore"].length)-1)
+                    }
                     listaNuoveAnnotazioni.annotazioni.push(annotazioneSingola);
                 }
                 annotazioniSessione.splice(i,1); //rimuove l'oggetto in locale contenente le annotazioni del documento
@@ -663,11 +677,22 @@ $(document).ready(function(){
         }
         console.log(listaNuoveAnnotazioni)
         sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-//        salvaAnnotazioniLocale(listaNuoveAnnotazioni)
-        var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
-        listaQueryDaInviare.push(query);
-//        inviaQuery(listaQuery)
+        //TODO svuotare oggetto annotazioni
+        for(j = 0; j < listaAllAnnotazioni.length; j++){
+            if(listaAllAnnotazioni[j].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+                listaAllAnnotazioni.splice(j, 1);
+            }
+        }
+        if(numeroAnnot != 0){
+            var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
+            listaQueryDaInviare.push(query);
+//        inviaQuery(listaQuery) //<------- giusto
+            inviaQuery(query)
+        }
+
         $('#modalGestAnnotazioni').modal('hide');
+//        query = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+//        get_annotazioni(query, $("ul.nav.nav-tabs li.active a").attr("id"));
     });
 
     /* Eliminare annotazioni o citazioni in locale */
@@ -755,20 +780,21 @@ $(document).ready(function(){
 
     /* Salva le citazioni inserite in locale */
     $("#salvaInsertCit").click(function(){
-
         /* Modifica citazione */
         if($("#modalAnnotCit").data('idCit') != undefined){
+            var indice = $("#selectCit").find(":selected").attr("value")
+            var infoCit = prendiInfoCitazioni(indice);
             var idCit = $("#modalAnnotCit").data('idCit');
             var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
             for(i = 0; i<annotazioniSessione.length; i++){
                 if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
                     for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                         if(annotazioniSessione[i].annotazioni[j].id == idCit){
-                            annotazioniSessione[i].annotazioni[j].oggetto = $("#selectCit").find(":selected").text()+'"'; //TODO prendere la nuova cit con l'indice, dall'oggetto che le contiene tutte
-                            //TODO prendere queste cose dall'oggetto <--------------------------------------------------------------
-                            annotazioniSessione[i].annotazioni[j].idFrammento = 'nuovoPathCit';
-                            annotazioniSessione[i].annotazioni[j].start = 0;
-                            annotazioniSessione[i].annotazioni[j].end = 0;
+                            annotazioniSessione[i].annotazioni[j].oggetto = infoCit.testo+indice;
+                            annotazioniSessione[i].annotazioni[j].idFrammento = infoCit.path;
+                            annotazioniSessione[i].annotazioni[j].start = infoCit.start;
+                            annotazioniSessione[i].annotazioni[j].end = infoCit.end;
+                            annotazioniSessione[i].annotazioni[j].selezione = infoCit.testo;
                             annotazioniSessione[i].annotazioni[j].data = getDateTime();
 
                             $('[data-id="' + idCit + '"]').children().filter(':nth-child(2)').html(annotazioniSessione[i].annotazioni[j].data.replace("T", " "));
@@ -784,11 +810,16 @@ $(document).ready(function(){
                 }
             }
         }else{
-            var cit = "[1] Bührig, Kristin et al. 2011. 'The corpus 'Interpreting in hospitals' possible applications for research and communication trainings.' In: Hedeland, Hanna et al. (Eds.), Multilingual Resources and Multilingual Applications Proceedings of the Conference of the German Society for Computational Linguistics and Language Technology (GSCL) 2011. Hamburg: Universität. (Arbeiten zur Mehrsprachigkeit: Working Papers in Multilingualism; Folge B: Serie B; 96)."
+            var indiceCit = $("#selectCit").find(":selected").attr("value")
+            //con questo indice mi cerco le info della citazione nell oggetto
+            var testo = listaCitazioni[indiceCit-1].testo;
+            var path = listaCitazioni[indiceCit-1].path;
+            var start = listaCitazioni[indiceCit-1].start;
+            var end = listaCitazioni[indiceCit-1].end;
+
             /* Inserisci citazione */
             //costruisciAnnotazione(source, tipo, valore, idFrammento, start, end, testoSelezionato)
-            costruisciAnnotazione($("ul.nav.nav-tabs li.active a").attr("id"), 'Citazione', ($("#selectCit").find(":selected").text()+'"').replaceAll('"', "'"), 'pathCitazione', 0, 0, 'testo citazione'); //TODO prendere le citazioni vere con l'indice, dall'oggetto che le contiene tutte, + .replace(' " ', " ' ")
-//            costruisciAnnotazione($("ul.nav.nav-tabs li.active a").attr("id"), 'Citazione', cit.replaceAll('"', "'"), 'pathCitazione', 0, 0, 'testo citazione');
+            costruisciAnnotazione($("ul.nav.nav-tabs li.active a").attr("id"), 'Citazione', testo.replaceAll('"', "'")+indiceCit, path, start, end, testo); //TODO prendere le citazioni vere con l'indice, dall'oggetto che le contiene tutte, + .replace(' " ', " ' ")
 
             $("#modalAnnotCit").modal("hide");
         }
@@ -814,6 +845,5 @@ $(document).ready(function(){
         $("#comm").val('');
         $("#funcRet").val('');
     });
-
 
 });

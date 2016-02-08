@@ -137,11 +137,7 @@ function salvaAnnotazioniJSON(url, listaAnnotazioni){
         annot_grafo['listaGrafi'].push(item);
     }
 
-    if(JSON.parse(localStorage.getItem('annotStorage')) != null){
-        listaAllAnnotazioni = JSON.parse(localStorage.getItem('annotStorage'));
-    }
     listaAllAnnotazioni.push(annot_grafo);
-    localStorage.setItem('annotStorage', JSON.stringify(listaAllAnnotazioni));
     //console.log(listaAllAnnotazioni);
 }
 

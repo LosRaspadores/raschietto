@@ -5,6 +5,9 @@ function inviaQuery(listaQuery){
             success: function(result) {
                 $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
                 $('#alertDoc').modal('show');
+
+                query = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+                get_annotazioni(query, $("ul.nav.nav-tabs li.active a").attr("id"));
             }
         });
 }
@@ -183,7 +186,6 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore){
                     'rdf:predicate sem:denotes ;' +
                     'rdf:object ' + switchRetorica(valore) + '.';
     } else if (tipo == "Citazione"){
-            alert("valore: "+valore)
             annotazione = '[] a oa:Annotation ;' +
                 'rdfs:label "Citazione"^^xsd:string ;' +
                 'rsch:type "cites"^^xsd:string ;' +
@@ -201,7 +203,6 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore){
 
     var documentFRBR = queryFRBRdocument(url);
     annotazione += documentFRBR;
-    alert(annotazione)
     return annotazione;
 }
 
