@@ -348,7 +348,7 @@ $(document).ready(function() {
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
-        urlNuovoDoc = $("#uriNuovoDoc").val();
+        urlNuovoDoc = $.trim($("#uriNuovoDoc").val());
         $("#uriNuovoDoc").val("");
         if(urlNuovoDoc !== ""){
             if(isOpen(urlNuovoDoc)){
