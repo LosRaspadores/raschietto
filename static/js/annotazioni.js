@@ -24,11 +24,11 @@ function query_all_annotazioni(url_documento){
     var query = prefissi +
         'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?body_ol ?fs_value '+
         '?start ?end ';
-    var i;
+    /*var i;
     for (i=0; i<listaGruppiCompleta.length; i++){
         query += 'FROM NAMED <' + listaGruppiCompleta[i].url + '> ';
-    };
-    // query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
+    };*/
+    query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
     query += 'WHERE {'+
             'GRAPH ?graph {?a a oa:Annotation. '+
             'OPTIONAL {?a rdfs:label ?label} '+
@@ -73,7 +73,6 @@ function get_annotazioni(query, urlDoc){
                 $('#alertDoc').modal('show');
                 scraper(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
-
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -90,16 +89,15 @@ function get_annotazioni(query, urlDoc){
 
 
 function scraper(urlDoc){
+    console.log("PARTE LO SCRAPER *********************************************************************");
     $.ajax({
         url: '/scrapingAutomatico',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
-            var url = $("ul.nav.nav-tabs li.active a").attr("id");
             res = JSON.parse(result);
-            query_all_annotazioni(url);
-            allAnnotazioni = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
-            get_annotazioni(allAnnotazioni,url)
+            query = query_all_annotazioni(urlDoc);
+            get_annotazioni(query, urlDoc);
         },
         error: function(){
 
@@ -200,7 +198,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
     }else {
-        console.log("annotazione scartata" + ann);
+        console.log("annotazione scartata" + ann + " *******************");
         //l'annotazione viene scartata
         var classCSS = "";
     }
@@ -216,7 +214,6 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
-        //TODO perchè //table/ e non /table/
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
@@ -462,9 +459,6 @@ function setRange(nodo, start, end, classCSS, ann) {
             }
         }
     }
-    //TODO!!!!!!!!!!!!!!!!!! per silvia!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    var rangeContent = rangeObject.toString();
-    console.log("range content: " + rangeContent);
 }
 
 

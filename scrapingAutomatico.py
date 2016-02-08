@@ -29,20 +29,60 @@ from urlparse import urlparse
 from lxml import etree, html
 import unicodedata
 
-
-
-
-
-
-
 def main():
      #scraping_automatico_titolo("http://www.dlib.org/dlib/july15/linek/07linek.html")
      #scraping_titolo()
      #scraping_citazioni("http://www.dlib.org/dlib/july15/linek/07linek.html")
      #scraping_citazioni()
-     #scarping_autore("http://www.dlib.org/dlib/july15/linek/07linek.html")
+     #scraping_autore("http://www.dlib.org/dlib/july15/linek/07linek.html")
      #scraping_doi("http://www.dlib.org/dlib/july15/linek/07linek.html")
      scraping_anno("http://www.dlib.org/dlib/july15/linek/07linek.html")
+
+
+def scraping_citazioni_due(url):
+    lista = []
+    try:
+        br = mechanize.Browser()
+        resp = br.open(url)
+    except:
+        print "Connection failed with "+url
+    html = resp.read()
+    soup = BeautifulSoup(html)
+    alberonodi = etree.HTML(html)
+
+    parsed_uri = urlparse(url)
+
+    if parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
+        tag = soup.findAll('h3')
+        for t in tag:
+            if 'References' in t.string or 'Bibliography' in t.string:
+                while t.find_next_sibling('p'):
+                    t = t.find_next_sibling('p')
+
+                    data = {}
+                    data['xpath'] = ""
+                    data['inizio'] = "0"
+                    data['fine'] = ""
+                    data['object'] = t.get_text()
+                    lista.append(data)
+
+    elif parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+        if  parsed_uri[2].find("article") != -1: #len(parsed_uri[2]) > 2 and
+            html = soup.find('div', {'id': 'articleCitations'})
+            if html is None:
+                print "citazioni non presenti"
+            else:
+                for p in html.findAll('p'):
+                    data = {}
+                    data['xpath'] = ""
+                    data['inizio'] = "0"
+                    data['fine'] = ""
+                    data['object'] = p.text
+                    lista.append(data)
+
+    return lista
+
+
 
 def scraping_titolo(urlDoc):
     # Browser mechanize
@@ -142,10 +182,12 @@ def scraping_automatico_titolo(url):
         path = path.replace("]", "")
         path = path.replace("/", "_")
         path = path.replace("_text()1","")
+        path = path.replace("1_html1_body1_", "")
         print path
         lista["path"]=path
         lista["titolo"]=titoloP
         print lista["path"]
+
 
     elif (url.find("http://www.dlib.org") != -1):      #portale dlib
         xpath_titolo='/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/h3[2]/text()'
@@ -163,6 +205,7 @@ def scraping_automatico_titolo(url):
         path = path.replace("]", "")
         path = path.replace("/", "_")
         path = path.replace("_text()1","")
+        path = path.replace("1_html1_body1_", "")
         print path
         lista["path"]=path
         lista["titolo"]=titoloP
@@ -170,7 +213,7 @@ def scraping_automatico_titolo(url):
     return lista
 
 
-def scarping_autore(urlDoc):
+def scraping_autore(urlDoc):
     # Browser mechanize
     br = mechanize.Browser()
     br.set_handle_robots(False) #
@@ -226,6 +269,7 @@ def scarping_autore(urlDoc):
             path = path.replace("]", "")
             path = path.replace("/", "_")
             path = path.replace("_text()1","")
+            path = path.replace("1_html1_body1_", "")
             print path
             lista["path"]=path
             lista["autori"]=html_autori
@@ -256,6 +300,7 @@ def scarping_autore(urlDoc):
             path = path.replace("]", "")
             path = path.replace("/", "_")
             path = path.replace("_text()1","")
+            path = path.replace("1_html1_body1_", "")
             print path
             lista["path"]=path
             lista["autori"]=autori
@@ -267,26 +312,23 @@ def scarping_autore(urlDoc):
 def scraping_doi(urlDoc):
     # Browser mechanize
     br = mechanize.Browser()
-    br.set_handle_robots(False) #
+    br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
-    lista = {}
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    lista = {}  # dict
     resp = br.open(urlDoc)
     raw_html = resp.read()
     tree = etree.HTML(raw_html)
 
-    parsed_uri = urlparse(urlDoc)
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    print domain
-
-
     if (urlDoc.find("unibo") != -1):
-        xpath_doi='//*[@id="pub-id::doi"]/text()'
+        start_doi = 0
+        end_doi = 0
+        xpath_doi = '//*[@id="pub-id::doi"]/text()'
         doi=tree.xpath(xpath_doi)[0]
-        lista["start"]=str(0)
-        lista["end"]=str(len(doi))
-        path_step_list =xpath_doi.split("/")
-        path=""
+        lista["start"] = str(0)
+        lista["end"] = str(len(doi))
+        path_step_list = xpath_doi.split("/")
+        path = ""
         for step in path_step_list:
             if not contains_digits(step):
                 step +="[1]"
@@ -295,15 +337,12 @@ def scraping_doi(urlDoc):
         path = path.replace("[", "")
         path = path.replace("]", "")
         path = path.replace("/", "_")
-        path = path.replace("_text()1","")
-        print (path)
+        path = path.replace("_text()", "")
+        path = path.replace("1_html1_body1_", "")
         lista["xpath"]=path
         lista["doi"]=doi
-
-
     elif (urlDoc.find("http://www.dlib.org") != -1):
-
-        start_doi=0
+        start_doi = 0
         end_doi = 0
         xpath_doi_meta='/html/head/meta[2]/@content'
         doi=tree.xpath(xpath_doi_meta)[0]
@@ -317,6 +356,7 @@ def scraping_doi(urlDoc):
                 end_doi = start_doi + len(doi)
                 lista["start"]=str(start_doi)
                 lista["end"]=str(end_doi)
+                break
         xpath_doi= "/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[2]/text()"
         path_step_list =xpath_doi.split("/")
         path=""
@@ -328,23 +368,19 @@ def scraping_doi(urlDoc):
         path = path.replace("[", "")
         path = path.replace("]", "")
         path = path.replace("/", "_")
-        path = path.replace("_text()1","")
-        print (path)
-        lista["xpath"]=path
-        lista["doi"]=doi
-
-
+        path = path.replace("_text()", "")
+        path = path.replace("1_html1_body1_", "")
+        lista["xpath"] = path
+        lista["doi"] = doi
     br.close()
-    #print json.dumps(lista)
-    print json.dumps(lista)
-    return json.dumps(lista)
+    return lista
 
 def scraping_anno(urlDoc):
     # Browser mechanize
     br = mechanize.Browser()
     br.set_handle_robots(False) #
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
     lista = {}
     resp = br.open(urlDoc)
     raw_html = resp.read()
@@ -414,12 +450,11 @@ def scraping_anno(urlDoc):
         path = path.replace("]", "")
         path = path.replace("/", "_")
         path = path.replace("_text()1","")
+        path = path.replace("1_html1_body1_", "")
         print("path codificato")
         print path
-        lista["xpath"]=path
+        lista["xpath"]="document"
         lista["anno"]=pubyear_full
-
-
 
     elif (urlDoc.find("http://www.dlib.org") != -1): #portale dlib
         xpath_anno='/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[1]/text()[1]'
@@ -440,6 +475,8 @@ def scraping_anno(urlDoc):
         path = path.replace("]", "")
         path = path.replace("/", "_")
         path = path.replace("_text()1","")
+        path = path.replace("_text()1","")
+        path = path.replace("1_html1_body1_", "")
         print("path codificato")
         print path
         lista["xpath"]=path
@@ -463,12 +500,8 @@ def scraping_citazioni(url):
     except:
         print "Connection failed with "+url
     html = resp.read()
-    soup = BeautifulSoup(html, 'html.parser')
-
     parsed_uri = urlparse(url)
     tree = etree.HTML(html)
-
-
 
     if parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         reference_list=[]

@@ -152,9 +152,9 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     target = "oa:hasTarget [ a oa:SpecificResource ;"\
                 "oa:hasSelector [ a oa:FragmentSelector ;"\
                     "rdf:value \"" + path + "\"^^xsd:string ;"\
-                    "oa:start \"" + start + "\"^^xsd:nonNegativeInteger ;"\
-                    "oa:end  \"" + end + "\"^^xsd:nonNegativeInteger ] ;"\
-                "oa:hasSource <" + urldoc + "> ] ."
+                    "oa:start \"" + str(start) + "\"^^xsd:nonNegativeInteger ;"\
+                    "oa:end  \"" + str(end) + "\"^^xsd:nonNegativeInteger ] ;"\
+                "oa:hasSource <" + str(urldoc) + "> ] ."
 
     if tipo == "hasTitle":
         ann = """[] a oa:Annotation ;
@@ -206,7 +206,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
                 rdfs:label \"""" + valore + """\"^^xsd:string ;
                 rdf:subject <""" + urlnohtml + """_ver1> ;
                 rdf:predicate prism:doi ;
-                rdf:object \"""" + valore + """\"^^xsd:date ."""
+                rdf:object \"""" + valore + """\"^^xsd:string ."""
     elif tipo == "hasURL":
         ann = """[] a oa:Annotation ;
             rdfs:label "URL"^^xsd:string ;
