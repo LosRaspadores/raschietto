@@ -71,8 +71,9 @@ function get_annotazioni(query, urlDoc){
             } else {
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
-                scraper(urlDoc)
-            };
+                scraper(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
+            }
+
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -92,14 +93,20 @@ function scraper(urlDoc){
     $.ajax({
         url: '/scrapingAutomatico',
         type: 'GET',
+        data: {url: urlDoc},
         success: function(result){
-
+            var url = $("ul.nav.nav-tabs li.active a").attr("id");
+            res = JSON.parse(result);
+            query_all_annotazioni(url);
+            allAnnotazioni = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            get_annotazioni(allAnnotazioni,url)
         },
         error: function(){
 
         }
     });
-}
+  }
+  
 
 function lancia_scraper(query, urlDoc){
     uriQuery = encodeURIComponent(query), // rende la query parte dell'uri

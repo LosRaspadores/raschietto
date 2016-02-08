@@ -32,8 +32,8 @@ function verificaTab(){
             end = frammentoSelezionato.fine;
             selezione = frammentoSelezionato.selezione;
             //apri modale per inserire annotazione sul frammento
-            $('textarea#selezione').val(selezione)
-            $('textarea#selezione').css('display', 'block');
+            $('#selezione').html(selezione)
+            $('#selezione').css('display', 'block');
             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
             $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
 
@@ -317,10 +317,6 @@ function aggiornaAnnotazione(azione){ // funzione che viene richiamata quando vi
             if(typeof(annotInfoTemp["id"]) != "undefined"){
                 $('#modalAnnotDoc').data("id", annotInfoTemp["id"]);
             }
-//            } else {
-//                $('#modalAnnotDoc').data("index", annotInfoTemp["index"]);
-//                $('#modalAnnotDoc').data("indexDoc", annotInfoTemp["indexDoc"]);
-//            }
             $("#bottoniModificaSelezione").css("display", "none");
             $('#modalAnnotDoc').modal('show');
         }
@@ -349,7 +345,6 @@ function annotaCitazione(idCit){
             for(var j = 0; j < annotazioniSessione[i].annotazioni.length; j++){
                 if(annotazioniSessione[i].annotazioni[j].id == idCit){
                     $('textarea#selezione').html(annotazioniSessione[i].annotazioni[j].oggetto);
-//                    oggettoCitazione = annotazioniSessione[i].annotazioni[j].oggetto; //TODO cos'è ?!?!
                 }
             }
         }
@@ -480,7 +475,7 @@ function modificaAnnot(element){
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').prop("selected",true).change();
 
     // se l'annotazione è stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
-    if(frammentoSelezionato != ""){
+    if(frammentoSelezionato != ""){        
         $('textarea#selezione').css("display", "block");
         $('textarea#selezione').val(frammentoSelezionato);
         $('button#bottonemodFramm').css("display", "block");
