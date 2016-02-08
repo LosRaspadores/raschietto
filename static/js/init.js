@@ -92,11 +92,6 @@ $(document).ready(function() {
         handle: ".modal-content"
     });
 
-    var year = new Date().getFullYear();
-    for(i = year; i >=  1800; i--){
-        $('select#anno').append('<option value="'+i+'">'+i+'</option>');
-    }
-
     $('ul#bottoniAnnotator button').click(function(e){
         /* I bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
@@ -305,7 +300,7 @@ $(document).ready(function() {
                 if(annotazioniSessione[i].doc == id){
                     for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                         tipo = annotazioniSessione[i].annotazioni[j].tipo;
-                        data = annotazioniSessione[i].annotazioni[j].data.replace("T", " ");
+                        data = parseDatetime(annotazioniSessione[i].annotazioni[j].data);
                         selezione = annotazioniSessione[i].annotazioni[j].selezione;
                         oggetto = annotazioniSessione[i].annotazioni[j].oggetto;
 

@@ -91,9 +91,8 @@ function getDocumenti(){
 //
 //    urlDoc = JSON.stringify(docTemp);
     $.ajax({
-        url: '/scrapingTitolo',
+        url: '/getDocumenti',
         type: 'GET',
-        data: {url: urlDoc},
         success: function(result){
             res = JSON.parse(result);
             $('#numDoc').html(res.length);

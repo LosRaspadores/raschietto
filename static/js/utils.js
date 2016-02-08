@@ -78,7 +78,7 @@ function getDateTime(){
     return datetime = currentdate.getFullYear() + "-"
                     + addZero(currentdate.getMonth()+1)  + "-"
                     + addZero(currentdate.getUTCDate()) + "T"
-                    + currentdate.getHours() + ":"
+                    + addZero(currentdate.getHours()) + ":"
                     + addZero(currentdate.getMinutes());
 
 }

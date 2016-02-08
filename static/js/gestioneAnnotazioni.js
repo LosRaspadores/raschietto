@@ -4,8 +4,10 @@ oggettoSelezionato = {}; // nuova selezione di frammento
 annotazioneModificata = {}; // annotazione che si vuole modificare
 annotazioneCitazione = {}; // citazione su cui si vuole aggiungere un'annotazione
 listaQueryDaInviare = []; // lista di query da inviare al server
+
 /* Variabile contenente le informazioni di un'annotazione da inserire (path, start, end, id)*/
 infoAnnotazioneDaInserire = [];
+
 function verificaTab(){
     var path = '';
     var start = '';
@@ -843,11 +845,11 @@ $(document).ready(function(){
         }
         console.log(listaNuoveAnnotazioni)
         sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-//        salvaAnnotazioniLocale(listaNuoveAnnotazioni)
-        var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
-        listaQueryDaInviare.push(query);
-//        inviaQuery(listaQuery)
 
+        if(numeroAnnot != 0){
+            var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
+            listaQueryDaInviare.push(query);
+        }
 
         annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
         var indexDoc = 0;
@@ -869,22 +871,15 @@ $(document).ready(function(){
         annotazioniGrafoSessione.splice(indexDoc, 1);
         sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
         $('#modalGestAnnotazioni').modal('hide');
-        inviaQuery(JSON.stringify(listaQueryDaInviare));
-
-        for(j = 0; j < listaAllAnnotazioni.length; j++){
-            if(listaAllAnnotazioni[j].url == urlDoc){
-                listaAllAnnotazioni.splice(j, 1);
+        if(listaQueryDaInviare.length != 0){
+            inviaQuery(JSON.stringify(listaQueryDaInviare));
+            for(j = 0; j < listaAllAnnotazioni.length; j++){
+                if(listaAllAnnotazioni[j].url == urlDoc){
+                    listaAllAnnotazioni.splice(j, 1);
+                }
             }
         }
-//        if(numeroAnnot != 0){
-//        salvaAnnotazioniLocale(listaNuoveAnnotazioni) //<----- NO
-//            var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
-//            listaQueryDaInviare.push(query);
-//        inviaQuery(listaQuery) //<------- giusto
-//            inviaQuery(query)
-        //}
 
-        $('#modalGestAnnotazioni').modal('hide');
     });
 
     /* Eliminare annotazioni o citazioni in locale */
