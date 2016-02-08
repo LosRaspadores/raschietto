@@ -1,4 +1,8 @@
 <h3>Benvenuto in Raschietto</h3>
 <h4>Un'applicazione per l'annotazione semantica di documenti</h4>
 <div>Modalità reader e annotator</div>
-<div>Tipo di annotazioni</div>
+<div>
+Tipo di annotazioni
+
+
+</div>

@@ -11,7 +11,6 @@ body {
     padding-right: 0px !important;
 }
 
-
 /* prima navbar con logo, descrizione e info */
 .navbar {
     background-color: #0C3C26;
@@ -336,7 +335,6 @@ button.button-lg:active {
 
 .highlightMultipleTipoDiverso{
     background-color: #dae0e6;
-    border: 1px solid #989ca1;
 }
 
 .highlightMultipleTipoUguale{
@@ -424,7 +422,6 @@ div.tab-content{
     font-size: small;
 }
 
-
 .tabList{
     max-width: 100px;
     max-height: 70px;
@@ -492,36 +489,6 @@ span.glyphicon.glyphicon-remove{
     margin-bottom: 0px;
 }
 
-/* Start by setting display:none to make this hidden.
-   Then we position it in relation to the viewport window
-   with position:fixed. Width, height, top and left speak
-   for themselves. Background we set to 80% white with
-   our animation centered, and no-repeating */
-#loading {
-    display: none;
-    position: fixed;
-    left: 33%;
-    top: 33%;
-    height: 100px;
-    width: 300px;
-    margin: auto;
-    background: rgba( 255, 255, 255, .8 )
-                url('/static/ico/loader.gif')
-                50% 50%
-                no-repeat;
-}
-
-/* When the body has the loading class, we turn
-   the scrollbar off with overflow:hidden */
-body.loading {
-    overflow: hidden;
-}
-
-/* Anytime the body has the loading class, our
-   modal element will be visible */
-body.loading #loading {
-    display: block;
-}
 /* Tabella nel modal di gestione delle annotazioni */
 .tableAnnot{
     margin: auto;
@@ -620,4 +587,32 @@ thead{
 }
 
 
+#ann_sul_doc{
+    word-wrap: break-word;
+    height: 350px;
+    overflow-y: auto;
+}
 
+.divAnnSulDoc{
+    border-top: 1px solid #44b78b;
+    padding-top: 20px;
+}
+
+
+#loading {
+    display: none;
+    position: absolute;
+    top: 60px;
+    background: rgba( 255, 255, 255, .8 )
+                url('/static/ico/loader.gif')
+                50% 0%
+                no-repeat;
+}
+
+body.loading {
+    overflow: hidden;
+}
+
+body.loading #loading {
+    display: block;
+}

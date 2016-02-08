@@ -1,35 +1,17 @@
 function inviaQuery(listaQuery){
-        $.ajax({
-            url: "/salvaAnnotazioni",
-            data: {"query": listaQuery},
-            success: function(result) {
-                $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
-                $('#alertDoc').modal('show');
-
-                query = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
-                get_annotazioni(query, $("ul.nav.nav-tabs li.active a").attr("id"));
-            }
-        });
+    $.ajax({
+        url: "/salvaAnnotazioni",
+        data: {"query": listaQuery},
+        success: function(result) {
+            $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
+            $('#alertDoc').modal('show');
+            listaQueryDaInviare = [];
+            $('span[class*="highlight"]').contents().unwrap();
+            query = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            get_annotazioni(query, $("ul.nav.nav-tabs li.active a").attr("id"));
+        }
+    });
 }
-
-//globale
-prefissi = 'PREFIX foaf: <http://xmlns.com/foaf/0.1/> '+
-    'PREFIX frbr: <http://purl.org/vocab/frbr/core#> '+
-    'PREFIX cito: <http://purl.org/spar/cito/> '+
-    'PREFIX fabio: <http://purl.org/spar/fabio/> '+
-    'PREFIX sro: <http://salt.semanticauthoring.org/ontologies/sro#> '+
-    'PREFIX dcterms: <http://purl.org/dc/terms/> '+
-    'PREFIX schema: <http://schema.org/> '+
-    'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> '+
-    'PREFIX oa: <http://www.w3.org/ns/oa#> '+
-    'PREFIX rsch: <http://vitali.web.cs.unibo.it/raschietto/> '+
-    'PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> '+
-    'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> '+
-    'PREFIX sem: <http://www.ontologydesignpatterns.org/cp/owl/semiotics.owl#> '+
-    'PREFIX skos: <http://www.w3.org/2009/08/skos-reference/skos.html> '+
-    'PREFIX prism: <http://prismstandard.org/namespaces/basic/2.0/> '+
-    'PREFIX deo: <http://purl.org/spar/deo/> '+
-    'PREFIX foaf: <http://xmlns.com/foaf/0.1/>';
 
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
@@ -91,6 +73,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore){
         start = 0;
         end = 0;
     }
+
     var target = 'oa:hasTarget [ a oa:SpecificResource ;' +
                  'oa:hasSelector [ a oa:FragmentSelector ;' +
                             'rdf:value "' + path + '"^^xsd:string ;' +
@@ -236,3 +219,175 @@ function switchRetorica(valore){
     return valore;
 }
 
+function creaQueryUpdate(annotazione){
+    query_delete = ' WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '+
+            ' DELETE { '+
+            '?a oa:annotatedAt "'+ annotazione.date.value+'"^^xsd:dateTime; '+
+            'oa:annotatedBy <'+ annotazione.provenance.value+'> . ';
+    query_insert = 'INSERT { '+
+                   '?a oa:annotatedAt "'+ annotazione.update.data_mod+'"^^xsd:dateTime; '+
+                   'oa:annotatedBy '+ annotazione.update.autore +' . ';
+    query_end = 'WHERE { '+
+                '?a a oa:Annotation; '+
+                'oa:annotatedAt "'+ annotazione.date.value+'"^^xsd:dateTime; '+
+                'oa:annotatedBy <'+ annotazione.provenance.value+">; "+
+                'rsch:type "'+annotazione.type.value+'"^^xsd:string . '+
+                '?a oa:hasBody ?body . '+
+                '?a oa:hasTarget ?target . '+
+                '?target oa:hasSelector ?sel . '+
+                '?body rdf:subject <'+annotazione.body_s.value+'> . }';
+
+    if(typeof(annotazione.update.tipo) != "undefined"){
+        query_delete += '?a rsch:type "'+annotazione.type.value+'"^^xsd:string . '+
+                 '?a rdfs:label "'+annotazione.label.value+'"^^xsd:string . '+
+                 '?body rdf:predicate <'+ annotazione.body_p.value +'> . ';
+        query_insert += '?a rsch:type "'+typeToIng(annotazione.update.tipo)+'"^^xsd:string . '+
+                        '?a rdfs:label "'+annotazione.update.label_tipo+'"^^xsd:string . '+
+                        '?body '+ getPredicato(annotazione.update.tipo.toLowerCase());
+    }
+
+    var tipo = "";
+    var tipoN = "";
+    if(typeof(annotazione.update.oggetto) != "undefined"){
+        if(typeof(annotazione.update.tipo) != "undefined"){
+            tipoN = annotazione.update.tipo;
+            tipo = typeToIta(annotazione.type.value);
+        } else {
+            tipoN = typeToIta(annotazione.type.value);
+            tipo = typeToIta(annotazione.type.value);
+        }
+
+        if(tipo.toLowerCase() == "doi" || tipo.toLowerCase() == "titolo" || tipo.toLowerCase() == "commento"){
+            query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:string; '+
+                        'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        } else if(tipo.toLowerCase() == "url"){
+            query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:anyURL; '+
+                        'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        } else if(tipo.toLowerCase() == "anno pubblicazione"){
+            query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:date; '+
+                        'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        } else if(tipo.toLowerCase() == "autore"){
+            query_delete += '?body rdf:object <'+ annotazione.body_o.value+'> ; '+
+                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        }  else { // funzione retorica o citazione
+            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
+                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        }
+
+        if(tipoN.toLowerCase() == "doi" || tipoN.toLowerCase() == "titolo" || tipoN.toLowerCase() == "commento"){
+            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:string ; '+
+                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        } else if(tipoN.toLowerCase() == "url"){
+            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:anyURL ; '+
+                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        } else if(tipoN.toLowerCase() == "anno pubblicazione"){
+            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:date ; '+
+                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        } else if(tipoN.toLowerCase() == "autore"){
+            query_insert += '?body rdf:object <'+ setIRIautore(annotazione.update.oggetto) +'> ; '+
+                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        } else { // funzione retorica e citazione
+            query_insert += '?body rdf:object <'+ annotazione.update.oggetto +'> ; '+
+                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        }
+
+
+//        else if(tipo.toLowerCase() == "funzione retorica"){
+//            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
+//                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+//            query_insert += '?body rdf:object <'+ switchRetorica(annotazione.update.oggetto) +'> ; '+
+//                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+//        } else if(tipo.toLowerCase() == "citazione"){
+//            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
+//                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+//            query_insert += '?body rdf:object <'+ annotazione.update.oggetto +'> ; '+
+//                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+//        }
+    }
+
+    if(typeof(annotazione.update.path) != "undefined"){
+        query_delete += '?sel rdf:value "'+annotazione.fs_value.value+'"^^xsd:string; '+
+                 'oa:start "'+annotazione.start.value+'"^^xsd:nonNegativeInteger; '+
+                 'oa:end "'+annotazione.end.value+'"^^xsd:nonNegativeInteger . ';
+
+        query_insert += '?sel rdf:value "'+annotazione.update.path+'"^^xsd:string; '+
+                        'oa:start "'+annotazione.update.start_fragm+'"^^xsd:nonNegativeInteger ; '+
+                        'oa:end "'+annotazione.update.end_fragm+'"^^xsd:nonNegativeInteger . ';
+
+        // se e' stato modificato il path di un'annotazione di tipo commento o retorica, si deve aggiornare anche il soggetto del body
+        if(tipo != tipoN){
+            if(tipoN.toLowerCase() == "commento" || tipoN.toLowerCase() == "funzione retorica"){
+            query_delete += '?body rdf:subject <'+ annotazione.body_s.value+'> . ';
+            query_insert += '?body rdf:subject <'+annotazione.target.value.replace('.html', '_ver1#')+annotazione.update.path+'-'+annotazione.update.start_fragm+'-'+annotazione.update.end_fragm+'> . ';
+        }
+        }
+    }
+
+    query_delete += ' } ';
+    query_insert += ' } ';
+    query = prefissi + query_delete + query_insert + query_end;
+    return query;
+}
+
+function creaQueryDelete(annotazione){
+    var oggetto = "";
+    if(annotazione.type.value == "hasPublicationYear"){
+        oggetto = '"'+annotazione.body_o.value+'"^^xsd:date';
+    } else if(annotazione.type.value == "hasURL"){
+        oggetto = '"'+annotazione.body_o.value+'"^^xsd:anyURL';
+    } else if(annotazione.type.value == "cites" || annotazione.type.value == "denotesRhetoric"){
+        oggetto = '<'+annotazione.body_o.value+'>';
+    } else if(annotazione.type.value == "hasAuthor"){
+        oggetto = annotazione.body_o.value;
+    } else {
+        oggetto = '"'+annotazione.body_o.value+'"^^xsd:string';
+    }
+
+    var query = prefissi;
+    var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
+    query += ' WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '+
+             'DELETE { ?a ?p ?o . ?body ?bp ?bo . ?target ?tp ?to . ?selector ?sp ?so .} '+
+            ' WHERE { ' +
+            '?a a oa:Annotation . '+
+            '?a rdfs:label "'+  annotazione.label.value +'"^^xsd:string . ' +
+            '?a rsch:type "'+ annotazione.type.value +'"^^xsd:string . ' +
+            '?a oa:annotatedAt "'+ annotazione.date.value +'"^^xsd:dateTime . ' +
+            '?a oa:annotatedBy <'+ annotazione.provenance.value +'>  . ' +
+            '?a oa:hasBody ?body . '+
+            '?a oa:hasTarget ?target . '+
+            '?target a oa:SpecificResource . '+
+            '?target oa:hasSelector ?selector . ' +
+            '?selector a oa:FragmentSelector . ' +
+            '?selector rdf:value "'+ annotazione.fs_value.value +'"^^xsd:string . ' +
+            '?selector oa:start "'+ annotazione.start.value +'"^^xsd:nonNegativeInteger . '+
+            '?selector oa:end "'+ annotazione.end.value +'"^^xsd:nonNegativeInteger . ' +
+            '?target oa:hasSource <'+ urlDoc +'> . '+
+            '?body a rdf:Statement . '+
+            '?body rdfs:label "'+ annotazione.body_l.value +'"^^xsd:string . ' +
+            '?body rdf:subject <'+ annotazione.body_s.value +'> . '+
+            '?body rdf:predicate <'+ annotazione.body_p.value +'> . '+
+            '?body rdf:object '+ oggetto +' . '+
+            '?a ?p ?o . '+
+            '?target ?tp ?to . '+
+            '?selector ?sp ?so . '+
+            '?body ?bp ?bo . }';
+    return query;
+}
+
+function creaTripleAutore(nome, urlDoc){
+    triple ='PREFIX foaf:  <http://xmlns.com/foaf/0.1/> '+
+            'PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> '+
+            'PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> '+
+            '<'+setIRIautore(nome)+'> a foaf:Person; '+
+            'rdfs:label "'+nome+'"^^xsd:string; '+
+            'foaf:made <'+urlDoc+'> .';
+    return triple;
+}
+
+function creaTriplaCit(urlDoc, citazione){
+    //if(urlDoc.indexOf(".html") != -1){
+    urlDoc = urlDoc.replace(".html", "_ver1");
+    //TODO completare con numero citazione
+    cit = "<"+urlDoc+">";
+    return cit;
+}

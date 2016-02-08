@@ -76,8 +76,8 @@ console.log(setIRIautore("M[a]ri� De Rossi Bianc.;h:i V�rdi Gialli"));
 function getDateTime(){
     var currentdate = new Date();
     return datetime = currentdate.getFullYear() + "-"
-                    + (currentdate.getMonth()+1)  + "-"
-                    + currentdate.getUTCDate() + "T"
+                    + addZero(currentdate.getMonth()+1)  + "-"
+                    + addZero(currentdate.getUTCDate()) + "T"
                     + currentdate.getHours() + ":"
                     + addZero(currentdate.getMinutes());
 
@@ -197,23 +197,6 @@ function filtriGruppo(gruppo, urlDoc){
     }
 }
 
-function creaTripleAutore(nome, urlDoc){
-    triple ='PREFIX foaf:  <http://xmlns.com/foaf/0.1/> '+
-            'PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> '+
-            'PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> '+
-            '<'+setIRIautore(nome)+'> a foaf:Person; '+
-            'rdfs:label "'+nome+'"^^xsd:string; '+
-            'foaf:made <'+urlDoc+'> .';
-    return triple;
-}
-
-function creaTriplaCit(urlDoc, citazione){
-    //if(urlDoc.indexOf(".html") != -1){
-    urlDoc = urlDoc.replace(".html", "_ver1");
-    //TODO completare con numero citazione
-    cit = "<"+urlDoc+">";
-    return cit;
-}
 
 function switchRetorica(valore){
     if(valore == "Abstract"){
@@ -296,93 +279,120 @@ function typeToIng(type){
     return out;
 }
 
-
-function creaQueryUpdate(annotazione){
-    query_delete = 'PREFIX oa: <http://www.w3.org/ns/oa#> '+
-            'PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> '+
-            'PREFIX rsch:  <http://vitali.web.cs.unibo.it/raschietto/> '+
-            'PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> '+
-            'PREFIX deo:   <http://purl.org/spar/deo/> '+
-            'PREFIX sro:   <http://salt.semanticauthoring.org/ontologies/sro#> ' +
-            'PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> '+
-            'WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '+
-            'DELETE { '+
-            '?a oa:annotatedAt "'+ annotazione.date.value+'"^^xsd:dateTime; '+
-            'oa:annotatedBy <'+ annotazione.provenance.value+'> . ';
-    query_insert = 'INSERT { '+
-                   '?a oa:annotatedAt "'+ annotazione.update.data_mod+'"^^xsd:dateTime; '+
-                   'oa:annotatedBy '+ annotazione.update.autore +' . ';
-    query_end = 'WHERE { '+
-                '?a a oa:Annotation; '+
-                'oa:annotatedAt "'+ annotazione.date.value+'"^^xsd:dateTime; '+
-                'oa:annotatedBy <'+ annotazione.provenance.value+">; "+
-                'rsch:type "'+annotazione.type.value+'"^^xsd:string . '+
-                '?a oa:hasBody ?body . '+
-                '?a oa:hasTarget ?target . '+
-                '?target oa:hasSelector ?sel . '+
-                '?body rdf:subject <'+annotazione.body_s.value+'> . }';
-
-    if(typeof(annotazione.update.tipo) != "undefined"){
-        query_delete += '?a rsch:type "'+annotazione.type.value+'"^^xsd:string . '+
-                 '?a rdfs:label "'+annotazione.label.value+'"^^xsd:string . '; // TODO NON SE SA CHE PROBLEMI HA STA LABEL
-        query_insert += '?a rsch:type "'+typeToIng(annotazione.update.tipo)+'"^^xsd:string . '+
-                        '?a rdfs:label "'+annotazione.update.label_tipo+'"^^xsd:string . ';
+function getPredicato(type){
+    out = "";
+    switch(type){
+        case "url":
+            out = ' rdf:predicate fabio:hasURL . ';
+            break;
+        case "titolo":
+            out = ' rdf:predicate dcterms:title . ';
+            break;
+        case "anno pubblicazione":
+            out = ' rdf:predicate fabio:hasPublicationYear . ';
+            break;
+        case "doi":
+            out = ' rdf:predicate prism:doi . ';
+            break;
+        case "autore":
+            out = ' rdf:predicate dcterms:creator . ';
+            break;
+        case "commento":
+            out = ' rdf:predicate schema:comment . ';
+            break;
+        case "funzione retorica":
+            out = ' rdf:predicate sem:denotes . ';
+            break;
+        case "citazione":
+            out = ' rdf:predicate cito:cites . ';
+            break;
     }
-
-    if(typeof(annotazione.update.oggetto) != "undefined"){
-        if(typeof(annotazione.update.tipo) != "undefined"){
-            tipo = annotazione.update.tipo;
-        } else {
-            tipo = annotazione.label.value;
-        }
-        if(tipo.toLowerCase() == "doi" || tipo.toLowerCase() == "titolo" || tipo.toLowerCase() == "commento"){
-            query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:string; '+
-                        'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:string ; '+
-                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "url"){
-            query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:anyURL; '+
-                        'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:anyURL ; '+
-                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "anno"){
-            query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:date; '+
-                        'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:date ; '+
-                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "autore"){
-            query_delete += '?body rdf:object <'+ annotazione.body_o.value+'> ; '+
-                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object <'+ setIRIautore(annotazione.update.oggetto) +'> ; '+
-                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "retorica"){
-            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
-                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object '+ switchRetorica(annotazione.update.oggetto) +' ; '+
-                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "citazione"){
-            //TODO completare con oggetto delle citazioni
-        }
-
-    }
-
-    if(typeof(annotazione.update.path) != "undefined"){
-        query_delete += '?sel rdf:value "'+annotazione.fs_value.value+'"^^xsd:string; '+
-                 'oa:start "'+annotazione.start.value+'"^^xsd:nonNegativeInteger; '+
-                 'oa:end "'+annotazione.end.value+'"^^xsd:nonNegativeInteger . ';
-        query_insert += '?sel rdf:value "'+annotazione.update.path+'"^^xsd:string; '+
-                        'oa:start "'+annotazione.update.start_fragm+'"^^xsd:nonNegativeInteger ; '+
-                        'oa:end "'+annotazione.update.end_fragm+'"^^xsd:nonNegativeInteger . ';
-    }
-
-    query_delete += ' } ';
-    query_insert += ' } ';
-    query = query_delete + query_insert + query_end;
-    return query;
+    return out;
 }
-
 
 /* Sostituire tutte le occorrenze di un carattere */
 String.prototype.replaceAll = function(target, replacement) {
   return this.split(target).join(replacement);
 };
+
+function getRangeContent(fragmentPath, start, end, urlDoc){
+	var content = "";
+	var path = getXPath(fragmentPath);
+	var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
+        if (path.indexOf('tbody') == -1 ) { // se non c'� tbody
+            path = path.replace(/\/tr/g, '/tbody[1]/tr');
+        }
+        path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
+
+        //if rivista statistica
+        path = path.replace("div[1]/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[1]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+
+        //if antropologia e teatro or if alma tourism
+        path = path.replace("div[1]/div[1]/div[1]/div[1]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[3]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+
+        //if rivista statistica or if antropologia e teatro
+        path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
+
+        //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
+        try {
+            //The expression is a legal expression.
+            var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (nodo != null){
+                content = getContent(nodo, start, end);
+            };
+        } catch (ex) {
+            //The expression is NOT a legal expression.
+            //se per esempio il fragmentPath � incompleto o relativo
+            //l'annotazione viene scartata
+        }
+	return content;
+}
+
+
+function getContent(nodo, start, end){
+
+    var rangeObject = document.createRange();  // creating a Range object.. we wull need to define its start and end points
+    var textNodes = getTextNodesIn(nodo);
+    if (start < 0) { start = 0; };
+    var caratteriTot = end - start;
+    var trovatoNodoStart = false;
+    var charParsed = 0;
+
+    //scorro i nodi discendenti di tipo testo del nodo evaluated
+    for (var i = 0; i<textNodes.length; i++) {
+        var nodoCorrente = textNodes[i];
+        var lunghezzaNodoCorrente = nodoCorrente.length;
+
+        // allora lo start e l'end sono compresi nel nodo corrente => start end offset del range trovati!
+        if((start<lunghezzaNodoCorrente && end <= lunghezzaNodoCorrente) || (trovatoNodoStart && end <= lunghezzaNodoCorrente)){
+            if(!trovatoNodoStart){
+                rangeObject.setStart(nodoCorrente, start);
+            }
+            charParsed = charParsed + (lunghezzaNodoCorrente - start);
+            rangeObject.setEnd(nodoCorrente, end);
+            break;
+        } else {
+            if(start >= lunghezzaNodoCorrente){
+                if(!trovatoNodoStart){
+                    start = start - lunghezzaNodoCorrente;
+                    end = end -lunghezzaNodoCorrente;
+                    // si passa al  al nodo successivo
+                }
+            } else {  // cio� if(start < lunghezzaNodoCorrente)
+                // lo start offset � nel nodo corrente
+                if(!trovatoNodoStart){
+                    rangeObject.setStart(nodoCorrente, start);
+                };
+                trovatoNodoStart = true;
+                charParsed = charParsed + (lunghezzaNodoCorrente - start);
+                end = caratteriTot - charParsed; // caratteri mancanti
+            }
+        }
+    }
+    var content = "";
+    content = rangeObject.toString();
+    return content;
+
+}

@@ -63,64 +63,47 @@ function getDocFromSparql(){
     urlQuery = encodeURIComponent(query); // rende la query parte dell'uri
     urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
     return $.ajax({
-                url: urlG,
-                dataType: 'jsonp',
-            });
+        url: urlG,
+        dataType: 'jsonp',
+    });
 }
 
 function getDocFromScraping(){
     return $.ajax({
-                url: '/scrapingDocumenti',
-                type: 'GET'
-            });
+        url: '/scrapingDocumenti',
+        type: 'GET'
+    });
 }
 
 //function getDocumenti(docAnnotati, docScraping){
+function getDocumenti(){
 //    docTemp = [];
 //
-//    for(i = 0; i < docAnnotati.length; i++){
-//        docTemp.push(docAnnotati[i].doc.value);
+//    for(i = 0; i < docScraping.length; i++){
+//        docTemp.push(docScraping[i].url);
 //    }
 //
-//    for(i = 0; i < docScraping.length; i++){
-//        if(!($.inArray(docScraping[i].url, docAnnotati))){
-//            docTemp.push(docScraping[i].url);
+//    for(i = 0; i < docAnnotati.length; i++){
+//        if(!($.inArray(docAnnotati[i].doc.value, docTemp))){
+//            docTemp.push(docAnnotati[i].doc.value);
 //        }
 //    }
 //
 //    urlDoc = JSON.stringify(docTemp);
-//    $.ajax({
-//        url: '/scrapingTitolo',
-//        type: 'GET',
-//        data: {url: urlDoc},
-//        success: function(result){
-//            res = JSON.parse(result);
-//            $('#numDoc').html(res.length);
-//            for(j = 0; j < res.length; j++){
-//                $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
-//            }
-//        },
-//        error: function(){
-//            $('#alertMessage').text("Errore nel caricamento dei documenti!");
-//            $('#alertDoc').modal('show');
-//        }
-//    });
-//}
-function getDocumenti(){
     $.ajax({
-    url:'/getDocumenti',
-    type: 'GET',
-    success: function(result){
-        res = JSON.parse(result);
-        $('#numDoc').html(res.length);
-        for(j = 0; j < res.length; j++){
-            $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
+        url: '/scrapingTitolo',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result){
+            res = JSON.parse(result);
+            $('#numDoc').html(res.length);
+            for(j = 0; j < res.length; j++){
+                $('div#lista_doc').append('<a class="list-group-item" value="' + res[j].url + '">' + res[j].titolo + '</a><br>');
+            }
+        },
+        error: function(){
+            $('#alertMessage').text("Errore nel caricamento dei documenti!");
+            $('#alertDoc').modal('show');
         }
-    },
-    error: function(){
-        $('#alertMessage').text("Errore nel caricamento dei documenti!");
-        $('#alertDoc').modal('show');
-    }
-});
+    });
 }
-

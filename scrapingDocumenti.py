@@ -5,30 +5,6 @@
 
 __author__ = 'Los Raspadores'
 
-"""
-    pip install beautifulsoup4
-
-    Beautiful Soup automatically converts incoming documents to Unicode and outgoing documents to UTF-8
-
-    >>> Documenti da annotare obbligatoramente:
-        articoli del volume 20 issue 11/12
-        -http://www.dlib.org/dlib/november14/11contents.html
-
-        articoli del volume 74 n 1 statistica
-        -http://rivista-statistica.unibo.it/issue/view/467
-
-        tutti gli articoli di una issue a scelta su dilib
-        -http://www.dlib.org/dlib/july15/07contents.html
-
-        -tutti gli articoli di questa issue
-        http://almatourism.unibo.it/issue/view/512
-
-        -tutti gli articoli di questa issue
-        http://antropologiaeteatro.unibo.it/issue/view/513
-
-"""
-
-
 from bs4 import BeautifulSoup
 import mechanize
 import json
@@ -171,7 +147,7 @@ def scraping_documenti():
         lista_docs.append(data)
 
 
-    # print json.dumps(lista_docs)
+    #print json.dumps(lista_docs)
 
     return lista_docs
 

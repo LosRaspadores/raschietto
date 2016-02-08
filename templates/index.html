@@ -20,13 +20,14 @@
         <meta name="author" content="Edoardo Viale">
 
         <!-- riferimenti css -->
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
-        <link rel="stylesheet" href="/static/css/index.css">
+        <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/index.css">
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Exo:400,900">
         <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Playball'>
         <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     </head>
+
     <body>
         <!-- prima navbar -->
         <nav class="navbar navbar-default">
@@ -131,7 +132,7 @@
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#filtriAnnotazioni">Tipi di annotazioni</a></h4>
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#filtriAnnotazioni">Filtri annotazioni</a></h4>
                             </div>
                             <div id="filtriAnnotazioni" class="panel-collapse collapse">
                                 <div class="panel-body" id="lista_annot">
@@ -155,12 +156,12 @@
                             </div>
                         </div>
 
-                        <div class="panel panel-default" id="panelAnnot" >
+                        <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#panelListaAnnotazioni">Annotazioni<span class="badge" id="numAnn">0</span></a></h4>
+                                <h4 class="sidebar-brand"><a data-toggle="collapse" href="#annotazioniSulDoc">Annotazioni</a></h4>
                             </div>
-                            <div id="#panelListaAnnotazioni" class="panel-collapse collapse">
-                                <div class="panel-body">
+                            <div id="annotazioniSulDoc" class="panel-collapse collapse">
+                                <div class="panel-body" id="ann_sul_doc">
 
                                 </div>
                             </div>
@@ -173,11 +174,11 @@
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" id="homeTab"><b>Home</b></a></li>
                     </ul>
-
                     <div class="tab-content" >
                         <div class="tab-pane fade in active" id="home">
-
                         </div>
+                        <div class="modal" id="loading">
+                    </div>
                     </div>
                 </div>
 
@@ -215,23 +216,6 @@
             </div>
         </div>
 
-
-        <!-- Modal annotazioni -->
-        <div class="modal fade" id="modalAnnotazioni" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h3 class="text-center" id="numeroAnnotazioni"></h3>
-                    </div>
-                    <div class="modal-body col-md-12">
-                        <div id="listaAnnotazioni"></div>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                 </div>
-            </div>
-        </div>
         <!--Modal di scelta del tipo di annotazione (documento - frammento)-->
         <div class="modal fade" id="modalTipoAnnotazione" role="dialog">
             <div class="modal-dialog modal-md">
@@ -350,8 +334,8 @@
                          <h4>Sei sicuro di voler procedere con l'eliminazione?</h4>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="eliminaAnnotazione">Elimina</button>
-                        <button type="button" class="btn btn-success" data-dismiss="modal">Annulla</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                        <button type="button" class="btn btn-success" id="eliminaAnnotazione" data-dismiss="modal">Elimina</button>
                     </div>
                 </div>
             </div>
@@ -474,21 +458,18 @@
             </div>
         </div>
 
-        <div class="modal" id="loading">
-        </div>
-
         <!-- riferimenti javascript -->
         <script type="text/javascript" charset="utf-8" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-core.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-classapplier.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-highlighter.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/rangy/1.3.0/rangy-selectionsaverestore.js"></script>
-        <script src="/static/js/init.js" type="text/javascript" charset="utf-8"></script>
-        <script src="/static/js/autenticazione.js" type="text/javascript" charset="utf-8"></script>
 
+        <script type="text/javascript" charset="utf-8" src="/static/js/init.js"></script>
+        <script type="text/javascript" charset="utf-8" src="/static/js/autenticazione.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/readFunctions.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/utils.js"></script>
         <script type="text/javascript" charset="utf-8" src="/static/js/annotazioni.js"></script>
