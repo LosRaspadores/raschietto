@@ -13,26 +13,14 @@ __author__ = 'Los Raspadores'
 
 
 # moduli importati
-import rdflib  # per leggere e manipolare grafi RDF
 from SPARQLWrapper import SPARQLWrapper, JSON, N3, TURTLE # per interrogare uno SPARQL end-point
-from rdflib.namespace import RDF  # namespace per RDF
+
 from rdflib import Namespace  # modulo Namespace per crearne di nuovi
-import json
-from urlparse import urljoin
+
 import re
 import datetime
 from time import gmtime, strftime
-from bs4 import BeautifulSoup
-import mechanize
-import json
-import urlparse
-from lxml import etree, html
-import lxml
-import urllib
-from lxml.cssselect import CSSSelector
-import unicodedata
-from unidecode import unidecode
-from os import sys
+
 
 # endpoint
 sparql_endpoint_remoto = "http://tweb2015.cs.unibo.it:8080/data"

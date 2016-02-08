@@ -344,7 +344,7 @@ function annotaCitazione(idCit){
         if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
             for(var j = 0; j < annotazioniSessione[i].annotazioni.length; j++){
                 if(annotazioniSessione[i].annotazioni[j].id == idCit){
-                    $('textarea#selezione').html(annotazioniSessione[i].annotazioni[j].oggetto);
+                    $('textarea#selezione').val(annotazioniSessione[i].annotazioni[j].oggetto);
                 }
             }
         }
@@ -449,6 +449,8 @@ function modificaAnnot(element){
 
     if(tipo == "Funzione retorica"){
         oggetto = gestioneRetoriche(annotazioneModificata.body_o.value);
+    } else if(tipo == "Autore"){
+        oggetto = annotazioneModificata.body_ol.value;
     }
 
     if(typeof(annotazioneModificata.update) != "undefined"){
@@ -461,9 +463,7 @@ function modificaAnnot(element){
         }
 
         if(typeof(annotazioneModificata.update.path) != "undefined"){
-//            path = annotazioneModificata.update.path;
-//            start = annotazioneModificata.start_fragm;
-//            end = annotazioneModificata.end_fragm;
+
             frammentoSelezionato = annotazioneModificata.update.selezione;
         }
     }
