@@ -24,11 +24,11 @@ function query_all_annotazioni(url_documento){
     var query = prefissi +
         'SELECT ?graph ?label ?type ?date ?provenance ?prov_nome ?prov_email ?prov_label ?body_s ?body_p ?body_o ?body_l ?body_ol ?fs_value '+
         '?start ?end ';
-    /*var i;
+    var i;
     for (i=0; i<listaGruppiCompleta.length; i++){
         query += 'FROM NAMED <' + listaGruppiCompleta[i].url + '> ';
-    };*/
-    query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
+    };
+    // query += 'FROM NAMED <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '
     query += 'WHERE {'+
             'GRAPH ?graph {?a a oa:Annotation. '+
             'OPTIONAL {?a rdfs:label ?label} '+
@@ -73,6 +73,7 @@ function get_annotazioni(query, urlDoc){
                 $('#alertDoc').modal('show');
                 scraper(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
+
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -459,6 +460,7 @@ function setRange(nodo, start, end, classCSS, ann) {
             }
         }
     }
+    var rangeContent = rangeObject.toString();
 }
 
 

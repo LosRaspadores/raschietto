@@ -63,12 +63,12 @@ function setIRIautore(nome_autore){
 }
 
 /*
-console.log(setIRIautore(" Màrio  "));
-console.log(setIRIautore("Marìo   Rossi"));
-console.log(setIRIautore("Ma&rio Dè Rùssi  "));
-console.log(setIRIautore("M. Dé Rossi"));
+console.log(setIRIautore(" Mï¿½rio  "));
+console.log(setIRIautore("Marï¿½o   Rossi"));
+console.log(setIRIautore("Ma&rio Dï¿½ Rï¿½ssi  "));
+console.log(setIRIautore("M. Dï¿½ Rossi"));
 console.log(setIRIautore("M{ar}io De Rossi B*ian;chi"));
-console.log(setIRIautore("M[a]riò De Rossi Bianc.;h:i Vèrdi Gialli"));
+console.log(setIRIautore("M[a]riï¿½ De Rossi Bianc.;h:i Vï¿½rdi Gialli"));
 */
 
 
@@ -78,7 +78,7 @@ function getDateTime(){
     return datetime = currentdate.getFullYear() + "-"
                     + addZero(currentdate.getMonth()+1)  + "-"
                     + addZero(currentdate.getUTCDate()) + "T"
-                    + currentdate.getHours() + ":"
+                    + addZero(currentdate.getHours()) + ":"
                     + addZero(currentdate.getMinutes());
 
 }
@@ -137,11 +137,7 @@ function salvaAnnotazioniJSON(url, listaAnnotazioni){
         annot_grafo['listaGrafi'].push(item);
     }
 
-    if(JSON.parse(localStorage.getItem('annotStorage')) != null){
-        listaAllAnnotazioni = JSON.parse(localStorage.getItem('annotStorage'));
-    }
     listaAllAnnotazioni.push(annot_grafo);
-    localStorage.setItem('annotStorage', JSON.stringify(listaAllAnnotazioni));
     //console.log(listaAllAnnotazioni);
 }
 
@@ -283,8 +279,120 @@ function typeToIng(type){
     return out;
 }
 
+function getPredicato(type){
+    out = "";
+    switch(type){
+        case "url":
+            out = ' rdf:predicate fabio:hasURL . ';
+            break;
+        case "titolo":
+            out = ' rdf:predicate dcterms:title . ';
+            break;
+        case "anno pubblicazione":
+            out = ' rdf:predicate fabio:hasPublicationYear . ';
+            break;
+        case "doi":
+            out = ' rdf:predicate prism:doi . ';
+            break;
+        case "autore":
+            out = ' rdf:predicate dcterms:creator . ';
+            break;
+        case "commento":
+            out = ' rdf:predicate schema:comment . ';
+            break;
+        case "funzione retorica":
+            out = ' rdf:predicate sem:denotes . ';
+            break;
+        case "citazione":
+            out = ' rdf:predicate cito:cites . ';
+            break;
+    }
+    return out;
+}
 
 /* Sostituire tutte le occorrenze di un carattere */
 String.prototype.replaceAll = function(target, replacement) {
   return this.split(target).join(replacement);
 };
+
+function getRangeContent(fragmentPath, start, end, urlDoc){
+	var content = "";
+	var path = getXPath(fragmentPath);
+	var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
+        if (path.indexOf('tbody') == -1 ) { // se non c'ï¿½ tbody
+            path = path.replace(/\/tr/g, '/tbody[1]/tr');
+        }
+        path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
+
+        //if rivista statistica
+        path = path.replace("div[1]/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[1]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+
+        //if antropologia e teatro or if alma tourism
+        path = path.replace("div[1]/div[1]/div[1]/div[1]/", ".//*[@id='" + id +"']/div/div/");
+        path = path.replace("div[1]/div[3]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
+
+        //if rivista statistica or if antropologia e teatro
+        path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
+
+        //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
+        try {
+            //The expression is a legal expression.
+            var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+            if (nodo != null){
+                content = getContent(nodo, start, end);
+            };
+        } catch (ex) {
+            //The expression is NOT a legal expression.
+            //se per esempio il fragmentPath ï¿½ incompleto o relativo
+            //l'annotazione viene scartata
+        }
+	return content;
+}
+
+
+function getContent(nodo, start, end){
+
+    var rangeObject = document.createRange();  // creating a Range object.. we wull need to define its start and end points
+    var textNodes = getTextNodesIn(nodo);
+    if (start < 0) { start = 0; };
+    var caratteriTot = end - start;
+    var trovatoNodoStart = false;
+    var charParsed = 0;
+
+    //scorro i nodi discendenti di tipo testo del nodo evaluated
+    for (var i = 0; i<textNodes.length; i++) {
+        var nodoCorrente = textNodes[i];
+        var lunghezzaNodoCorrente = nodoCorrente.length;
+
+        // allora lo start e l'end sono compresi nel nodo corrente => start end offset del range trovati!
+        if((start<lunghezzaNodoCorrente && end <= lunghezzaNodoCorrente) || (trovatoNodoStart && end <= lunghezzaNodoCorrente)){
+            if(!trovatoNodoStart){
+                rangeObject.setStart(nodoCorrente, start);
+            }
+            charParsed = charParsed + (lunghezzaNodoCorrente - start);
+            rangeObject.setEnd(nodoCorrente, end);
+            break;
+        } else {
+            if(start >= lunghezzaNodoCorrente){
+                if(!trovatoNodoStart){
+                    start = start - lunghezzaNodoCorrente;
+                    end = end -lunghezzaNodoCorrente;
+                    // si passa al  al nodo successivo
+                }
+            } else {  // cioï¿½ if(start < lunghezzaNodoCorrente)
+                // lo start offset ï¿½ nel nodo corrente
+                if(!trovatoNodoStart){
+                    rangeObject.setStart(nodoCorrente, start);
+                };
+                trovatoNodoStart = true;
+                charParsed = charParsed + (lunghezzaNodoCorrente - start);
+                end = caratteriTot - charParsed; // caratteri mancanti
+            }
+        }
+    }
+    var content = "";
+    content = rangeObject.toString();
+    return content;
+
+}

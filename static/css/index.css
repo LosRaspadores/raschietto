@@ -7,7 +7,7 @@
 
 body {
     overflow: auto;
-    font-family: Arial, Helvetica, 'Exo' sans-serif;
+    font-family: Arial, Helvetica, 'Exo', sans-serif;
     padding-right: 0px !important;
 }
 
@@ -141,7 +141,7 @@ input.cmn-toggle-yes-no + label:after {
     bottom: 0;
     right: 0;
     color: white;
-    font-family: 'Roboto', sans-serif;
+    font-family: Arial, Helvetica, 'Exo', sans-serif;
     font-size: 18px;
     text-align: center;
     line-height: 50px;
@@ -418,9 +418,9 @@ button.button-lg:active {
 }
 
 /* Visualizzazione documento */
-#singoloDocumento{
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
-    font-size: 14px;
+div.tab-content{
+    font-family: 'Open Sans', sans-serif;
+    font-size: small;
 }
 
 .tabList{
@@ -536,10 +536,6 @@ thead{
 
 #modalGestAnnotazioni table span.glyphicon {
     padding-left: 15px;
-}
-
-div.tab-content{
-    font-family: "Candara";
 }
 
 #selezione {

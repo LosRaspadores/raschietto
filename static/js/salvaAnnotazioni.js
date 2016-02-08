@@ -5,7 +5,10 @@ function inviaQuery(listaQuery){
         success: function(result) {
             $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
             $('#alertDoc').modal('show');
-            //TODO svuotare l'oggetto!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            listaQueryDaInviare = [];
+            $('span[class*="highlight"]').contents().unwrap();
+            query = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            get_annotazioni(query, $("ul.nav.nav-tabs li.active a").attr("id"));
         }
     });
 }
@@ -166,7 +169,6 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore){
                     'rdf:predicate sem:denotes ;' +
                     'rdf:object ' + switchRetorica(valore) + '.';
     } else if (tipo == "Citazione"){
-            alert("valore: "+valore)
             annotazione = '[] a oa:Annotation ;' +
                 'rdfs:label "Citazione"^^xsd:string ;' +
                 'rsch:type "cites"^^xsd:string ;' +
@@ -184,7 +186,6 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore){
 
     var documentFRBR = queryFRBRdocument(url);
     annotazione += documentFRBR;
-    alert(annotazione)
     return annotazione;
 }
 
@@ -217,6 +218,7 @@ function switchRetorica(valore){
     }
     return valore;
 }
+
 function creaQueryUpdate(annotazione){
     query_delete = ' WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> '+
             ' DELETE { '+
@@ -237,48 +239,70 @@ function creaQueryUpdate(annotazione){
 
     if(typeof(annotazione.update.tipo) != "undefined"){
         query_delete += '?a rsch:type "'+annotazione.type.value+'"^^xsd:string . '+
-                 '?a rdfs:label "'+annotazione.label.value+'"^^xsd:string . ';
+                 '?a rdfs:label "'+annotazione.label.value+'"^^xsd:string . '+
+                 '?body rdf:predicate <'+ annotazione.body_p.value +'> . ';
         query_insert += '?a rsch:type "'+typeToIng(annotazione.update.tipo)+'"^^xsd:string . '+
-                        '?a rdfs:label "'+annotazione.update.label_tipo+'"^^xsd:string . ';
+                        '?a rdfs:label "'+annotazione.update.label_tipo+'"^^xsd:string . '+
+                        '?body '+ getPredicato(annotazione.update.tipo.toLowerCase());
     }
 
+    var tipo = "";
+    var tipoN = "";
     if(typeof(annotazione.update.oggetto) != "undefined"){
         if(typeof(annotazione.update.tipo) != "undefined"){
-            tipo = annotazione.update.tipo;
+            tipoN = annotazione.update.tipo;
+            tipo = typeToIta(annotazione.type.value);
         } else {
-            tipo = annotazione.label.value;
+            tipoN = typeToIta(annotazione.type.value);
+            tipo = typeToIta(annotazione.type.value);
         }
+
         if(tipo.toLowerCase() == "doi" || tipo.toLowerCase() == "titolo" || tipo.toLowerCase() == "commento"){
             query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:string; '+
                         'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:string ; '+
-                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
         } else if(tipo.toLowerCase() == "url"){
             query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:anyURL; '+
                         'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:anyURL ; '+
-                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "anno"){
+        } else if(tipo.toLowerCase() == "anno pubblicazione"){
             query_delete += '?body rdf:object "'+ annotazione.body_o.value+'"^^xsd:date; '+
                         'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:date ; '+
-                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
         } else if(tipo.toLowerCase() == "autore"){
             query_delete += '?body rdf:object <'+ annotazione.body_o.value+'> ; '+
                     'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        }  else { // funzione retorica o citazione
+            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
+                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        }
+
+        if(tipoN.toLowerCase() == "doi" || tipoN.toLowerCase() == "titolo" || tipoN.toLowerCase() == "commento"){
+            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:string ; '+
+                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        } else if(tipoN.toLowerCase() == "url"){
+            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:anyURL ; '+
+                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        } else if(tipoN.toLowerCase() == "anno pubblicazione"){
+            query_insert += '?body rdf:object "'+ annotazione.update.oggetto+'"^^xsd:date ; '+
+                        'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+        } else if(tipoN.toLowerCase() == "autore"){
             query_insert += '?body rdf:object <'+ setIRIautore(annotazione.update.oggetto) +'> ; '+
                     'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "retorica"){
-            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
-                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-            query_insert += '?body rdf:object '+ switchRetorica(annotazione.update.oggetto) +' ; '+
-                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-        } else if(tipo.toLowerCase() == "citazione"){
-            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
-                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+        } else { // funzione retorica e citazione
             query_insert += '?body rdf:object <'+ annotazione.update.oggetto +'> ; '+
                     'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
         }
+
+
+//        else if(tipo.toLowerCase() == "funzione retorica"){
+//            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
+//                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+//            query_insert += '?body rdf:object <'+ switchRetorica(annotazione.update.oggetto) +'> ; '+
+//                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+//        } else if(tipo.toLowerCase() == "citazione"){
+//            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
+//                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
+//            query_insert += '?body rdf:object <'+ annotazione.update.oggetto +'> ; '+
+//                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
+//        }
     }
 
     if(typeof(annotazione.update.path) != "undefined"){
@@ -291,9 +315,11 @@ function creaQueryUpdate(annotazione){
                         'oa:end "'+annotazione.update.end_fragm+'"^^xsd:nonNegativeInteger . ';
 
         // se e' stato modificato il path di un'annotazione di tipo commento o retorica, si deve aggiornare anche il soggetto del body
-        if(tipo.toLowerCase() == "commento" || tipo.toLowerCase() == "retorica"){
+        if(tipo != tipoN){
+            if(tipoN.toLowerCase() == "commento" || tipoN.toLowerCase() == "funzione retorica"){
             query_delete += '?body rdf:subject <'+ annotazione.body_s.value+'> . ';
             query_insert += '?body rdf:subject <'+annotazione.target.value.replace('.html', '_ver1#')+annotazione.update.path+'-'+annotazione.update.start_fragm+'-'+annotazione.update.end_fragm+'> . ';
+        }
         }
     }
 
@@ -309,7 +335,9 @@ function creaQueryDelete(annotazione){
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:date';
     } else if(annotazione.type.value == "hasURL"){
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:anyURL';
-    } else if(annotazione.type.value == "cites" || annotazione.type.value == "denotesRhetoric" || annotazione.type.value == "hasAuthor"){
+    } else if(annotazione.type.value == "cites" || annotazione.type.value == "denotesRhetoric"){
+        oggetto = '<'+annotazione.body_o.value+'>';
+    } else if(annotazione.type.value == "hasAuthor"){
         oggetto = annotazione.body_o.value;
     } else {
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:string';
