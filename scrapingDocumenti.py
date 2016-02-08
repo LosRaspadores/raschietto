@@ -147,9 +147,9 @@ def scraping_documenti():
         lista_docs.append(data)
 
 
-    # print json.dumps(lista_docs)
+    #print json.dumps(lista_docs)
 
-    return json.dumps(lista_docs)
+    return lista_docs
 
 
 if __name__ == "__main__":

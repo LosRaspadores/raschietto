@@ -235,6 +235,19 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     return ann
 
 
+def get_fragment_path(path):
+    arr = path.split("_")
+    for i in range(len(arr)):
+        if not(contains_digits(arr[i])):
+            arr[i] = arr[i] + "1"
+        else:
+            if "h" in arr[i]:
+                if len(arr[i]) == 2:
+                    arr[i] = arr[i]+"1"
+    path = "_".join(arr)
+    path = path.replace("1_html1_body1_", "")
+    return path
+
 # per query insert e delete
 def do_query_post(endpoint, query):
     sparql_endpoint = SPARQLWrapper(endpoint+"/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
@@ -249,6 +262,7 @@ def query_annotazione(nome_grafo, annotazione):
                     GRAPH <%s> { %s }
                 }""" % (nome_grafo, annotazione)
     return query
+
 
 
 def query_delete_all_doc_nostraprovenance(url_doc):
@@ -269,6 +283,19 @@ def query_delete_all_doc_nostraprovenance(url_doc):
 def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
+
+def get_fragment_path(path):
+    arr = path.split("_")
+    for i in range(len(arr)):
+        if not(contains_digits(arr[i])):
+            arr[i] = arr[i] + "1"
+        else:
+            if "h" in arr[i]:
+                if len(arr[i]) == 2:
+                    arr[i] = arr[i]+"1"
+    path = "_".join(arr)
+    path = path.replace("html1_body1_", "")
+    return path
 
 def main():
     """
@@ -331,7 +358,6 @@ def main():
     """
     reload(sys)
     sys.setdefaultencoding("utf-8")
-
     url = "http://rpd.unibo.it/article/view/5355"
     pathgenerale = "/html/body/div/div/div[2]/div[3]/"
     pathparziale = "div[2]/h3/text()"

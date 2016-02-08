@@ -71,8 +71,9 @@ function get_annotazioni(query, urlDoc){
             } else {
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
-                //scraper(lista_annotazioni, urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
+                scraper(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
+
         },
         //there is no error handling for JSONP request
         //workaround: jQuery ajax Timeout
@@ -87,6 +88,25 @@ function get_annotazioni(query, urlDoc){
     });
 };
 
+
+function scraper(urlDoc){
+    $.ajax({
+        url: '/scrapingAutomatico',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result){
+            var url = $("ul.nav.nav-tabs li.active a").attr("id");
+            res = JSON.parse(result);
+            query_all_annotazioni(url);
+            allAnnotazioni = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            get_annotazioni(allAnnotazioni,url)
+        },
+        error: function(){
+
+        }
+    });
+  }
+  
 
 function lancia_scraper(query, urlDoc){
     uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
@@ -106,160 +126,6 @@ function lancia_scraper(query, urlDoc){
         }
     });
 };
-
-/*
-function scraper(anns, urlDoc){
-    $findTitle = false;
-    $findAuthor = false;
-    $findDoi = false;
-    $findYears = false;
-    $findCitazioni = false;
-
-     for (i = 0; i < anns.length; i++) {
-        ann = anns[i];
-        // alert('ann='+ann);
-        ann_out = displaySingolaAnnotazione("", ann);
-        if(typeof(ann["type"]) !== "undefined"){
-           tipo_ann = gestioneTipoType(ann["type"]["value"]);
-           //console.log("tipo ann="+ann["type"]["value"]);
-
-           if(ann["type"]["value"]=="hasTitle"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                console.log("annot titolo="+ann_out);
-                $findTitle = true;
-               }
-             }
-           }
-           if(ann["type"]["value"]== "hasAuthor"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annot autore="+ann_out);
-                    $findAuthor = true;
-               }
-             }
-           }
-           if(ann["type"]["value"]== "hasDOI"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annotazione doi="+ann_out);
-                    $findDoi = true;
-               }
-             }
-           }
-           if(ann["type"]["value"]== "hasPublicationYear"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annotazione anno="+ann_out);
-                    $findYears = true;
-               }
-             }
-           }
-
-            if(ann["type"]["value"]== "cites"){
-             if(typeof(ann["prov_nome"]) !== "undefined"){
-               if(ann["prov_nome"]["value"] == "Heisenbergg"){
-                    console.log("annotazione anno="+ann_out);
-                    $findYears = true;
-               }
-             }
-           }
-
-
-        }
-    }
-
-    if($findTitle == false){
-        console.log($findTitle);
-        console.log("chiamare scraper titolo");
-
-        $.ajax({
-             url: '/scrapingAutomaticoTitolo',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping titolo="+result);
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-     if($findAuthor == false){
-        console.log($findTitle);
-        console.log("chiamare scraper autore");
-
-        $.ajax({
-             url: '/scrapingAutomaticoAutore',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping autore="+result);
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-    if ($findDoi ==false) {
-       console.log($findDoi);
-       console.log("chiamare scraper doi");
-
-       $.ajax({
-             url: '/scrapingAutomaticoDoi',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping Doi="+result);
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-    }
-
-    if($findYears == false){
-        console.log($findYears);
-        console.log("chiamare scraper anno");
-
-        $.ajax({
-             url: '/scrapingAutomaticoYears',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping anno="+result);
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-        if($findCitazioni == false){
-        console.log($findCitazioni);
-        console.log("chiamare scraper citazioni");
-
-        $.ajax({
-             url: '/scrapingCitazioni',
-             type: 'GET',
-             data: {url: urlDoc},
-             success: function(result) {
-                   alert("scraping citazioni="+result);
-             },
-             error: function(error) {
-                   alert("Error: " + error);
-             }
-        });
-
-    }
-
-
-}*/
 
 function gestioneAnnotazioni(lista_annotazioni, urlDoc) {
     for (i = 0; i < lista_annotazioni.length; i++) {
@@ -434,25 +300,25 @@ function getXPath(x){
 function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
-        case "sro:Abstract":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Abstract":
             out = "Abstract";
             break;
-        case "deo:Introduction":
+        case "http://purl.org/spar/deo/Introduction":
             out = "Introduction";
             break;
-        case "deo:Materials":
+        case "http://purl.org/spar/deo/Materials":
             out = "Materials";
             break;
-        case "deo:Methods":
+        case "http://purl.org/spar/deo/Methods":
             out = "Methods";
             break;
-        case "deo:Results":
+        case "http://purl.org/spar/deo/Results":
             out = "Results";
             break;
-        case "sro:Discussion":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Discussion":
             out = "Discussion";
             break;
-        case "sro:Conclusion":
+        case "http://salt.semanticauthoring.org/ontologies/sro#Conclusion":
             out = "Conclusion";
             break;
     }
@@ -463,33 +329,41 @@ function getClassNameType(type){
     var classCSS = "";
     switch(type){
         case "hasURL":
+        case "URL":
             classCSS = "highlightURL";
             break;
         case "hasTitle":
+        case "Titolo":
             classCSS = "highlightTitle";
             break;
         case "hasPublicationYear":
+        case "Anno di pubblicazione":
+        case "Anno pubblicazione":
             classCSS = "highlightPublicationYear";
             break;
         case "hasDOI":
+        case "DOI":
             classCSS = "highlightDOI";
             break;
         case "hasAuthor":
+        case "Autore":
             classCSS = "highlightAuthor";
             break;
         case "hasComment":
+        case "Commento":
             classCSS = "highlightComment";
             break;
         case "denotesRhetoric":
+        case "Funzione retorica":
             classCSS = "highlightDenotesRhetoric";
             break;
         case "cites":
+        case "Citazione":
             classCSS = "highlightCites";
             break;
     }
     return classCSS;
 };
-
 
 /* parse formato data e ora YYYY-MM-DDTHH:mm */
 function parseDatetime(dataAnn){

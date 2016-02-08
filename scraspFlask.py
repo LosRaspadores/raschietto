@@ -13,7 +13,6 @@ __author__ = 'Los Raspadores'
 
 from flask import Flask, render_template, request
 
-
 # script importati
 from scrapingGruppi import scraping_gruppi
 from scrapingDocumenti import scraping_documenti
@@ -21,6 +20,8 @@ from scrapingSingoloDocumento import scraping_singolo_documento
 from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_endpoint_remoto, rfrbDocToEndpoint
 import json
 from scrapingAutomatico import scraping_titolo, scarping_autore, scraping_doi, scraping_anno, scraping_citazioni, scraping_automatico_titolo
+from insertQuery import *
+
 
 # inizializzazione applicazione
 app = Flask(__name__)
@@ -29,7 +30,6 @@ app = Flask(__name__)
 app.config.update(
     DEBUG=True,
 )
-
 
 # controllers
 @app.route('/')
@@ -48,20 +48,42 @@ def return_gruppi():
     data = scraping_gruppi()
     return data
 
-
-@app.route('/scrapingCitazioni')
-def return_citazioni():
-    urlD = request.args.get('url')
-    data = scraping_citazioni(urlD)
-    return data
-
-
-@app.route('/scrapingAutomaticoAutore')
-def return_autore():
+@app.route('/scrapingAutomatico')
+def scrapingAutomatico():
+     listaAnnotazioni=[]
      urlD = request.args.get('url')
-     data = scarping_autore(urlD)
-     return data
-
+     doi = scraping_doi(urlD)   #dict
+     print doi
+     anno = scraping_anno(urlD)
+     autore = scarping_autore(urlD)
+     citazioni = scraping_citazioni(urlD)
+     titolo = scraping_automatico_titolo(urlD)
+     # annDoi = costruisciAnnotazione(urlD,get_fragment_path(doi["xpath"]),doi["start"],doi["end"],"hasDOI",doi["doi"], 0)
+     # query_doi=query_annotazione(nome_grafo_gruppo,annDoi)
+     # do_query_post(sparql_endpoint_remoto,query_doi)
+     # listaAnnotazioni.append(annDoi)
+     annAnno = costruisciAnnotazione(urlD,get_fragment_path(anno["xpath"]),anno["start"],anno["end"],"hasPublicationYear",anno["anno"], 0)
+     query_Anno=query_annotazione(nome_grafo_gruppo,annAnno)
+     do_query_post(sparql_endpoint_remoto,query_Anno)
+     listaAnnotazioni.append(annAnno)
+     annAutore = costruisciAnnotazione(urlD,get_fragment_path(autore["path"]),autore["start"],autore["end"],"hasAuthor",autore["autori"], 0)
+     query_autore=query_annotazione(nome_grafo_gruppo,annAutore)
+     do_query_post(sparql_endpoint_remoto,query_autore)
+     listaAnnotazioni.append(annAutore)
+     annTitolo = costruisciAnnotazione(urlD,get_fragment_path(titolo["path"]),titolo["start"],titolo["end"],"hasTitle",titolo["titolo"], 0)
+     query_titolo=query_annotazione(nome_grafo_gruppo,annTitolo)
+     do_query_post(sparql_endpoint_remoto,query_titolo)
+     listaAnnotazioni.append(annTitolo)
+     for i in range(len(citazioni)):
+         annCitazione=costruisciAnnotazione(urlD,get_fragment_path(citazioni[i]["xpath"]),citazioni[i]["inizio"],citazioni[i]["fine"],"cites",citazioni[i]["object"], i+1)
+         query_citazione=query_annotazione(nome_grafo_gruppo,annCitazione)
+         do_query_post(sparql_endpoint_remoto,query_citazione)
+         listaAnnotazioni.append(annCitazione)
+     
+     
+     result={}
+     result["numero"]=len(listaAnnotazioni)
+     return json.dumps(result)
 
 # @app.route('/scrapingAutomatico')
 # def return_scrapingAuto():
@@ -87,40 +109,52 @@ def return_doi():
      return data
 
 
-@app.route('/scrapingAutomaticoYears')
-def return_years():
+
+@app.route('/scrapingAutomaticoForzato')
+def scrapingAutomaticoForzato():
      urlD = request.args.get('url')
-     data = scraping_anno(urlD)
-     return data
+     doi = scraping_doi(urlD)
+     anno = scraping_anno(urlD)
+     autore = scarping_autore(urlD)
+     citazioni = scraping_citazioni(urlD)
+     titolo = scraping_automatico_titolo(urlD)
+     #return data
 
 
-@app.route('/scrapingAutomaticoTitolo')
-def return_auto_titolo():
-    urlD = request.args.get('url')
-    data = scraping_automatico_titolo(urlD)
-    return data
 
-
-@app.route('/scrapingTitolo', methods=['GET', 'POST'])    #prende il titolo dei docuemnti quando vengono caricati
+@app.route('/getDocumenti', methods=['GET', 'POST'])    #prende il titolo dei documenti quando vengono caricati
 def return_titolo():
-    url = request.args.get('url')  #  riceve: urlDoc = JSON.stringify(docTemp);
-    if url is not None:
-        item_list = json.loads(url)  # load s => stringa
+    #url = request.args.get('url')
+    #item_list = json.loads(url)
+    # url = request.args.get('url')  #  riceve: urlDoc = JSON.stringify(docTemp);
+    # if url is not None:
+    #     item_list = json.loads(url)  # load s => stringa
 
+    item_list = []
     read_file = open('cacheDoc.json', 'r')
     result = read_file.read()
     read_file.close()
     if (result):
         data = result
     else:
-        if url is not None:
-            data = scraping_titolo(item_list)
-            out_file = open('cacheDoc.json', 'w')
-            out_file.write(data)
-            out_file.close()
+        docFromScraping = scraping_documenti();
+        query = "PREFIX fabio: <http://purl.org/spar/fabio/> SELECT DISTINCT ?doc WHERE { ?doc a fabio:Item . FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'cited')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'Reference')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), '_ver')}}";
+        docFromSPARQL = do_query_get(sparql_endpoint_remoto, query)
+
+        for d in docFromScraping:
+            item_list.append(d['url'])
+
+        for doc in docFromSPARQL['results']['bindings']:
+            if doc['doc']['value'] in item_list:
+                continue
+            else:
+                item_list.append(doc['doc']['value'])
+        #if url is not None:
+        data = scraping_titolo(item_list)
+        out_file = open('cacheDoc.json', 'w')
+        out_file.write(data)
+        out_file.close()
     return data
-
-
 
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
@@ -173,8 +207,10 @@ def check_Documento_In_Cache():
 @app.route('/salvaAnnotazioni')
 def salvaAnnotazioni():
     query = request.args.get('query')
-    do_query_post(sparql_endpoint_remoto, query)
-    print query
+    lista_query = json.loads(query)
+    for q in lista_query:
+        print q
+        do_query_post(sparql_endpoint_remoto, q)
     return "ok"
 
 # launch app
