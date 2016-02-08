@@ -255,6 +255,7 @@ def do_query_post(endpoint, query):
     sparql_endpoint.setMethod('POST')
     sparql_endpoint.query()
 
+
 def query_annotazione(nome_grafo, annotazione):
     query = prefissi + """
                 INSERT DATA {
@@ -282,6 +283,19 @@ def query_delete_all_doc_nostraprovenance(url_doc):
 def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
+
+def get_fragment_path(path):
+    arr = path.split("_")
+    for i in range(len(arr)):
+        if not(contains_digits(arr[i])):
+            arr[i] = arr[i] + "1"
+        else:
+            if "h" in arr[i]:
+                if len(arr[i]) == 2:
+                    arr[i] = arr[i]+"1"
+    path = "_".join(arr)
+    path = path.replace("html1_body1_", "")
+    return path
 
 def main():
     """
@@ -348,6 +362,8 @@ def main():
     pathgenerale = "/html/body/div/div/div[2]/div[3]/"
     pathparziale = "div[2]/h3/text()"
     titolo = "La valutazione"
+
+
     #albero nodi metodo 1
     br = mechanize.Browser()
     response = br.open(url)
@@ -359,6 +375,7 @@ def main():
     end = start + len(titolo)
     print start
     print end
+
     # open url metodo 2
     url = "http://rpd.unibo.it/article/view/5355"
     url = "http://www.dlib.org/dlib/july15/downs/07downs.html"

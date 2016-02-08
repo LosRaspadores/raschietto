@@ -79,12 +79,34 @@ def scrapingAutomatico():
          query_citazione=query_annotazione(nome_grafo_gruppo,annCitazione)
          do_query_post(sparql_endpoint_remoto,query_citazione)
          listaAnnotazioni.append(annCitazione)
-
-
+     
+     
      result={}
      result["numero"]=len(listaAnnotazioni)
      return json.dumps(result)
 
+# @app.route('/scrapingAutomatico')
+# def return_scrapingAuto():
+#     urlD = request.args.get('url')
+#     auto = []
+#     data =scarping_autore(urlD)
+#     data1 = scraping_automatico_titolo(urlD)
+#     data2 = scraping_doi(urlD)
+#     data3 = scraping_anno(urlD)
+#     data4 = scraping_citazioni(urlD)
+#     auto.append(data)
+#     auto.append(data1)
+#     auto.append(data2)
+#     auto.append(data3)
+#     auto.append(data4)
+#     return data
+
+
+@app.route('/scrapingAutomaticoDoi')
+def return_doi():
+     urlD = request.args.get('url')
+     data = scraping_doi(urlD)
+     return data
 
 
 
@@ -100,16 +122,34 @@ def scrapingAutomaticoForzato():
 
 
 
-@app.route('/scrapingTitolo')    #prende il titolo dei docuemnti quando vengono caricati
+@app.route('/getDocumenti', methods=['GET', 'POST'])    #prende il titolo dei documenti quando vengono caricati
 def return_titolo():
-    url = request.args.get('url')
-    item_list = json.loads(url)
+    #url = request.args.get('url')
+    #item_list = json.loads(url)
+    # url = request.args.get('url')  #  riceve: urlDoc = JSON.stringify(docTemp);
+    # if url is not None:
+    #     item_list = json.loads(url)  # load s => stringa
+
+    item_list = []
     read_file = open('cacheDoc.json', 'r')
     result = read_file.read()
     read_file.close()
     if (result):
         data = result
     else:
+        docFromScraping = scraping_documenti();
+        query = "PREFIX fabio: <http://purl.org/spar/fabio/> SELECT DISTINCT ?doc WHERE { ?doc a fabio:Item . FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'cited')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), 'Reference')} FILTER NOT EXISTS { ?doc a fabio:Item . FILTER regex(str(?doc), '_ver')}}";
+        docFromSPARQL = do_query_get(sparql_endpoint_remoto, query)
+
+        for d in docFromScraping:
+            item_list.append(d['url'])
+
+        for doc in docFromSPARQL['results']['bindings']:
+            if doc['doc']['value'] in item_list:
+                continue
+            else:
+                item_list.append(doc['doc']['value'])
+        #if url is not None:
         data = scraping_titolo(item_list)
         out_file = open('cacheDoc.json', 'w')
         out_file.write(data)
@@ -119,7 +159,6 @@ def return_titolo():
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
     url = request.args.get('url')
-    #print("url=="+url)
     data = scraping_singolo_documento(url)
     return data
 
@@ -168,8 +207,10 @@ def check_Documento_In_Cache():
 @app.route('/salvaAnnotazioni')
 def salvaAnnotazioni():
     query = request.args.get('query')
-    do_query_post(sparql_endpoint_remoto, query)
-    print query
+    lista_query = json.loads(query)
+    for q in lista_query:
+        print q
+        do_query_post(sparql_endpoint_remoto, q)
     return "ok"
 
 # launch app
@@ -178,4 +219,4 @@ if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5000) # host server (macchina local)
 
     # in locale: run on default port localhost:5000
-    app.run()
+    # app.run()

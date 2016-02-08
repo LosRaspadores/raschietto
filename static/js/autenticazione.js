@@ -35,20 +35,20 @@ $(document).ready(function() {
         }
     });
 
+
     function readerMode(){
 
-        $('[data-toggle="tooltip"]').tooltip('destroy');
-        $('[data-toggle="tooltip"]').tooltip();
+        $('#modalitaToggleLabel').tooltip('destroy');
         $("#modalitaToggleLabel").attr('title','Passa a modalità annotator');
-
+        $('#modalitaToggleLabel').tooltip();
         $('#utenteAutenticato').text("");
         $('#bottoniAnnotator').hide();
     }
 
     function annotatorMode(){
-        $('[data-toggle="tooltip"]').tooltip('destroy');
+        $('#modalitaToggleLabel').tooltip('destroy');
         $("#modalitaToggleLabel").attr('title','Passa a modalità reader');
-        $('[data-toggle="tooltip"]').tooltip();
+        $('#modalitaToggleLabel').tooltip();
         $('#bottoniAnnotator').show();
     }
 
