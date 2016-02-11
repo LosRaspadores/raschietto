@@ -274,7 +274,8 @@ $(document).ready(function() {
                         if(tipo == "Funzione retorica"){
                             oggetto = gestioneRetoriche(annot_gest[i].body_o.value);
                         } else if(tipo == "Citazione" || tipo == "Autore"){
-                            oggetto = annot_gest[i].body_ol.value;
+//                            console.log("*****testo citazione: "+annot_gest[i])
+                            oggetto = annot_gest[i].body_l.value; //TODO <--------------------------------- body_ol.value
                         } else {
                             oggetto = annot_gest[i].body_o.value;
                         }

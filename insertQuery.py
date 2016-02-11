@@ -67,6 +67,7 @@ prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 def setIRIautore(nome_autore):
     nome_autore = nome_autore.strip()
     nome_autore = nome_autore.lower()
+    nome_autore = nome_autore.encode("utf-8")
     for ch in ['\\', ';', '&', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '$', '\'']:
         if ch in nome_autore:
             nome_autore = nome_autore.replace(ch, "")
@@ -110,6 +111,7 @@ def setIRIautore(nome_autore):
     else:
         uri += list[0][0:1] + "-" + list[length-2] + list[length-1]
 
+    uri = uri.decode("utf-8")
     return uri
 
 

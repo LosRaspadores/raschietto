@@ -600,7 +600,7 @@ function annotaCitazioneGrafo(element){
     $('button#bottonemodFramm').css("display", "none");
     $('#modalAnnotDoc h3').html("Inserisci annotazione");
     $('textarea#selezione').css('display', 'block');
-    $('textarea#selezione').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_ol.value);
+    $('textarea#selezione').val(listaAnnotGrafo1537[indexDoc].annotazioni[index].body_l.value); //TODO c'era body_ol.value
 
     annotazioneCitazione = listaAnnotGrafo1537[indexDoc].annotazioni[index];
     $("#modalAnnotDoc").modal("show");
