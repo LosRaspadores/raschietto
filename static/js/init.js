@@ -407,10 +407,10 @@ $(document).ready(function() {
 
     });
 
-    //collegamento bottone lancia scraper
+
     $('#buttonScraper').click(function(){
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lancia_scraper(query, href);
+        lancia_scraper(href);
 
     });
 

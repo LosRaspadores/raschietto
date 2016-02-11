@@ -108,24 +108,25 @@ function scraper(urlDoc){
   }
   
 
-function lancia_scraper(query, urlDoc){
-    uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
+function lancia_scraper(urlDoc){
     $.ajax({
-        url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
-        //url: "http://localhost:3030/data/query?query=" + uriQuery + "&format=json",
-
-        dataType: "jsonp",
-        success: function(result) {
-            lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
-            scraper(lista_annotazioni,urlDoc);
-
+        url: '/scrapingAutomaticoForzato',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result){
+            alert("scraping automatico forzato ")
+            var url = $("ul.nav.nav-tabs li.active a").attr("id");
+            res = JSON.parse(result);
+            query_all_annotazioni(url);
+            allAnnotazioni = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            get_annotazioni(allAnnotazioni,url)
         },
-        error: function(error) {
-            $('#alertMessage').text("Errore nell'esecuzione dello scraper");
-            $('#alertDoc').modal('show');
+        error: function(){
+
         }
     });
-};
+  }
+
 
 function gestioneAnnotazioni(lista_annotazioni, urlDoc) {
     for (i = 0; i < lista_annotazioni.length; i++) {
