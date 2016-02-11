@@ -1027,7 +1027,7 @@ $(document).ready(function(){
                 annotazioniGrafoSessione.push(annot);
             }
 
-            sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
+            sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
         }else{ //inserisci citazione
             var cit = "[1] Bührig, Kristin et al. 2011. 'The corpus 'Interpreting in hospitals' possible applications for research and communication trainings.' In: Hedeland, Hanna et al. (Eds.), Multilingual Resources and Multilingual Applications Proceedings of the Conference of the German Society for Computational Linguistics and Language Technology (GSCL) 2011. Hamburg: Universität. (Arbeiten zur Mehrsprachigkeit: Working Papers in Multilingualism; Folge B: Serie B; 96)."
             /* Inserisci citazione */
