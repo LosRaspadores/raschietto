@@ -1,8 +1,19 @@
 <h3>Benvenuto in Raschietto</h3>
 <h4>Un'applicazione per l'annotazione semantica di documenti</h4>
-<div>Modalità reader e annotator</div>
-<div>
-Tipo di annotazioni
 
+L'utente può utilizzare l'applicazione come reader o autenticarsi come annotator.
+<p>L'utente in modalità reader può:</p>
 
-</div>
+<ul>
+<li>scegliere i documenti su cui visualizzare le annotazioni e aggiungerne di nuovi</li>
+<li>filtrare le annotazioni per tipologia e gruppo</li>
+</ul>
+
+<p>In più, l'utente in modalità annotator può:</p>
+
+<ul>
+<li>aggiungere annotazioni sul documento selezionato</li>
+<li>modificare o cancellare annotazioni</li>
+<li>salvarle definitivamente sul dataset</li>
+</ul>
+

@@ -13,26 +13,14 @@ __author__ = 'Los Raspadores'
 
 
 # moduli importati
-import rdflib  # per leggere e manipolare grafi RDF
 from SPARQLWrapper import SPARQLWrapper, JSON, N3, TURTLE # per interrogare uno SPARQL end-point
-from rdflib.namespace import RDF  # namespace per RDF
+
 from rdflib import Namespace  # modulo Namespace per crearne di nuovi
-import json
-from urlparse import urljoin
+
 import re
 import datetime
 from time import gmtime, strftime
-from bs4 import BeautifulSoup
-import mechanize
-import json
-import urlparse
-from lxml import etree, html
-import lxml
-import urllib
-from lxml.cssselect import CSSSelector
-import unicodedata
-from unidecode import unidecode
-from os import sys
+
 
 # endpoint
 sparql_endpoint_remoto = "http://tweb2015.cs.unibo.it:8080/data"
@@ -152,9 +140,9 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     target = "oa:hasTarget [ a oa:SpecificResource ;"\
                 "oa:hasSelector [ a oa:FragmentSelector ;"\
                     "rdf:value \"" + path + "\"^^xsd:string ;"\
-                    "oa:start \"" + start + "\"^^xsd:nonNegativeInteger ;"\
-                    "oa:end  \"" + end + "\"^^xsd:nonNegativeInteger ] ;"\
-                "oa:hasSource <" + urldoc + "> ] ."
+                    "oa:start \"" + str(start) + "\"^^xsd:nonNegativeInteger ;"\
+                    "oa:end  \"" + str(end) + "\"^^xsd:nonNegativeInteger ] ;"\
+                "oa:hasSource <" + str(urldoc) + "> ] ."
 
     if tipo == "hasTitle":
         ann = """[] a oa:Annotation ;
@@ -206,7 +194,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
                 rdfs:label \"""" + valore + """\"^^xsd:string ;
                 rdf:subject <""" + urlnohtml + """_ver1> ;
                 rdf:predicate prism:doi ;
-                rdf:object \"""" + valore + """\"^^xsd:date ."""
+                rdf:object \"""" + valore + """\"^^xsd:string ."""
     elif tipo == "hasURL":
         ann = """[] a oa:Annotation ;
             rdfs:label "URL"^^xsd:string ;

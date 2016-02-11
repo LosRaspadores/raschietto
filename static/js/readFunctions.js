@@ -90,9 +90,8 @@ function getDocumenti(){
 //    }
 //
 //    urlDoc = JSON.stringify(docTemp);
-
     $.ajax({
-        url:'/getDocumenti',
+        url: '/getDocumenti',
         type: 'GET',
         success: function(result){
             res = JSON.parse(result);

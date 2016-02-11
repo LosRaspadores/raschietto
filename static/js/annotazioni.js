@@ -90,16 +90,15 @@ function get_annotazioni(query, urlDoc){
 
 
 function scraper(urlDoc){
+    console.log("PARTE LO SCRAPER *********************************************************************");
     $.ajax({
         url: '/scrapingAutomatico',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
-            var url = $("ul.nav.nav-tabs li.active a").attr("id");
             res = JSON.parse(result);
-            query_all_annotazioni(url);
-            allAnnotazioni = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
-            get_annotazioni(allAnnotazioni,url)
+            query = query_all_annotazioni(urlDoc);
+            get_annotazioni(query, urlDoc);
         },
         error: function(){
 
@@ -201,7 +200,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
     }else {
-        console.log("annotazione scartata" + ann);
+        console.log("annotazione scartata" + ann + " *******************");
         //l'annotazione viene scartata
         var classCSS = "";
     }
@@ -217,7 +216,6 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
-        //TODO perchè //table/ e non /table/
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
@@ -463,9 +461,7 @@ function setRange(nodo, start, end, classCSS, ann) {
             }
         }
     }
-    //TODO!!!!!!!!!!!!!!!!!! per silvia!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     var rangeContent = rangeObject.toString();
-    console.log("range content: " + rangeContent);
 }
 
 

@@ -33,19 +33,16 @@ import unicodedata
 
 
 
-#citazioni - fuori dal ciclo con errore nei siti buddendohm
+
 
 def main():
-     #scraping_automatico_titolo('http://rivista-statistica.unibo.it/article/view/4599?acceptCookies=1')
+     #scraping_automatico_titolo("http://www.dlib.org/dlib/july15/linek/07linek.html")
      scraping_titolo()
-     #scraping_citazioni("http://www.dlib.org/dlib/november14/jahja/11jahja.html")
-     #scraping_citazioni("http://rivista-statistica.unibo.it/article/view/4599?acceptCookies=1")
+     #scraping_citazioni("http://www.dlib.org/dlib/july15/linek/07linek.html")
      #scraping_citazioni()
      #scarping_autore("http://www.dlib.org/dlib/july15/linek/07linek.html")
-     #scraping_doi("http://rivista-statistica.unibo.it/article/view/4599?acceptCookies=1")
-     #scraping_doi("http://rivista-statistica.unibo.it/article/view/4599?acceptCookies=1")
-     #scraping_anno("http://rivista-statistica.unibo.it/article/view/4599?acceptCookies=1")
-     #scraping_anno("http://rivista-statistica.unibo.it/article/view/4599?acceptCookies=1")
+     #scraping_doi("http://www.dlib.org/dlib/july15/linek/07linek.html")
+     #scraping_anno("http://www.dlib.org/dlib/july15/linek/07linek.html")
 
 def scraping_titolo(urlDoc):
     # Browser mechanize
@@ -123,6 +120,7 @@ def scraping_automatico_titolo(url):
         xpath_titolo = '//*[@id="articleTitle"]/h3/text()'
         titoloP = tree.xpath(xpath_titolo)[0]  #prendo il primo valore degli h3
         start = 0
+        lista["start"]=start
         end = start+len(str(titoloP))
         lista["start"]=str(start)
         lista["end"]=str(end)
