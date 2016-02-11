@@ -140,9 +140,9 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     target = "oa:hasTarget [ a oa:SpecificResource ;"\
                 "oa:hasSelector [ a oa:FragmentSelector ;"\
                     "rdf:value \"" + path + "\"^^xsd:string ;"\
-                    "oa:start \"" + start + "\"^^xsd:nonNegativeInteger ;"\
-                    "oa:end  \"" + end + "\"^^xsd:nonNegativeInteger ] ;"\
-                "oa:hasSource <" + urldoc + "> ] ."
+                    "oa:start \"" + str(start) + "\"^^xsd:nonNegativeInteger ;"\
+                    "oa:end  \"" + str(end) + "\"^^xsd:nonNegativeInteger ] ;"\
+                "oa:hasSource <" + str(urldoc) + "> ] ."
 
     if tipo == "hasTitle":
         ann = """[] a oa:Annotation ;
@@ -194,7 +194,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
                 rdfs:label \"""" + valore + """\"^^xsd:string ;
                 rdf:subject <""" + urlnohtml + """_ver1> ;
                 rdf:predicate prism:doi ;
-                rdf:object \"""" + valore + """\"^^xsd:date ."""
+                rdf:object \"""" + valore + """\"^^xsd:string ."""
     elif tipo == "hasURL":
         ann = """[] a oa:Annotation ;
             rdfs:label "URL"^^xsd:string ;
@@ -238,6 +238,8 @@ def get_fragment_path(path):
 
 # per query insert e delete
 def do_query_post(endpoint, query):
+    print("do_queryPost")
+    print(query)
     sparql_endpoint = SPARQLWrapper(endpoint+"/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
     sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('POST')
@@ -272,18 +274,18 @@ def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
 
-def get_fragment_path(path):
-    arr = path.split("_")
-    for i in range(len(arr)):
-        if not(contains_digits(arr[i])):
-            arr[i] = arr[i] + "1"
-        else:
-            if "h" in arr[i]:
-                if len(arr[i]) == 2:
-                    arr[i] = arr[i]+"1"
-    path = "_".join(arr)
-    path = path.replace("html1_body1_", "")
-    return path
+# def get_fragment_path(path):
+#     arr = path.split("_")
+#     for i in range(len(arr)):
+#         if not(contains_digits(arr[i])):
+#             arr[i] = arr[i] + "1"
+#         else:
+#             if "h" in arr[i]:
+#                 if len(arr[i]) == 2:
+#                     arr[i] = arr[i]+"1"
+#     path = "_".join(arr)
+#     #path = path.replace("1_html1_body1_", "")
+#     return path
 
 def main():
     """

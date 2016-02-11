@@ -90,11 +90,30 @@ function get_annotazioni(query, urlDoc){
 
 
 function scraper(urlDoc){
+    console.log("PARTE LO SCRAPER *********************************************************************");
     $.ajax({
         url: '/scrapingAutomatico',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
+            res = JSON.parse(result);
+            query = query_all_annotazioni(urlDoc);
+            get_annotazioni(query, urlDoc);
+        },
+        error: function(){
+
+        }
+    });
+  }
+  
+
+function lancia_scraper(urlDoc){
+    $.ajax({
+        url: '/scrapingAutomaticoForzato',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result){
+            alert("scraping automatico forzato ")
             var url = $("ul.nav.nav-tabs li.active a").attr("id");
             res = JSON.parse(result);
             query_all_annotazioni(url);
@@ -106,26 +125,7 @@ function scraper(urlDoc){
         }
     });
   }
-  
 
-function lancia_scraper(query, urlDoc){
-    uriQuery = encodeURIComponent(query), // rende la query parte dell'uri
-    $.ajax({
-        url: "http://tweb2015.cs.unibo.it:8080/data/query?query=" + uriQuery + "&format=json",
-        //url: "http://localhost:3030/data/query?query=" + uriQuery + "&format=json",
-
-        dataType: "jsonp",
-        success: function(result) {
-            lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
-            scraper(lista_annotazioni,urlDoc);
-
-        },
-        error: function(error) {
-            $('#alertMessage').text("Errore nell'esecuzione dello scraper");
-            $('#alertDoc').modal('show');
-        }
-    });
-};
 
 function gestioneAnnotazioni(lista_annotazioni, urlDoc) {
     for (i = 0; i < lista_annotazioni.length; i++) {
@@ -200,7 +200,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
     }else {
-        console.log("annotazione scartata" + ann);
+        console.log("annotazione scartata" + ann + " *******************");
         //l'annotazione viene scartata
         var classCSS = "";
     }
@@ -216,7 +216,6 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
-        //TODO perchè //table/ e non /table/
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica

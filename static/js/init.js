@@ -360,16 +360,16 @@ $(document).ready(function() {
         }
     });
 
-    //collegamento bottone lancia scraper
+
     $('#buttonScraper').click(function(){
         var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lancia_scraper(query, href);
+        lancia_scraper(href);
 
     });
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
-        urlNuovoDoc = $("#uriNuovoDoc").val();
+        urlNuovoDoc = $.trim($("#uriNuovoDoc").val());
         $("#uriNuovoDoc").val("");
         if(urlNuovoDoc !== ""){
             if(isOpen(urlNuovoDoc)){
