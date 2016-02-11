@@ -134,7 +134,8 @@ def scraping_titolo(urlDoc):
                 data['titolo'] = title.string
             lista.append(data)
     print json.dumps(lista)
-    return json.dumps(lista)
+    #return json.dumps(lista)
+    return lista
 
 
 

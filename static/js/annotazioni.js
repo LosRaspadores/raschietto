@@ -54,6 +54,7 @@ function query_all_annotazioni(url_documento){
     return query;
 }
 
+
 //chiamata ajax (tutte le annotazioni di un documento)
 function get_annotazioni(query, urlDoc){
     var uriQuery = encodeURIComponent(query); // rende la query parte dell'uri
@@ -115,9 +116,8 @@ function lancia_scraper(query, urlDoc){
 
         dataType: "jsonp",
         success: function(result) {
-            lista_annotazioni = result["results"]["bindings"];   //mette dentro i risultati della query che prende tutte le annotazioni in lista annotazioni
+            lista_annotazioni = result["results"]["bindings"];
             scraper(lista_annotazioni,urlDoc);
-
         },
         error: function(error) {
             $('#alertMessage').text("Errore nell'esecuzione dello scraper");
@@ -182,7 +182,7 @@ function displaySingolaAnnotazione(str, ann){
                 out += ann["provenance"]["value"];
             }
             if(typeof(ann["prov_email"]) != "undefined"){
-                out += ann["prov_email"]["value"];
+                out += ann["prov_email"]["value"] + " ";
             }
             out += "</td>"
             out += "</tr>";

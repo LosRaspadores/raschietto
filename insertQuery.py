@@ -33,10 +33,10 @@ USER = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 nome_grafo_gruppo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
 # provenance gruppo
-PROVENANCE = """<mailto:los.raspadores@gmail.com> a foaf:mbox ;
-            schema:email "los.raspadores@gmail.com" ;
-            foaf:name "LosRaspadores"^^xsd:string ;
-            rdfs:label "LosRaspadores"^^xsd:string ."""
+PROVENANCE = """<mailto:los.raspadores@gmail.com> a <http://xmlns.com/foaf/0.1/mbox> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "LosRaspadores"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    <http://schema.org/email> "los.raspadores@gmail.com" ;
+    <http://xmlns.com/foaf/0.1/name> "LosRaspadores"^^<http://www.w3.org/2001/XMLSchema#string> ."""
 
 # dichiarazione namespace
 FOAF = Namespace("http://xmlns.com/foaf/0.1/")
@@ -252,7 +252,6 @@ def query_annotazione(nome_grafo, annotazione):
     return query
 
 
-
 def query_delete_all_doc_nostraprovenance(url_doc):
     query = prefissi + " WITH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> " \
                     " DELETE {?a ?p ?o. ?body ?bp ?bo. ?target ?tp ?to. ?fragment ?fsp ?fso.} WHERE { "\
@@ -300,6 +299,13 @@ def main():
     end = "20"
     url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
     # (urldoc, path, start, end, tipo, valore):
+
+    urlnonhtml = "http://www.dlib.org/dlib/july15/downs/07downs"
+    numcit = "1"
+    valore = "blablabla bla blabla"
+    ciaone = """<""" + urlnonhtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
+    print ciaone
+
 
     triple = ""
 
