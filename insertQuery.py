@@ -238,6 +238,8 @@ def get_fragment_path(path):
 
 # per query insert e delete
 def do_query_post(endpoint, query):
+    print("do_queryPost")
+    print(query)
     sparql_endpoint = SPARQLWrapper(endpoint+"/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
     sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('POST')
@@ -271,18 +273,18 @@ def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
 
-def get_fragment_path(path):
-    arr = path.split("_")
-    for i in range(len(arr)):
-        if not(contains_digits(arr[i])):
-            arr[i] = arr[i] + "1"
-        else:
-            if "h" in arr[i]:
-                if len(arr[i]) == 2:
-                    arr[i] = arr[i]+"1"
-    path = "_".join(arr)
-    path = path.replace("html1_body1_", "")
-    return path
+# def get_fragment_path(path):
+#     arr = path.split("_")
+#     for i in range(len(arr)):
+#         if not(contains_digits(arr[i])):
+#             arr[i] = arr[i] + "1"
+#         else:
+#             if "h" in arr[i]:
+#                 if len(arr[i]) == 2:
+#                     arr[i] = arr[i]+"1"
+#     path = "_".join(arr)
+#     #path = path.replace("1_html1_body1_", "")
+#     return path
 
 def main():
     """

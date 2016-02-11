@@ -552,6 +552,7 @@ def query_annotazione(nome_grafo, annotazione):
                 INSERT DATA {
                     GRAPH <%s> { %s }
                 }""" % (nome_grafo, annotazione)
+    print("query:"+query)
     return query
 
 
