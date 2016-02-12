@@ -33,9 +33,10 @@ def main():
     print("scrapingAutomatico")
     # scraping_automatico_titolo("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # scraping_titolo()
-    # #scraping_citazioni("http://www.dlib.org/dlib/july15/linek/07linek.html")
-    # scraping_citazioni("http://rivista-statistica.unibo.it/article/view/4594")
-    # scarping_autore("http://almatourism.unibo.it/article/view/5292")
+    # scraping_citazioni("http://www.dlib.org/dlib/july15/linek/07linek.html")
+    scraping_citazioni("http://www.dlib.org/dlib/july15/lorang/07lorang.html")
+    # scraping_citazioni("http://almatourism.unibo.it/article/view/5292")
+    # scarping_autore("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # #scraping_doi("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # #scraping_anno("http://www.dlib.org/dlib/july15/linek/07linek.html")
 
@@ -342,13 +343,11 @@ def scraping_citazioni(url):
         for paraText in soup.findAll("h3"):  # prendo tutti gli h3 della pagina
             p = paraText.contents[0].strip()  # strip mi toglie gli spazi iniziali e finali
             if url.find("09behnk") != -1:
-                if p.find(
-                        "Bibliography") != -1:  # p != "Notes"    se all'interno della pagina viene trovata la parola "bibliography
+                if p.find("Bibliography") != -1:  # p != "Notes"    se all'interno della pagina viene trovata la parola "bibliography
                     while check:
                         stringa = paraText.findNext('p')
                         if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():
-                            reference_list.append(stringa.getText().encode(
-                                "utf-8"))  # encode perche alcune hanno caratteri speciali che poi non vengono riconosciuti (lettere accentate)
+                            reference_list.append(stringa.getText().encode("utf-8"))
                             paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
                             check = True  # check uguale a true finchè non ci sono più reference dopo
                         else:  # nel caso non ci siano altre reference esco dal ciclo
@@ -362,20 +361,19 @@ def scraping_citazioni(url):
             else:
                 if p.find("Reference") != -1 or p.find("Notes") != -1 or p.find("Bibliography") != -1:
                     if url.find("11brook") != -1 or url.find("11beel") != -1:
-                        if p.find("Reference") != -1:
+                        if p.find("Reference") != -1 or p.find("Notes") != -1:
                             check = True
                         else:
                             check = False
                     while check:
                         stringa = paraText.findNext('p')
-                        if stringa.getText().startswith('[') or stringa.getText()[
-                            0].isdigit():  # tutte le stringe che iniziano con [
-                            reference_list.append(stringa.getText().encode(
-                                "utf-8"))  # encode perche alcune hanno caratteri speciali che poi non vengono riconosciuti (lettere accentate)
+                        if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():  # tutte le stringe che iniziano con [
+                            reference_list.append(stringa.getText().encode("utf-8"))
                             paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
                             check = True
                         else:  # se non ci sono altre reference esco dal ciclo
                             check = False
+
         count = True
         i = 0
         xpath_ref = []
@@ -383,8 +381,7 @@ def scraping_citazioni(url):
         # di ogni reference controllo sempre la successiva per sapere quando devo uscire dal ciclo e fermare.
         if (url.find('09summerlin') != -1) or (url.find('09vanbergen') != -1) or (url.find('09westervelt') != -1):
             while (count):
-                xp_span = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(
-                    i) + ']/span/a/@name'
+                xp_span = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i) + ']/span/a/@name'
                 xp1_span = tree.xpath(xp_span)
                 if xp1_span:
                     xp2_span = xp1_span[0].encode("utf-8")
@@ -400,7 +397,7 @@ def scraping_citazioni(url):
                                 count = False
                         else:
                             count = False
-                i = i + 1
+                i += 1
         elif url.find('09zuniga') != -1:
             xpath_ref.append("/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[14]/text()")
         elif url.find("11smith-unna") != -1:  # la pagina non ha reference, l'array e vuoto

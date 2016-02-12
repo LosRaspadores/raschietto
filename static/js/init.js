@@ -35,6 +35,7 @@ $(document).ready(function() {
     $('#insertComm').css('display', 'none');
     $('#insertfunzRet').css('display', 'none');
     $('#salvaInsert').prop('disabled', 'disabled');
+    $('#salvaInsertCit').prop('disabled', 'disabled');
 
 
     // gestione tab home
@@ -196,7 +197,7 @@ $(document).ready(function() {
         }
    });
 
-    $('#buttonCit').click(function(){ //TODO
+    $('#buttonCit').click(function(){
         var url = $("ul.nav.nav-tabs li.active a").attr("id");
         if(url != 'homeTab'){
             getCitazioni(url);
@@ -482,23 +483,31 @@ function getCitazioni(urlDoc){
         data: {url: urlDoc},
         success: function(result) {
             listaCitazioni = JSON.parse(result)
-            var cit = '';
-            for(var i = 0; i < listaCitazioni.length; i++){
-                var path = listaCitazioni[i].path;
-                var start = listaCitazioni[i].start;
-                var end = listaCitazioni[i].end;
-                var testo = listaCitazioni[i].citazione;
-                if(listaCitazioni[i].citazione.length > 70){
-                    cit = listaCitazioni[i].citazione.substring(0, 70)+'...';
-                    } else {
-                    cit = listaCitazioni[i].citazione;
-                    }
-                $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>'); //mettergli come id, l'indice+1, cosi lo ritrovo quando devo modificare o annotare la citazione
+            if(listaCitazioni.length > 0){
+                var cit = '';
+                $("#selectCit").append('<option value=" "></option>');
+                for(var i = 0; i < listaCitazioni.length; i++){
+                    var path = listaCitazioni[i].path;
+                    var start = listaCitazioni[i].start;
+                    var end = listaCitazioni[i].end;
+                    var testo = listaCitazioni[i].citazione;
+                    if(listaCitazioni[i].citazione.length > 70){
+                        cit = listaCitazioni[i].citazione.substring(0, 70)+'...';
+                        } else {
+                        cit = listaCitazioni[i].citazione;
+                        }
+                    $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>'); //mettergli come id, l'indice+1, cosi lo ritrovo quando devo modificare o annotare la citazione
+                }
+                $('#modalAnnotCit').modal('show');
+            }else{
+                $('#alertMessage').text("Non ci sono citazioni in questo documento.");
+                $('#alertDoc').modal('show');
             }
         },
         error: function(error) {
             $('#alertMessage').text("Errore nello scraping delle citazioni.");
             $('#alertDoc').modal('show');
-        }
+        }//,
+//        timeout: 3000
     });
 }

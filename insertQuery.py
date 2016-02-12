@@ -212,7 +212,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
             rdf:predicate cito:cites ;
             rdf:object <""" + urldoc + "ver1_cited""" + str(numcit) + """>.
         <""" + urlnohtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
-    print(ann)
+    # print(ann)
     return ann
 
 
