@@ -552,7 +552,6 @@ def query_annotazione(nome_grafo, annotazione):
                 INSERT DATA {
                     GRAPH <%s> { %s }
                 }""" % (nome_grafo, annotazione)
-    print("query:"+query)
     return query
 
 
@@ -587,20 +586,9 @@ def xpathToFragmentPath(xpath):
 def main():
 
     query = query_clear_graph(nome_grafo_gruppo)
-    #do_query_post(sparql_endpoint_remoto, query)
+    do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
 
-    xpath = "/html/body/div/div[3]/div[2]/div[3]/div[2]/h3[67]"
-    print xpathToFragmentPath(xpath)
-
-    xpath = "/html/body/div/div[3]/div[2]/div[3]/div[2]/h3"
-    print xpathToFragmentPath(xpath)
-
-    urlnonhtml = "http://www.dlib.org/dlib/july15/downs/07downs"
-    numcit = "1"
-    valore = "blablabla bla blabla"
-    ciaone = """<""" + urlnonhtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
-    print ciaone
 
     """
     url_doc = "http://www.dlib.org/dlib/july15/downs/07downs.html"

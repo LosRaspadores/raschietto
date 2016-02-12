@@ -102,11 +102,13 @@ def return_doi():
 
 @app.route('/scrapingAutomaticoForzato')
 def scrapingAutomaticoForzato():
-     listaAnnotazioni=[]
+     listaAnnotazioni = []
      urlD = request.args.get('url')
-     query_delete=query_delete_all_doc_nostraprovenance(urlD)
-     do_query_post(sparql_endpoint_remoto,query_delete)
-     doi = scraping_doi(urlD)   #dict
+     query_delete = query_delete_all_doc_nostraprovenance(urlD)
+     do_query_post(sparql_endpoint_remoto, query_delete)
+
+     """
+     doi = scraping_doi(urlD)  # dict
      anno = scraping_anno(urlD)
      listaAutori = scarping_autore(urlD)
      listaCitazioni = scraping_citazioni(urlD)
@@ -146,9 +148,12 @@ def scrapingAutomaticoForzato():
      #      listaAnnotazioni.append(annCitazione)
      #      i=i+1
 
+     """
 
-     result={}
-     result["numero"]=len(listaAnnotazioni)
+     result = {}
+     result["numero"] = len(listaAnnotazioni)
+
+
      return json.dumps(result)
 
 

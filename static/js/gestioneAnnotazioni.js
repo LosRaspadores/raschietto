@@ -58,9 +58,8 @@ function getHostname(url) {
 function verificaFrammento(){
     selection = rangy.getSelection();
     if(selection.toString() != ""){
-        alert(selection.toString());
         var range = selection.getRangeAt(0);
-        var bookmark = selection.getBookmark(range.commonAncestorContainer).rangeBookmarks[0]; //getBookmark->obj con start e end - commonAncestorContainer->nodo più in profondità
+        var bookmark = selection.getBookmark(range.commonAncestorContainer).rangeBookmarks[0]; //getBookmark->obj con start e end - commonAncestorContainer->nodo piï¿½ in profonditï¿½
         var container = bookmark.containerNode; //nodo contenente la selezione
         startOffset = bookmark.start;
         endOffset = bookmark.end;
@@ -105,11 +104,11 @@ function verificaFrammento(){
         return false;
     }
 }
-/* Permette di costruire il path della selezione, fino al più piccolo elemento, escludendo gli span di evidenziazione delle annotazioni */
+/* Permette di costruire il path della selezione, fino al piï¿½ piccolo elemento, escludendo gli span di evidenziazione delle annotazioni */
 function getElementPath($element, d){
     var tag = $element[0].tagName.toLowerCase()
     var target = $($element[0]);
-    //Se seleziona uno span con classe che inzia con 'highlight' -> è un frammento già annotato !
+    //Se seleziona uno span con classe che inzia con 'highlight' -> ï¿½ un frammento giï¿½ annotato !
     //Esclude gli <span> dal path del frammento
     while(tag == 'span' && (target.is($("span[class^='highlight']")))){
         $element = $element.parent();
@@ -388,7 +387,7 @@ function costruisciAnnotazione(source, tipo, testo, idFrammento, start, end, sel
     /* Verifica che non ci sia gia l'entry per il documento */
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
     if(annotazioniSessione.length == 0){
-        //l'oggetto è vuoto -> inserisco l'annotazione
+        //l'oggetto ï¿½ vuoto -> inserisco l'annotazione
         var annotazioniDoc = {};
         annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
         annotazioniDoc['annotazioni'] = [];
@@ -481,7 +480,7 @@ function modificaAnnot(element){
 
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').prop("selected",true).change();
 
-    // se l'annotazione è stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
+    // se l'annotazione ï¿½ stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
     if(frammentoSelezionato != ""){        
         $('textarea#selezione').css("display", "block");
         $('textarea#selezione').val(frammentoSelezionato);
@@ -531,7 +530,7 @@ function confermaCancellazione(element){
     $('#modalConfermaEliminazione').modal('show');
 }
 
-function prendiInfoCitazioni(indice){ //indice è la posizione della cit nella lista, quello che poi sarà n
+function prendiInfoCitazioni(indice){ //indice ï¿½ la posizione della cit nella lista, quello che poi sarï¿½ n
     var infoCitazione = {};
     infoCitazione["testo"] = listaCitazioni[indice-1].testo;
     infoCitazione["path"] = listaCitazioni[indice-1].path;
@@ -753,7 +752,7 @@ $(document).ready(function(){
                         for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                             if(annotazioniSessione[i].annotazioni[j].id == idAnn){
 
-                                /* Se il frammento è stato modificato, aggiorno i dati */
+                                /* Se il frammento ï¿½ stato modificato, aggiorno i dati */
                                 if(typeof(oggettoSelezionato.selezione) != 'undefined'){
                                     annotazioniSessione[i].annotazioni[j].selezione = oggettoSelezionato.selezione;
                                     annotazioniSessione[i].annotazioni[j].idFrammento = oggettoSelezionato.id;
@@ -801,7 +800,7 @@ $(document).ready(function(){
             }
             var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione);
 
-            /* Se l'annotazione è su una citazioni, la inserisco dinamicamente nel modal */
+            /* Se l'annotazione ï¿½ su una citazioni, la inserisco dinamicamente nel modal */
             if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined"){
                 classCSS = getClassNameType(tipo);
                 col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
@@ -959,7 +958,7 @@ $(document).ready(function(){
         }
     });
 
-     /* Gestione citazioni -> abilita il bottone di salvataggio solo se è selezionata una citazione */
+     /* Gestione citazioni -> abilita il bottone di salvataggio solo se ï¿½ selezionata una citazione */
      $(document).on('change', '#selectCit', function(){
          if($("#selectCit").find(":selected").text().length != 0){
             $("#salvaInsertCit").removeAttr('disabled', 'disabled');

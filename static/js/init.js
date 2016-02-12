@@ -93,7 +93,7 @@ $(document).ready(function() {
     });
 
     $('ul#bottoniAnnotator button').click(function(e){
-        /* I bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar non sono funzionali se non c'ï¿½ un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
             var mess = '';
             if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
@@ -261,7 +261,7 @@ $(document).ready(function() {
                             if(tipo == "Funzione retorica"){
                                 oggetto = gestioneRetoriche(annotazioniGrafoSessione[indexDoc].annot[index].body_o.value);
                             } else if(tipo == "Citazione" || tipo == "Autore"){
-                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_ol.value;
+                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_l.value;
                             } else {
                                 oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_o.value;
                             }
@@ -274,7 +274,7 @@ $(document).ready(function() {
                         if(tipo == "Funzione retorica"){
                             oggetto = gestioneRetoriche(annot_gest[i].body_o.value);
                         } else if(tipo == "Citazione" || tipo == "Autore"){
-                            oggetto = annot_gest[i].body_ol.value;
+                            oggetto = annot_gest[i].body_l.value;
                         } else {
                             oggetto = annot_gest[i].body_o.value;
                         }
@@ -343,9 +343,9 @@ $(document).ready(function() {
                     data: {url: urlDoc},
                     success: function(result) {
                         addTab(result, urlDoc, title);
-
                         query = query_all_annotazioni(urlDoc);
                         get_annotazioni(query, urlDoc);
+                        annotazioniSuDoc(urlDoc);
                         filtriAttivi();
                     },
                     error: function(error) {
@@ -360,12 +360,6 @@ $(document).ready(function() {
         }
     });
 
-
-    $('#buttonScraper').click(function(){
-        var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lancia_scraper(href);
-
-    });
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
@@ -385,6 +379,7 @@ $(document).ready(function() {
                             addTab(result, urlNuovoDoc, urlNuovoDoc);
                             query = query_all_annotazioni(urlNuovoDoc);
                             get_annotazioni(query, urlNuovoDoc);
+                            annotazioniSuDoc(urlNuovoDoc);
                             filtriAttivi();
                         },
                         error: function(error) {
@@ -405,7 +400,7 @@ $(document).ready(function() {
                             }
                         },
                         error: function(error) {
-                            console.log("error");
+
                         }
                     });
                 }else{
@@ -414,11 +409,18 @@ $(document).ready(function() {
                 }
             }
         } else {
-            $('#alertMessage').text("L'URI inserito non è valido.");
+            $('#alertMessage').text("L'URI inserito non ï¿½ valido.");
             $('#alertDoc').modal('show');
         }
     });
 
+
+    $('#buttonScraper').click(function(){
+        var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
+        if(urlDoc != "homeTab"){
+            lancia_scraper(urlDoc);
+        }
+    });
 
 
 });
@@ -491,9 +493,9 @@ function getCitazioni(urlDoc){
                 var testo = result[i].testo;
                 if(result[i].testo.length > 70){
                     cit = result[i].testo.substring(0, 70)+'...';
-                    } else {
+                } else {
                     cit = result[i].testo;
-                    }
+                }
                 $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>'); //mettergli come id, l'indice+1, cosi lo ritrovo quando devo modificare o annotare la citazione
             }
         },

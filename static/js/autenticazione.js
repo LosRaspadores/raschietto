@@ -85,7 +85,6 @@ $(document).ready(function() {
             sessionStorage.nomecognome = nomecognome;
             sessionStorage.email = email;
             sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
-            $('#utenteAutenticato').text(sessionStorage.nomecognome);
             sessionStorage.annotModificSessione = JSON.stringify(annotModificSessione);
             $('#utenteAutenticato').text(sessionStorage.nomecognome);
             annotatorMode();

@@ -86,16 +86,6 @@ def setIRIautore(nome_autore):
     for ch in ['ù']:
         if ch in nome_autore:
             nome_autore = nome_autore.replace(ch, "u")
-    """
-    rExps = [{'re': '/[\xE0-\xE6]/g', 'ch': 'a'},
-             {'re': '/[\xE8-\xEB]/g', 'ch': 'e'},
-             {'re': '/[\xEC-\xEF]/g', 'ch': 'i'},
-             {'re': '/[\xF2-\xF6]/g', 'ch': 'o'},
-             {'re': '/[\xF9-\xFC]/g', 'ch': 'u'}]
-    for item in rExps:
-        nome_autore = re.sub(item["re"], item["ch"], nome_autore)
-    """
-
     prefix_rsch = "http://vitali.web.cs.unibo.it/raschietto/person/"
     uri = prefix_rsch   # =prefix/[inizialeprimonome]-[cognome]
     list = nome_autore.split(" ")
@@ -223,23 +213,9 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     return ann
 
 
-def get_fragment_path(path):
-    arr = path.split("_")
-    for i in range(len(arr)):
-        if not(contains_digits(arr[i])):
-            arr[i] = arr[i] + "1"
-        else:
-            if "h" in arr[i]:
-                if len(arr[i]) == 2:
-                    arr[i] = arr[i]+"1"
-    path = "_".join(arr)
-    path = path.replace("1_html1_body1_", "")
-    return path
 
 # per query insert e delete
 def do_query_post(endpoint, query):
-    print("do_queryPost")
-    print(query)
     sparql_endpoint = SPARQLWrapper(endpoint+"/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
     sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('POST')
@@ -247,6 +223,7 @@ def do_query_post(endpoint, query):
 
 
 def query_annotazione(nome_grafo, annotazione):
+    annotazione += PROVENANCE
     query = prefissi + """
                 INSERT DATA {
                     GRAPH <%s> { %s }
@@ -273,41 +250,31 @@ def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
 
-# def get_fragment_path(path):
-#     arr = path.split("_")
-#     for i in range(len(arr)):
-#         if not(contains_digits(arr[i])):
-#             arr[i] = arr[i] + "1"
-#         else:
-#             if "h" in arr[i]:
-#                 if len(arr[i]) == 2:
-#                     arr[i] = arr[i]+"1"
-#     path = "_".join(arr)
-#     #path = path.replace("1_html1_body1_", "")
-#     return path
+
+def xpathToFragmentPath(xpath):
+    xpath = xpath.replace("/html/body/", "")
+    xpath = xpath.replace("/text()", "")
+    xpath_steps = xpath.split("/")
+    fragment_path = ""
+    for step in xpath_steps:
+        if not contains_digits(step):
+            step += "1"
+        if step == "h1" or step == "h2" or step == "h3" or step == "h4" or step == "h5" or step == "h6":
+            if len(step) == 2:
+                step += "1"
+        fragment_path += step + "_"
+    fragment_path = fragment_path[:-1]
+    fragment_path = fragment_path.replace("[", "")
+    fragment_path = fragment_path.replace("]", "")
+    return fragment_path
 
 def main():
-    """
-    print(setIRIautore(" Màrio  "))
-    print(setIRIautore("Marìo   Rossi"))
-    print(setIRIautore("Ma&rio Dè Rùssi  "))
-    print(setIRIautore("M. Dé Rossi"))
-    print(setIRIautore("M{ar}io De Rossi B*ian;chi"))
-    print(setIRIautore("M[a]riò De Rossi Bianc.;h:i Vèrdi Gialli"))
-    """
 
     path = "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"
     start = "0"
     end = "20"
     url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
     # (urldoc, path, start, end, tipo, valore):
-
-    urlnonhtml = "http://www.dlib.org/dlib/july15/downs/07downs"
-    numcit = "1"
-    valore = "blablabla bla blabla"
-    ciaone = """<""" + urlnonhtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
-    print ciaone
-
 
     triple = ""
 
