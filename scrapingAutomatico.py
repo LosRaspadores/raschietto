@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
-import lxml
-import re
-from lxml import etree, html
-import unicodedata
 
 __author__ = 'Los Raspadores'
 
@@ -24,18 +20,18 @@ import mechanize
 import json
 import urllib2
 import re
-from urllib2 import urlopen
 from urlparse import urlparse
-from lxml import etree, html
+from lxml import etree
 import unicodedata
 
 
 def main():
+    print("scrapingAutomatico")
     # scraping_automatico_titolo("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # scraping_titolo()
     # #scraping_citazioni("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # scraping_citazioni("http://rivista-statistica.unibo.it/article/view/4594")
-    scarping_autore("http://almatourism.unibo.it/article/view/5292")
+    # scarping_autore("http://almatourism.unibo.it/article/view/5292")
     # #scraping_doi("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # #scraping_anno("http://www.dlib.org/dlib/july15/linek/07linek.html")
 
@@ -43,11 +39,9 @@ def main():
 def scraping_titolo(urlDoc):
     # Browser mechanize
     br = mechanize.Browser()
-    br.set_handle_robots(False)  #
+    br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent',
-                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
-    print "facendo scraping dei titoli.."
+    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
     lista = []
 
     for doc in urlDoc:
@@ -91,26 +85,25 @@ def scraping_titolo(urlDoc):
             else:
                 data['titolo'] = title.string
             lista.append(data)
-    print json.dumps(lista)
+    # print json.dumps(lista)
     return json.dumps(lista)
 
 
 def scraping_automatico_titolo(url):
     br = mechanize.Browser()
-    br.set_handle_robots(False)  #
+    br.set_handle_robots(False)
     br.set_handle_refresh(False)
     br.addheaders = [('user-agent',
                       '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
-    print("url " + url)
     lista = {}
     resp = br.open(url)
     raw_html = resp.read()
-    soup = BeautifulSoup(raw_html)
+    # soup = BeautifulSoup(raw_html)
     tree = etree.HTML(raw_html)
 
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    print domain
+    # print domain
 
     if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
         1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
@@ -145,7 +138,7 @@ def scraping_automatico_titolo(url):
 def scarping_autore(urlDoc):
     # Browser mechanize
     br = mechanize.Browser()
-    br.set_handle_robots(False)  #
+    br.set_handle_robots(False)
     br.set_handle_refresh(False)
     br.addheaders = [('user-agent',
                       '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
@@ -153,7 +146,7 @@ def scarping_autore(urlDoc):
     listaAutori = []
     resp = br.open(urlDoc)
     raw_html = resp.read()
-    soup = BeautifulSoup(raw_html)
+    # soup = BeautifulSoup(raw_html)
     tree = etree.HTML(raw_html)
     parsed_uri = urlparse(urlDoc)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
@@ -166,7 +159,7 @@ def scarping_autore(urlDoc):
         autori = html_autori.split(', ')
         for res in autori:
             xpath_autori = "/html/body/div/div[3]/div[2]/div[3]/div[3]/em/text()"
-            ret = tree.xpath(xpath_autori)
+            # ret = tree.xpath(xpath_autori)
             autore = {}
             start = html_autori.index(res)  # vado a ricavarmi lo start relativo al valore ritornatomi dal xpath
             end = start + len(res)
@@ -182,7 +175,6 @@ def scarping_autore(urlDoc):
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         xpath_autori = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/table/tr/td[2]/p/b/text()'
         autori = tree.xpath(xpath_autori)
-        print autori
 
         xpath_tag = "/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[2]/text()"  # xpath relativo al tag dove sono presenti gli autori
         autori_list = tree.xpath(xpath_tag)
@@ -218,7 +210,7 @@ def scraping_doi(urlDoc):
 
     parsed_uri = urlparse(urlDoc)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    print domain
+    # print domain
 
     if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
         1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
@@ -240,8 +232,7 @@ def scraping_doi(urlDoc):
         dup = BeautifulSoup(
             urllib2.urlopen(urlDoc))  # controllo tutti i paragrafi e se trovo il doi dentro prendo lo start e l'end
         for paragrafo in dup.findAll("p"):
-            doi_stringa = unicodedata.normalize('NFKD', paragrafo.getText()).encode('ascii',
-                                                                                    'ignore')  # modifico la stringa doi, tolgo gli accenti e caratteri stranieri sulle vocali/consonanti
+            doi_stringa = unicodedata.normalize('NFKD', paragrafo.getText()).encode('ascii', 'ignore')  # modifico la stringa doi, tolgo gli accenti e caratteri stranieri sulle vocali/consonanti
             if doi_stringa.find(
                     doi) != -1:  # se trovo il paragrafo preciso con all'interno il doi allora  mi prendo lo start
                 start_doi = doi_stringa.index(doi)
@@ -254,20 +245,19 @@ def scraping_doi(urlDoc):
         lista["doi"] = str(doi)
 
     br.close()
-    print lista
     return lista
 
 
 def scraping_anno(urlDoc):
     br = mechanize.Browser()
-    br.set_handle_robots(False)  #
+    br.set_handle_robots(False)
     br.set_handle_refresh(False)
     br.addheaders = [('user-agent',
                       '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
     lista = {}
     resp = br.open(urlDoc)
     raw_html = resp.read()
-    soup = BeautifulSoup(raw_html)
+    # soup = BeautifulSoup(raw_html)
     tree = etree.HTML(raw_html)
 
     parsed_uri = urlparse(urlDoc)
@@ -303,24 +293,22 @@ def scraping_anno(urlDoc):
         lista["anno"] = str(pubyear)
 
     br.close()
-    print lista
     return lista
 
 
 def scraping_citazioni(url):
     # Browser mechanize
     br = mechanize.Browser()
-    br.set_handle_robots(False)  #
+    br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent',
-                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
     try:
         resp = br.open(url)
     except:
         print "Connection failed with " + url
     html = resp.read()
-    soup = BeautifulSoup(html, 'html.parser')
+    # soup = BeautifulSoup(html, 'html.parser')
 
     parsed_uri = urlparse(url)
     tree = etree.HTML(html)
@@ -341,8 +329,6 @@ def scraping_citazioni(url):
             citazione["citazione"] = str(refer)
             listaCitazioni.append(citazione)
             i += 1
-
-
 
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         listaCitazioni = []
@@ -434,7 +420,7 @@ def scraping_citazioni(url):
                                 count = False
                         else:
                             count = False
-                i = i + 1
+                i += 1
         i = 0
         for refer in reference_list:
             citazione = {}
@@ -444,10 +430,9 @@ def scraping_citazioni(url):
             path = trascodifica_path(xpath_ref[i])
             citazione["path"] = str(path)
             listaCitazioni.append(citazione)
-            i = i + 1
+            i += 1
 
     br.close()
-    print listaCitazioni
     return listaCitazioni
 
 

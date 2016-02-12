@@ -100,7 +100,7 @@ def setIRIautore(nome_autore):
     prefix_rsch = "http://vitali.web.cs.unibo.it/raschietto/person/"
     uri = prefix_rsch   # =prefix/[inizialeprimonome]-[cognome]
     list = nome_autore.split(" ")
-    print list
+    # print list
     length = len(list)
     if length == 1:
         uri += list[0]
@@ -222,6 +222,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
             rdf:predicate cito:cites ;
             rdf:object <""" + urldoc + "ver1_cited""" + str(numcit) + """>.
         <""" + urlnohtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
+    print(ann)
     return ann
 
 
@@ -276,18 +277,6 @@ def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
 
-# def get_fragment_path(path):
-#     arr = path.split("_")
-#     for i in range(len(arr)):
-#         if not(contains_digits(arr[i])):
-#             arr[i] = arr[i] + "1"
-#         else:
-#             if "h" in arr[i]:
-#                 if len(arr[i]) == 2:
-#                     arr[i] = arr[i]+"1"
-#     path = "_".join(arr)
-#     #path = path.replace("1_html1_body1_", "")
-#     return path
 
 def main():
     """
@@ -340,10 +329,10 @@ def main():
     triple += PROVENANCE + documentFRBR
 
     query = query_delete_all_doc_nostraprovenance(url)
-    do_query_post(sparql_endpoint_locale, query)
+    # do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, triple)
-    do_query_post(sparql_endpoint_locale, query)
+    # do_query_post(sparql_endpoint_locale, query)
 
 
 

@@ -34,7 +34,7 @@ function verificaTab(){
             end = frammentoSelezionato.fine;
             selezione = frammentoSelezionato.selezione;
             //apri modale per inserire annotazione sul frammento
-            $('#selezione').html(selezione)
+            $('#selezione').val(selezione)
             $('#selezione').css('display', 'block');
             $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
             $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
@@ -178,6 +178,7 @@ function modificaAnnotazioneLocale(id){
             for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                 if(annotazioniSessione[i].annotazioni[j].id == id){
                     tipo = annotazioniSessione[i].annotazioni[j].tipo;
+
                     if(tipo != 'Citazione'){ //sto modificando un'annotazione
                         var oggettoAnnotazione = annotazioniSessione[i].annotazioni[j].oggetto;
                         $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').prop("selected",true).change();
@@ -197,17 +198,18 @@ function modificaAnnotazioneLocale(id){
 
                             if(annotazioniSessione[i].annotazioni[j].source.indexOf("_cited[") > -1){ //ann su cit
                                 $('textarea#selezione').css("display", "block");
+                                $('button#bottonemodFramm').css("display", "none");
                                 $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
                                 $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
 
-                                $('#modalAnnotDoc textarea').html(annotazioniSessione[i].annotazioni[j].selezione);
+                                $('#modalAnnotDoc textarea#selezione').val(annotazioniSessione[i].annotazioni[j].selezione);
                             }else{ //annotazione semplice
                                 $('textarea#selezione').css("display", "block");
                                 $('button#bottonemodFramm').css("display", "block");
                                 $('select[id="selectTipoAnnot"]').find('option:contains("Commento")').prop('disabled',false);
                                 $('select[id="selectTipoAnnot"]').find('option:contains("Funzione retorica")').prop('disabled',false);
 
-                                $('#modalAnnotDoc textarea').html(annotazioniSessione[i].annotazioni[j].selezione);
+                                $('#modalAnnotDoc textarea#selezione').val(annotazioniSessione[i].annotazioni[j].selezione);
                             }
 
                         }else{ /* Modifica di un'annotazione sul documento */
@@ -1026,7 +1028,7 @@ $(document).ready(function(){
             annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
             var find = false;
             for(i = 0; i < annotazioniGrafoSessione.length; i++){
-                if(annotazioniGrafoSessione[i].prov_email.value == annot.prov_email.value && annotazioniGrafoSessione[i].date.value == annot.date.value && annotazioniGrafoSessione[i].type.value == annot.type.value && annotazioniGrafoSessione[i].body_s.value == annot.body_s.value){
+                if(annotazioniGrafoSessione[i].provenance.value == annot.provenance.value && annotazioniGrafoSessione[i].date.value == annot.date.value && annotazioniGrafoSessione[i].type.value == annot.type.value && annotazioniGrafoSessione[i].body_s.value == annot.body_s.value){
                     annotazioniGrafoSessione[i] = annot;
                     find = true;
                 }
@@ -1040,7 +1042,7 @@ $(document).ready(function(){
         }else{
             var indiceCit = $("#selectCit").find(":selected").attr("value")
             //con questo indice mi cerco le info della citazione nell oggetto
-            var testo = listaCitazioni[indiceCit-1].testo;
+            var testo = listaCitazioni[indiceCit-1].citazione;
             var path = listaCitazioni[indiceCit-1].path;
             var start = listaCitazioni[indiceCit-1].start;
             var end = listaCitazioni[indiceCit-1].end;
@@ -1069,6 +1071,7 @@ $(document).ready(function(){
         $("#doi").val('');
         $("#comm").val('');
         $("#funcRet").val('');
+        $("textarea#selezione").val(''); //TODO
     });
 
     $("#modalConfermaEliminazione").on('hidden.bs.modal', function () {

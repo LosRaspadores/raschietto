@@ -1,6 +1,6 @@
 /* Variabile globale contenente le citazioni di un documento */
-//listaCitazioni = [] //TODO prendere le citazioni dall'oggetto che le contiene
-listaCitazioni = [{"testo": "citazioneUno", "path": "pathCit", "start": "start", "end": "end"}, {"testo": "citazioneDue", "path": "pathCit", "start": "start", "end": "end"}]
+listaCitazioni = [] //TODO prendere le citazioni dall'oggetto che le contiene
+//listaCitazioni = [{"testo": "citazioneUno", "path": "pathCit", "start": "start", "end": "end"}, {"testo": "citazioneDue", "path": "pathCit", "start": "start", "end": "end"}]
 
 $(document).ready(function() {
     listaGruppiCompleta = [];
@@ -199,11 +199,11 @@ $(document).ready(function() {
     $('#buttonCit').click(function(){ //TODO
         var url = $("ul.nav.nav-tabs li.active a").attr("id");
         if(url != 'homeTab'){
-            //getCitazioni(url);
-            for(var n = 0; n < 10; n++){
-                $("#selectCit").append('<option value="'+n+'">['+n+']</option>');
-//                $("#selectCit").append('<option value="indice">['+n+']</option>');
-            }
+            getCitazioni(url);
+//            for(var n = 0; n < 10; n++){
+//                $("#selectCit").append('<option value="'+n+'">['+n+']</option>');
+////                $("#selectCit").append('<option value="indice">['+n+']</option>');
+//            }
 
         }
     });
@@ -261,7 +261,7 @@ $(document).ready(function() {
                             if(tipo == "Funzione retorica"){
                                 oggetto = gestioneRetoriche(annotazioniGrafoSessione[indexDoc].annot[index].body_o.value);
                             } else if(tipo == "Citazione" || tipo == "Autore"){
-                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_ol.value;
+                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_l.value;
                             } else {
                                 oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_o.value;
                             }
@@ -274,8 +274,7 @@ $(document).ready(function() {
                         if(tipo == "Funzione retorica"){
                             oggetto = gestioneRetoriche(annot_gest[i].body_o.value);
                         } else if(tipo == "Citazione" || tipo == "Autore"){
-//                            console.log("*****testo citazione: "+annot_gest[i])
-                            oggetto = annot_gest[i].body_l.value; //TODO <--------------------------------- body_ol.value
+                            oggetto = annot_gest[i].body_l.value;
                         } else {
                             oggetto = annot_gest[i].body_o.value;
                         }
@@ -479,21 +478,22 @@ function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionat
 function getCitazioni(urlDoc){
     //chiamata ajax per ottenere le citazioni
     $.ajax({
-        url: '/scraping_citazioni',
+        url: '/scrapingCitazioni',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result) {
-            listaCitazioni = result
+            listaCitazioni = JSON.parse(result)
+            console.log(listaCitazioni)
             var cit = '';
-            for(var i = 0; i < result.length; i++){
-                var path = result[i].path;
-                var start = result[i].start;
-                var end = result[i].end;
-                var testo = result[i].testo;
-                if(result[i].testo.length > 70){
-                    cit = result[i].testo.substring(0, 70)+'...';
+            for(var i = 0; i < listaCitazioni.length; i++){
+                var path = listaCitazioni[i].path;
+                var start = listaCitazioni[i].start;
+                var end = listaCitazioni[i].end;
+                var testo = listaCitazioni[i].citazione;
+                if(listaCitazioni[i].citazione.length > 70){
+                    cit = listaCitazioni[i].citazione.substring(0, 70)+'...';
                     } else {
-                    cit = result[i].testo;
+                    cit = listaCitazioni[i].citazione;
                     }
                 $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>'); //mettergli come id, l'indice+1, cosi lo ritrovo quando devo modificare o annotare la citazione
             }

@@ -27,7 +27,6 @@ def main():
 
 
 def scraping_singolo_documento(url):
-    print("url " + url)
     parsed_uri = urlparse(url)
     doc_html = br.open(url).read()
     soup = BeautifulSoup(doc_html, 'html.parser')
