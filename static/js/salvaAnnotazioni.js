@@ -64,8 +64,9 @@ function setProvenanceUtente(){
 }
 
 
-function annotazione(url, tipo, datetime, path, start, end, valore, mailautore){
+function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, numCit){
     //TODO controllare annotazioni su citazioni
+    console.log("info annot: "+url+"\n"+tipo+"\n"+valore+"\n")
     var annotazione = "";
     mailautore =  sessionStorage.email;
     var url_nohtml = url.slice(0, -5);
@@ -179,8 +180,8 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore){
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
                     'rdf:subject <' + url_nohtml + '_ver1> ;' +
                     'rdf:predicate cito:cites ;' +
-                    'rdf:object <' + url_nohtml + 'ver1_cited1>.'+
-                '<' + url_nohtml + 'ver1_cited1> rdfs:label "' + valore + '"^^xsd:string.';
+                    'rdf:object <' + url_nohtml + 'ver1_cited['+numCit+']>.'+
+                '<' + url_nohtml + 'ver1_cited['+numCit+']> rdfs:label "' + valore + '"^^xsd:string.';
     }
     //TODO per quanto riguarda le ANNOTAZIONI SULLE CITAZIONI: il soggetto è già impostato come url_ver1_cited[n] (ciò che si chiama url)
 
@@ -193,7 +194,7 @@ function creaQueryInsertAnnotazioni(lista){
     var triple = "";
     for (var i=0; i<lista.annotazioni.length; i++){
         var item = lista.annotazioni[i];
-        triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance);
+        triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance, item.numCit);
     }
     triple += setProvenanceUtente();
     var query = prefissi + "INSERT DATA {GRAPH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> {" + triple + "}}";

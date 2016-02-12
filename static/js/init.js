@@ -473,6 +473,8 @@ function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionat
 
 /* Ottenere le citazioni del documento */
 function getCitazioni(urlDoc){
+    listaCitazioni = []
+    $("#selectCit").empty();
     //chiamata ajax per ottenere le citazioni
     $.ajax({
         url: '/scrapingCitazioni',
@@ -480,7 +482,6 @@ function getCitazioni(urlDoc){
         data: {url: urlDoc},
         success: function(result) {
             listaCitazioni = JSON.parse(result)
-            console.log(listaCitazioni)
             var cit = '';
             for(var i = 0; i < listaCitazioni.length; i++){
                 var path = listaCitazioni[i].path;
