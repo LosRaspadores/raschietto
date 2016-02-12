@@ -274,11 +274,9 @@ def scraping_anno(urlDoc):
         anno = date_xpath.split("-")[0]  # siccome viene estratta l'intera data(anno-mese-giorno) prende solo l'anno
         start_anno = date_xpath.index(anno)
         end_anno = start_anno + len(anno)
-        xpath_pubyear = '/html/body/head/meta[8]/@content'
-        path = trascodifica_path(xpath_pubyear)
-        lista["xpath"] = str(path)
-        lista["start"] = str(start_anno)
-        lista["end"] = str(end_anno)
+        lista["xpath"] = "document"
+        lista["start"] = "0"
+        lista["end"] = "0"
         lista["anno"] = str(anno)
 
 
@@ -368,10 +366,8 @@ def scraping_citazioni(url):
                             check = False
                     while check:
                         stringa = paraText.findNext('p')
-                        if stringa.getText().startswith('[') or stringa.getText()[
-                            0].isdigit():  # tutte le stringe che iniziano con [
-                            reference_list.append(stringa.getText().encode(
-                                "utf-8"))  # encode perche alcune hanno caratteri speciali che poi non vengono riconosciuti (lettere accentate)
+                        if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():  # tutte le stringe che iniziano con [
+                            reference_list.append(stringa.getText().encode("utf-8"))  # encode perche alcune hanno caratteri speciali che poi non vengono riconosciuti (lettere accentate)
                             paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
                             check = True
                         else:  # se non ci sono altre reference esco dal ciclo

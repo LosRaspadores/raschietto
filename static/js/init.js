@@ -51,6 +51,7 @@ $(document).ready(function() {
         $("#home").load("/static/homeText.txt");
         $("#home").addClass("in active");
         $("#ann_sul_doc").html("<p>Nessun documento selezionato</p>");
+        $('body').removeClass("loading");
     });
 
     // seconda nav fissa dopo lo scrolling della pagina
@@ -93,7 +94,7 @@ $(document).ready(function() {
     });
 
     $('ul#bottoniAnnotator button').click(function(e){
-        /* I bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar non sono funzionali se non c'ï¿½ un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
             var mess = '';
             if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
@@ -408,15 +409,6 @@ $(document).ready(function() {
             $('#alertDoc').modal('show');
         }
     });
-
-
-    $('#buttonScraper').click(function(){
-        var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
-        if(urlDoc != "homeTab"){
-            lancia_scraper(urlDoc);
-        }
-    });
-
 
 });
 

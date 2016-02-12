@@ -21,7 +21,6 @@ body {
     border-radius: 0;
 }
 
-
 /* logo applicazione */
 .navbar .navbar-brand {
     color: white;
@@ -40,7 +39,7 @@ body {
     color: #44b78b;
 }
 
-/* link info e help*/
+/* link info e help */
 .navbar .navbar-nav>li>a{
     color: white;
 }
@@ -51,7 +50,7 @@ body {
 }
 
 
-/* seconda navbar con toggle button, caricamento url e info utente autenticato */
+/* seconda navbar con toggle button, caricamento url, info utente autenticato e bottoni */
 #secondnav{
     background-color: #44b78b;
     color: white;
@@ -60,11 +59,11 @@ body {
 }
 
 .navbar-collapse {
-    -webkit-box-shadow: none;
+    -webkit-box-shadow: none; /* per togliere righine bianche */
     box-shadow: none;
 }
 
-.navbar-form{
+.navbar-form {
     margin-right: 0px;
     margin-left: 0px;
 }
@@ -84,6 +83,7 @@ body {
     color: white;
 }
 
+/* stile seconsa navbar fissa */
 .sticky {
     position: fixed;
     width: 100%;
@@ -112,7 +112,7 @@ body {
 .cmn-toggle {
     position: absolute;
     margin-left: -9999px;
-    visibility: hidden; /*nasconde la checkbox*/
+    visibility: hidden; /* nasconde la checkbox */
 }
 
 .cmn-toggle + label {
@@ -241,7 +241,7 @@ input.cmn-toggle-yes-no:checked + label:after {
     border-color: #39735C;
 }
 
-/* bottone autenticazione */
+/* bottone modal autenticazione */
 button.button-lg {
     font-weight: bold;
     background-color: #44b78b;
@@ -266,7 +266,7 @@ button.button-lg:active {
     overflow-y: auto;
 }
 
-/* filtri tipo di annotazioni */
+/* toggle checkbox filtri tipo di annotazioni */
 .filtri {
     font-size: 16px;
     font-weight: bold;

@@ -19,7 +19,7 @@ from rdflib import Namespace  # modulo Namespace per crearne di nuovi
 
 import re
 import datetime
-from time import gmtime, strftime
+from time import gmtime, strftime, localtime
 
 
 # endpoint
@@ -108,7 +108,7 @@ def setIRIautore(nome_autore):
 # ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm
 def getDateTime():
     datetime.datetime.now()
-    return strftime("%Y-%m-%dT%H:%M", gmtime())
+    return strftime("%Y-%m-%dT%H:%M", localtime())
 
 
 def tripleFRBRdocument(url_doc):
@@ -212,7 +212,6 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
             rdf:predicate cito:cites ;
             rdf:object <""" + urldoc + "ver1_cited""" + str(numcit) + """>.
         <""" + urlnohtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
-    print(ann)
     return ann
 
 
@@ -272,6 +271,8 @@ def xpathToFragmentPath(xpath):
     return fragment_path
 
 def main():
+
+    print getDateTime()
 
     path = "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"
     start = "0"

@@ -6,7 +6,6 @@ function inviaQuery(listaQuery){
             $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
             $('#alertDoc').modal('show');
             listaQueryDaInviare = [];
-            $('span[class*="highlight"]').contents().unwrap();
             query = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
             get_annotazioni(query, $("ul.nav.nav-tabs li.active a").attr("id"));
         }
