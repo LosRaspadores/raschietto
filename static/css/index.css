@@ -59,6 +59,11 @@ body {
     border-bottom: 3px solid #0C3C26;
 }
 
+.navbar-collapse {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
 .navbar-form{
     margin-right: 0px;
     margin-left: 0px;
@@ -339,7 +344,8 @@ button.button-lg:active {
 }
 
 .highlightMultipleTipoUguale{
-    border: 1px solid #57595c;
+    border-top: 1px solid #57595c;
+    border-bottom: 1px solid #57595c;
 }
 
 .panel-default>.panel-heading .badge {
@@ -404,7 +410,6 @@ button.button-lg:active {
     text-decoration: none;
     font-weight: 600;
     width: 300px;
-    background: #F5F5F5;
 }
 
 .panel-group  a:hover {

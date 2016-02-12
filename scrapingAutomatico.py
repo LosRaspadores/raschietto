@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
+import lxml
+import re
+from lxml import etree, html
+import unicodedata
 
 __author__ = 'Los Raspadores'
 
@@ -34,7 +38,6 @@ def main():
     # scarping_autore("http://almatourism.unibo.it/article/view/5292")
     # #scraping_doi("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # #scraping_anno("http://www.dlib.org/dlib/july15/linek/07linek.html")
-
 
 def scraping_titolo(urlDoc):
     # Browser mechanize
@@ -86,7 +89,7 @@ def scraping_titolo(urlDoc):
                 data['titolo'] = title.string
             lista.append(data)
     # print json.dumps(lista)
-    return json.dumps(lista)
+    return json.dumps(lista) # dumps o lista ?
 
 
 def scraping_automatico_titolo(url):

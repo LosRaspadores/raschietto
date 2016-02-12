@@ -1,6 +1,6 @@
 /* Variabile globale contenente le citazioni di un documento */
-listaCitazioni = [] //TODO prendere le citazioni dall'oggetto che le contiene
-//listaCitazioni = [{"testo": "citazioneUno", "path": "pathCit", "start": "start", "end": "end"}, {"testo": "citazioneDue", "path": "pathCit", "start": "start", "end": "end"}]
+listaCitazioni = []
+
 
 $(document).ready(function() {
     listaGruppiCompleta = [];
@@ -200,11 +200,6 @@ $(document).ready(function() {
         var url = $("ul.nav.nav-tabs li.active a").attr("id");
         if(url != 'homeTab'){
             getCitazioni(url);
-//            for(var n = 0; n < 10; n++){
-//                $("#selectCit").append('<option value="'+n+'">['+n+']</option>');
-////                $("#selectCit").append('<option value="indice">['+n+']</option>');
-//            }
-
         }
     });
 
@@ -343,9 +338,9 @@ $(document).ready(function() {
                     data: {url: urlDoc},
                     success: function(result) {
                         addTab(result, urlDoc, title);
-
                         query = query_all_annotazioni(urlDoc);
                         get_annotazioni(query, urlDoc);
+                        annotazioniSuDoc(urlDoc);
                         filtriAttivi();
                     },
                     error: function(error) {
@@ -360,12 +355,6 @@ $(document).ready(function() {
         }
     });
 
-
-    $('#buttonScraper').click(function(){
-        var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lancia_scraper(href);
-
-    });
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
@@ -385,6 +374,7 @@ $(document).ready(function() {
                             addTab(result, urlNuovoDoc, urlNuovoDoc);
                             query = query_all_annotazioni(urlNuovoDoc);
                             get_annotazioni(query, urlNuovoDoc);
+                            annotazioniSuDoc(urlNuovoDoc);
                             filtriAttivi();
                         },
                         error: function(error) {
@@ -405,7 +395,7 @@ $(document).ready(function() {
                             }
                         },
                         error: function(error) {
-                            console.log("error");
+
                         }
                     });
                 }else{
@@ -414,11 +404,18 @@ $(document).ready(function() {
                 }
             }
         } else {
-            $('#alertMessage').text("L'URI inserito non è valido.");
+            $('#alertMessage').text("L'URI inserito non ? valido.");
             $('#alertDoc').modal('show');
         }
     });
 
+
+    $('#buttonScraper').click(function(){
+        var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
+        if(urlDoc != "homeTab"){
+            lancia_scraper(urlDoc);
+        }
+    });
 
 
 });
