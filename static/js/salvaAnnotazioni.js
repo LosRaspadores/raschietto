@@ -63,15 +63,19 @@ function setProvenanceUtente(){
 }
 
 
-function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, numCit){
-    //TODO controllare annotazioni su citazioni
-    console.log("info annot: "+url+"\n"+tipo+"\n"+valore+"\n")
+function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, numCit, annotCit){
+    console.log("info annot: "+url+"\n"+tipo+"\n"+valore+"\n"+"\n"+numCit+"\n"+annotCit)
     var annotazione = "";
     mailautore =  sessionStorage.email;
     var url_nohtml = url.slice(0, -5);
     if (path == "document"){
         start = 0;
         end = 0;
+    }
+    var subjectBody = '_ver1';
+    if(annotCit.length > 0){ //-> annot su cit. (il soggetto del body è url_ver1_cited[n])
+        alert("annot su cit")
+        subjectBody += '_cited['+numCit+']'
     }
 
     var target = 'oa:hasTarget [ a oa:SpecificResource ;' +
@@ -89,7 +93,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
             'oa:hasBody _:title ;' + target +
             '_:title a rdf:Statement;' +
                 'rdfs:label "' + valore + '"^^xsd:string ;' +
-                'rdf:subject <' + url_nohtml + '_ver1> ;' +
+                'rdf:subject <' + url_nohtml + subjectBody+'> ;' + //TODO
                 'rdf:predicate dcterms:title ;' +
                 'rdf:object "' + valore + '"^^xsd:string .';
     } else if (tipo == "URL"){
@@ -101,7 +105,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
             'oa:hasBody _:url ;' + target +
             '_:url a rdf:Statement;' +
                 'rdfs:label "' + valore + '"^^xsd:string ;' +
-                'rdf:subject <' + url_nohtml + '_ver1> ;' +
+                'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
                 'rdf:predicate fabio:hasURL ;' +
                 'rdf:object "' + valore + '"^^xsd:anyURL .';
     } else if (tipo == "Anno pubblicazione"){
@@ -113,7 +117,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:year ;' + target +
                 '_:year a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url_nohtml + '_ver1> ;' +
+                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
                     'rdf:predicate fabio:hasPublicationYear ;' +
                     'rdf:object "' + valore + '"^^xsd:date .';
     } else if (tipo == "Autore"){
@@ -126,7 +130,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:author ;' + target +
                 '_:author a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url_nohtml + '_ver1> ;' +
+                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
                     'rdf:predicate dcterms:creator;' +
                     'rdf:object <' + uri_autore +  '>.' +
                 '<' + uri_autore +  '> a foaf:Person;' +
@@ -141,7 +145,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:doi ;' + target +
                 '_:doi a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url_nohtml + '_ver1> ;' +
+                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
                     'rdf:predicate prism:doi ;' +
                     'rdf:object "' + valore + '"^^xsd:string .';
     } else if (tipo == "Commento"){
@@ -153,7 +157,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:commento ;' + target +
                 '_:commento a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url + '#' + path + '> ;' +
+                    'rdf:subject <' + url + '#' + path + '> ;' +  //TODO ????
                     'rdf:predicate schema:comment;' +
                     'rdf:object "' + valore + '"^^xsd:string .';
     } else if (tipo == "Funzione retorica"){
@@ -165,7 +169,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:retoric ;' + target +
                 '_:retoric a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url + '#' + path + '> ;' +
+                    'rdf:subject <' + url + '#' + path + '> ;' +  //TODO ?????
                     'rdf:predicate sem:denotes ;' +
                     'rdf:object ' + switchRetorica(valore) + '.';
     } else if (tipo == "Citazione"){
@@ -179,11 +183,9 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
                     'rdf:subject <' + url_nohtml + '_ver1> ;' +
                     'rdf:predicate cito:cites ;' +
-                    'rdf:object <' + url_nohtml + 'ver1_cited['+numCit+']>.'+
-                '<' + url_nohtml + 'ver1_cited['+numCit+']> rdfs:label "' + valore + '"^^xsd:string.';
+                    'rdf:object <' + url_nohtml + '_ver1_cited['+numCit+']>.'+
+                '<' + url_nohtml + '_ver1_cited['+numCit+']> rdfs:label "' + valore + '"^^xsd:string.';
     }
-    //TODO per quanto riguarda le ANNOTAZIONI SULLE CITAZIONI: il soggetto è già impostato come url_ver1_cited[n] (ciò che si chiama url)
-
     var documentFRBR = queryFRBRdocument(url);
     annotazione += documentFRBR;
     return annotazione;
@@ -193,7 +195,7 @@ function creaQueryInsertAnnotazioni(lista){
     var triple = "";
     for (var i=0; i<lista.annotazioni.length; i++){
         var item = lista.annotazioni[i];
-        triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance, item.numCit);
+        triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance, item.numCit, item.annotCit);
     }
     triple += setProvenanceUtente();
     var query = prefissi + "INSERT DATA {GRAPH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> {" + triple + "}}";

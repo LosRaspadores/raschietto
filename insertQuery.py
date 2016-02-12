@@ -272,8 +272,6 @@ def xpathToFragmentPath(xpath):
 
 def main():
 
-    print getDateTime()
-
     path = "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"
     start = "0"
     end = "20"
