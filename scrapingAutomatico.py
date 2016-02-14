@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
-import lxml
-import re
-from lxml import etree, html
-import unicodedata
 
 __author__ = 'Los Raspadores'
 
@@ -34,18 +30,20 @@ def main():
     # scraping_automatico_titolo("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # scraping_titolo()
     # scraping_citazioni("http://www.dlib.org/dlib/july15/linek/07linek.html")
-    scraping_citazioni("http://www.dlib.org/dlib/july15/lorang/07lorang.html")
+    # scraping_citazioni("http://www.dlib.org/dlib/july15/lorang/07lorang.html")
     # scraping_citazioni("http://almatourism.unibo.it/article/view/5292")
     # scarping_autore("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # #scraping_doi("http://www.dlib.org/dlib/july15/linek/07linek.html")
     # #scraping_anno("http://www.dlib.org/dlib/july15/linek/07linek.html")
+
 
 def scraping_titolo(urlDoc):
     # Browser mechanize
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent',
+                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
     lista = []
 
     for doc in urlDoc:
@@ -90,7 +88,7 @@ def scraping_titolo(urlDoc):
                 data['titolo'] = title.string
             lista.append(data)
     # print json.dumps(lista)
-    return json.dumps(lista) # dumps o lista ?
+    return json.dumps(lista)
 
 
 def scraping_automatico_titolo(url):
@@ -236,7 +234,8 @@ def scraping_doi(urlDoc):
         dup = BeautifulSoup(
             urllib2.urlopen(urlDoc))  # controllo tutti i paragrafi e se trovo il doi dentro prendo lo start e l'end
         for paragrafo in dup.findAll("p"):
-            doi_stringa = unicodedata.normalize('NFKD', paragrafo.getText()).encode('ascii', 'ignore')  # modifico la stringa doi, tolgo gli accenti e caratteri stranieri sulle vocali/consonanti
+            doi_stringa = unicodedata.normalize('NFKD', paragrafo.getText()).encode('ascii',
+                                                                                    'ignore')  # modifico la stringa doi, tolgo gli accenti e caratteri stranieri sulle vocali/consonanti
             if doi_stringa.find(
                     doi) != -1:  # se trovo il paragrafo preciso con all'interno il doi allora  mi prendo lo start
                 start_doi = doi_stringa.index(doi)
@@ -305,7 +304,8 @@ def scraping_citazioni(url):
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent',
+                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
     try:
         resp = br.open(url)
@@ -337,42 +337,38 @@ def scraping_citazioni(url):
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         listaCitazioni = []
         reference_list = []
-        check = True
+        listaCitazioniNotes = []
         # uso BeautifulSoup per poter prendere una dopo l'altra le references
         soup = BeautifulSoup(urllib2.urlopen(url))
         for paraText in soup.findAll("h3"):  # prendo tutti gli h3 della pagina
-            p = paraText.contents[0].strip()  # strip mi toglie gli spazi iniziali e finali
-            if url.find("09behnk") != -1:
-                if p.find("Bibliography") != -1:  # p != "Notes"    se all'interno della pagina viene trovata la parola "bibliography
-                    while check:
-                        stringa = paraText.findNext('p')
-                        if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():
-                            reference_list.append(stringa.getText().encode("utf-8"))
-                            paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
-                            check = True  # check uguale a true finchè non ci sono più reference dopo
-                        else:  # nel caso non ci siano altre reference esco dal ciclo
+            p = paraText.contents[0]
+
+            if p.find("Reference") != -1 or p.find("Bibliography") != -1:
+                print("Reference")
+                check = True
+                while check:
+                    stringa = paraText.findNext('p')
+                    if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():
+                        print("trovato")
+                        reference_list.append(stringa.getText().encode("utf-8"))
+                        paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
+                        check = True
+                    else:  # se non ci sono altre reference esco dal ciclo
+                        check = False
+            elif p.find("Notes") != -1:  # <--------------------------------
+                check = True
+                while check:
+                    for sibling in paraText.next_siblings:
+                        if sibling.name == "p":
+                            if sibling.getText()[0].isdigit():
+                                check = True
+                                # trovata citazione -> fai cose
+                                listaCitazioniNotes.append(sibling)
+                        elif sibling.name == "div":
                             check = False
-            elif url.find("11smith-unna") != -1:
-                reference_list = []
-            elif url.find("09zuniga") != -1:
-                if p.find("Reference") != -1:
-                    stringa = paraText.findNext('p')  # prende tutti  tag p dopo la parola trovata Reference
-                    reference_list.append(stringa.getText().encode("utf-8"))
-            else:
-                if p.find("Reference") != -1 or p.find("Notes") != -1 or p.find("Bibliography") != -1:
-                    if url.find("11brook") != -1 or url.find("11beel") != -1:
-                        if p.find("Reference") != -1 or p.find("Notes") != -1:
-                            check = True
-                        else:
-                            check = False
-                    while check:
-                        stringa = paraText.findNext('p')
-                        if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():  # tutte le stringe che iniziano con [
-                            reference_list.append(stringa.getText().encode("utf-8"))
-                            paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
-                            check = True
-                        else:  # se non ci sono altre reference esco dal ciclo
-                            check = False
+
+                print(listaCitazioniNotes)
+
 
         count = True
         i = 0
@@ -386,10 +382,8 @@ def scraping_citazioni(url):
                 if xp1_span:
                     xp2_span = xp1_span[0].encode("utf-8")
                     if xp2_span:
-                        xpath_ref.append(
-                            '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i) + ']/text()')
-                        xp_sec_span = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(
-                            i + 1) + ']/span/a/@name'
+                        xpath_ref.append('/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i) + ']/text()')
+                        xp_sec_span = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i + 1) + ']/span/a/@name'
                         xp1_sec_span = tree.xpath(xp_sec_span)
                         if xp1_sec_span:
                             xp2_sec_span = xp1_sec_span[0].encode("utf-8")
@@ -422,6 +416,7 @@ def scraping_citazioni(url):
                             count = False
                 i += 1
         i = 0
+
         for refer in reference_list:
             citazione = {}
             citazione["citazione"] = str(refer)

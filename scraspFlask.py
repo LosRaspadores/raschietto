@@ -250,6 +250,7 @@ def salvaAnnotazioni():
     for q in lista_query:
         # print q
         do_query_post(sparql_endpoint_remoto, q)
+        # do_query_post("http://localhost:3030/dataset1", q)
     return "ok"
 
 

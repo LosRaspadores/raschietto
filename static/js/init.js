@@ -439,7 +439,7 @@ function addTab(text, urlP, title){
     $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
     $("#"+url+"t").html(text);
 }
-function closeTab(element){ //TODO svuoti l'oggetto contenente le citazioni listaCitazioni = []
+function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
     var tabId = $(element).parent().attr("id");
     $(element).parent().parent().remove(); //remove li of tab
@@ -452,7 +452,6 @@ function closeTab(element){ //TODO svuoti l'oggetto contenente le citazioni list
         }
     }
 
-    console.log("lista");
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         console.log(listaAllAnnotazioni[j].url);
     }
@@ -461,8 +460,6 @@ function closeTab(element){ //TODO svuoti l'oggetto contenente le citazioni list
     if(numTabs == 1){
         $('#homeTab').trigger("click");
     };
-
-    listaCitazioni = [];
 }
 
 function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionato
@@ -476,7 +473,6 @@ function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionat
 function getCitazioni(urlDoc){
     listaCitazioni = []
     $("#selectCit").empty();
-    //chiamata ajax per ottenere le citazioni
     $.ajax({
         url: '/scrapingCitazioni',
         type: 'GET',
@@ -496,18 +492,17 @@ function getCitazioni(urlDoc){
                         } else {
                         cit = listaCitazioni[i].citazione;
                         }
-                    $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>'); //mettergli come id, l'indice+1, cosi lo ritrovo quando devo modificare o annotare la citazione
+                    $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>');
                 }
                 $('#modalAnnotCit').modal('show');
             }else{
-                $('#alertMessage').text("Non ci sono citazioni in questo documento.");
+                $('#alertMessage').text("Citazioni non trovate.");
                 $('#alertDoc').modal('show');
             }
         },
         error: function(error) {
-            $('#alertMessage').text("Errore nello scraping delle citazioni.");
+            $('#alertMessage').text("Citazioni non trovate.");
             $('#alertDoc').modal('show');
-        }//,
-//        timeout: 3000
+        }
     });
 }

@@ -74,6 +74,7 @@ console.log(setIRIautore("M[a]ri� De Rossi Bianc.;h:i V�rdi Gialli"));
 
 /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
 function getDateTime(){
+    console.log("date time")
     var currentdate = new Date();
     return datetime = currentdate.getFullYear() + "-"
                     + addZero(currentdate.getMonth()+1)  + "-"
@@ -90,9 +91,6 @@ function addZero(i) {
     return i;
 }
 
-//console.log(getDateTime());
-
-
 /* provenance di un annotazione fatta dall'utente correntemente autenticato */
 function setProvenanceUtente(){
     var provenance;
@@ -105,9 +103,6 @@ function setProvenanceUtente(){
     return provenance;
 }
 
-//console.log(setProvenanceUtente());
-
-
 /* provenance di un annotazione fatta dallo scraper automatico  */
 function setProvenanceGruppo(){
     var provenance;
@@ -119,8 +114,6 @@ function setProvenanceGruppo(){
     }
     return provenance;
 }
-
-//console.log(setProvenanceGruppo());
 
 var listaAllAnnotazioni = [];
 var listaAnnotGrafo1537 = [];
@@ -138,7 +131,6 @@ function salvaAnnotazioniJSON(url, listaAnnotazioni){
     }
 
     listaAllAnnotazioni.push(annot_grafo);
-    //console.log(listaAllAnnotazioni);
 }
 
 function searchAnnot(gruppo, listaAnnotazioni){
