@@ -93,8 +93,9 @@ $(document).ready(function() {
         handle: ".modal-content"
     });
 
+    /* Gestione dei bottoni modalita' annotator */
     $('ul#bottoniAnnotator button').click(function(e){
-        /* I bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar NON sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
             var mess = '';
             if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
@@ -107,6 +108,10 @@ $(document).ready(function() {
             e.stopPropagation();
         }else if($(this).attr("id") == "buttonAnnotDoc"){ //Il modal per l'inserimento delle annotazioni ha bisogno di verificare che ci sia o meno un frammento di testo selezionato
             verificaTab()
+        }else if($(this).attr("id") == "buttonCit"){
+            if($("ul.nav.nav-tabs li.active a").attr("id") != 'homeTab'){
+                getCitazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            }
         }
     });
 
@@ -196,13 +201,6 @@ $(document).ready(function() {
                 break;
         }
    });
-
-    $('#buttonCit').click(function(){
-        var url = $("ul.nav.nav-tabs li.active a").attr("id");
-        if(url != 'homeTab'){
-            getCitazioni(url);
-        }
-    });
 
 
     /* Riempie modale di gestione delle annotazioni */

@@ -363,11 +363,12 @@ def scraping_citazioni(url):
                             if sibling.getText()[0].isdigit():
                                 check = True
                                 # trovata citazione -> fai cose
-                                listaCitazioniNotes.append(sibling)
+                                listaCitazioniNotes.append(sibling.getText())  # per prendere solo il tag -> .append(sibling)
                         elif sibling.name == "div":
                             check = False
 
-                print(listaCitazioniNotes)
+                for cit in listaCitazioniNotes:
+                    print(cit)
 
 
         count = True

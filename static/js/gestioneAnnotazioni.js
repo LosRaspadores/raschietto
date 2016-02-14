@@ -853,7 +853,6 @@ $(document).ready(function(){
 
         if(numeroAnnot != 0){
             var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
-//            console.log(query)
             listaQueryDaInviare.push(query);
         }
 
@@ -878,7 +877,7 @@ $(document).ready(function(){
         sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
         $('#modalGestAnnotazioni').modal('hide');
         if(listaQueryDaInviare.length != 0){
-//            inviaQuery(JSON.stringify(listaQueryDaInviare)); //TODO scommentare
+            inviaQuery(JSON.stringify(listaQueryDaInviare));
             for(j = 0; j < listaAllAnnotazioni.length; j++){
                 if(listaAllAnnotazioni[j].url == urlDoc){
                     listaAllAnnotazioni.splice(j, 1);
