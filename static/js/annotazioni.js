@@ -69,7 +69,7 @@ function get_annotazioni(query, urlDoc){
             if(lista_annotazioni.length != 0){
                 gestioneAnnotazioni(lista_annotazioni, urlDoc);
             } else {
-                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.\nRicerca automatica di annotazioni in corso..");
                 $('#alertDoc').modal('show');
                 scrapingAutomatico(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
@@ -146,10 +146,17 @@ function scrapingAutomatico(urlDoc){
         success: function(result){
             $('body').removeClass("loading");
             res = JSON.parse(result);
-            query = query_all_annotazioni(urlDoc);
-            get_annotazioni(query, urlDoc);
+            if(res.numero != 0){
+                allAnnotazioni = query_all_annotazioni(urlDoc);
+                get_annotazioni(allAnnotazioni, urlDoc)
+            } else {
+                $('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+                $('#alertDoc').modal('show');
+            }
         },
         error: function(){
+            $('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+            $('#alertDoc').modal('show');
             $('body').removeClass("loading");
         }
     });
@@ -165,10 +172,17 @@ function scrapingForzato(urlDoc){
         success: function(result){
             $('body').removeClass("loading");
             res = JSON.parse(result);
-            allAnnotazioni = query_all_annotazioni(urlDoc);
-            get_annotazioni(allAnnotazioni, urlDoc)
+            if(res.numero != 0){
+                allAnnotazioni = query_all_annotazioni(urlDoc);
+                get_annotazioni(allAnnotazioni, urlDoc)
+            } else {
+                $('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+                $('#alertDoc').modal('show');
+            }
         },
         error: function(){
+            a$('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+            $('#alertDoc').modal('show');
             $('body').removeClass("loading");
         }
     });
@@ -247,6 +261,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
         path = path.replace("div[1]/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
@@ -259,12 +274,15 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         //if rivista statistica or if antropologia e teatro
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
+        console.log("path: " + path + " - start " + start + " - end " + end)
+
         //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
         var evidenziata = false;
         try {
             //The expression is a legal expression.
             var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             if (nodo != null){
+                console.log("path: " + path + " - start " + start + " - end " + end)
                 evidenziata = setRange(nodo, start, end, classCSS, ann);
             };
         } catch (ex) {

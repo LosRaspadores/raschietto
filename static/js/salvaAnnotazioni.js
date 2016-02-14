@@ -64,7 +64,6 @@ function setProvenanceUtente(){
 
 
 function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, numCit, annotCit){
-    console.log("info annot: "+url+"\n"+tipo+"\n"+valore+"\n"+"\n"+numCit+"\n"+annotCit)
     var annotazione = "";
     mailautore =  sessionStorage.email;
     var url_nohtml = url.slice(0, -5);

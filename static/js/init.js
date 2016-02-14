@@ -6,13 +6,6 @@ $(document).ready(function() {
     listaGruppiCompleta = [];
 
     //documenti
-//    $.when(getDocFromScraping(), getDocFromSparql()).done(function(r1, r2){
-//        docS = JSON.parse(r1[0]);
-//        docA = r2[0].results.bindings;
-//
-//        getDocumenti(docA, docS);
-//    });
-
     getDocumenti();
     //gruppi
     getGruppi();

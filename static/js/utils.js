@@ -127,6 +127,7 @@ var listaAnnotGrafo1537 = [];
 
  
 function salvaAnnotazioniJSON(url, listaAnnotazioni){
+
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         if(listaAllAnnotazioni[j].url == url){
             listaAllAnnotazioni.splice(j, 1);

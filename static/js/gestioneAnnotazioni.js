@@ -104,6 +104,8 @@ function verificaFrammento(){
         return false;
     }
 }
+
+
 /* Permette di costruire il path della selezione, fino al pi� piccolo elemento, escludendo gli span di evidenziazione delle annotazioni */
 function getElementPath($element, d){
     var tag = $element[0].tagName.toLowerCase()
@@ -134,6 +136,8 @@ function getElementPath($element, d){
     path.reverse()
     return path.join("_")+"_"+$element[0].tagName.toLowerCase()+index
 }
+
+
 /* Preso in input un nodo */
 function getTextNodes(node) { //=container.parentNode
     var textNodes = [];
@@ -148,10 +152,12 @@ function getTextNodes(node) { //=container.parentNode
     return textNodes;
 }
 
+
 /* Rimuove annotazioni inserite e non ancora salvate */ //TODO PER ANNOTAZIONI PRESENTI
 function eliminaAnnotazioneLocale(id){
     $('#modalConfermaEliminazione').data('id', id).modal('show');
 }
+
 
 function eliminaAnnotazione(id){
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
@@ -334,6 +340,8 @@ function aggiornaAnnotazione(azione){ // funzione che viene richiamata quando vi
         $('#modalAnnotDoc').modal('show');
     }
 }
+
+
 
 /* Metodo per annotare una citazione */
 function annotaCitazione(idCit){
@@ -882,7 +890,7 @@ $(document).ready(function(){
         sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
         $('#modalGestAnnotazioni').modal('hide');
         if(listaQueryDaInviare.length != 0){
-//            inviaQuery(JSON.stringify(listaQueryDaInviare));
+            inviaQuery(JSON.stringify(listaQueryDaInviare));
             for(j = 0; j < listaAllAnnotazioni.length; j++){
                 if(listaAllAnnotazioni[j].url == urlDoc){
                     listaAllAnnotazioni.splice(j, 1);

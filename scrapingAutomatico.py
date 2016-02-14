@@ -17,9 +17,8 @@ __author__ = 'Los Raspadores'
 """
 
 
-
 # moduli importati
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 import mechanize
 import json
 import urllib2
@@ -30,21 +29,15 @@ import unicodedata
 
 
 def main():
-    print("scrapingAutomatico")
-    # scraping_automatico_titolo("http://www.dlib.org/dlib/july15/linek/07linek.html")
-    # scraping_titolo()
-    # #scraping_citazioni("http://www.dlib.org/dlib/july15/linek/07linek.html")
-    # scraping_citazioni("http://rivista-statistica.unibo.it/article/view/4594")
-    # scarping_autore("http://almatourism.unibo.it/article/view/5292")
-    # #scraping_doi("http://www.dlib.org/dlib/july15/linek/07linek.html")
-    # #scraping_anno("http://www.dlib.org/dlib/july15/linek/07linek.html")
+    print "scraping"
+
 
 def scraping_titolo(urlDoc):
     # Browser mechanize
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
     lista = []
 
     for doc in urlDoc:
@@ -60,7 +53,7 @@ def scraping_titolo(urlDoc):
         if parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
             result = soup.select("h3.blue-space")  # prendo gli h3 classe blue.space
             for res in result:
-                if (res.text != 'D-Lib Magazine'):  # se è dlib
+                if res.text != 'D-Lib Magazine':  # se è dlib
                     data = {}
                     data['url'] = doc
                     data['titolo'] = res.text
@@ -88,28 +81,22 @@ def scraping_titolo(urlDoc):
             else:
                 data['titolo'] = title.string
             lista.append(data)
-    # print json.dumps(lista)
-    return json.dumps(lista) # dumps o lista ?
+    return json.dumps(lista)
 
 
 def scraping_automatico_titolo(url):
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent',
-                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+
     lista = {}
     resp = br.open(url)
     raw_html = resp.read()
-    # soup = BeautifulSoup(raw_html)
     tree = etree.HTML(raw_html)
-
     parsed_uri = urlparse(url)
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    # print domain
 
-    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
-        1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
         xpath_titolo = '//*[@id="articleTitle"]/h3/text()'
         titoloP = tree.xpath(xpath_titolo)[0]  # prendo il primo valore degli h3
         titoloP = titoloP.encode("utf-8")
@@ -143,26 +130,20 @@ def scarping_autore(urlDoc):
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent',
-                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
     listaAutori = []
     resp = br.open(urlDoc)
     raw_html = resp.read()
-    # soup = BeautifulSoup(raw_html)
     tree = etree.HTML(raw_html)
     parsed_uri = urlparse(urlDoc)
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    print domain
 
-    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
-        1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
         xpath_autori = '//*[@id="authorString"]/em/text()'
         html_autori = tree.xpath(xpath_autori)[0]  # prendo il primo perchè è il valore che m'interessa
         autori = html_autori.split(', ')
         for res in autori:
             xpath_autori = "/html/body/div/div[3]/div[2]/div[3]/div[3]/em/text()"
-            # ret = tree.xpath(xpath_autori)
             autore = {}
             start = html_autori.index(res)  # vado a ricavarmi lo start relativo al valore ritornatomi dal xpath
             end = start + len(res)
@@ -172,8 +153,6 @@ def scarping_autore(urlDoc):
             autore["path"] = path
             autore["autori"] = res.encode("utf-8")
             listaAutori.append(autore)
-
-
 
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         xpath_autori = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/table/tr/td[2]/p/b/text()'
@@ -204,19 +183,15 @@ def scraping_doi(urlDoc):
     br = mechanize.Browser()
     br.set_handle_robots(False)  #
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent',
-                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
     lista = {}
     resp = br.open(urlDoc)
     raw_html = resp.read()
     tree = etree.HTML(raw_html)
 
     parsed_uri = urlparse(urlDoc)
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    # print domain
 
-    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
-        1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
         xpath_doi = '//*[@id="pub-id::doi"]/text()'
         doi = tree.xpath(xpath_doi)[0]
         start = 0
@@ -227,7 +202,6 @@ def scraping_doi(urlDoc):
         path = trascodifica_path(path)
         lista["xpath"] = str(path)
         lista["doi"] = str(doi)
-
 
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         xpath_doi_meta = '/html/head/meta[2]/@content'
@@ -255,31 +229,22 @@ def scraping_anno(urlDoc):
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent',
-                      '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
     lista = {}
     resp = br.open(urlDoc)
     raw_html = resp.read()
-    # soup = BeautifulSoup(raw_html)
     tree = etree.HTML(raw_html)
 
     parsed_uri = urlparse(urlDoc)
-    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    print domain
 
-    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
-        1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
         xpath_pubyear = '/html/head/meta[8]/@content'  # prendo l'anno del documento dai meta dati
         date_xpath = tree.xpath(xpath_pubyear)[0]
         anno = date_xpath.split("-")[0]  # siccome viene estratta l'intera data(anno-mese-giorno) prende solo l'anno
-        start_anno = date_xpath.index(anno)
-        end_anno = start_anno + len(anno)
         lista["xpath"] = "document"
         lista["start"] = "0"
         lista["end"] = "0"
         lista["anno"] = str(anno)
-
-
 
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         xpath_anno = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[1]/text()[1]'
@@ -302,22 +267,22 @@ def scraping_citazioni(url):
     br = mechanize.Browser()
     br.set_handle_robots(False)
     br.set_handle_refresh(False)
-    br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+    br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
     try:
         resp = br.open(url)
     except:
         print "Connection failed with " + url
-    html = resp.read()
-    # soup = BeautifulSoup(html, 'html.parser')
 
+    raw_html = resp.read()
+    tree = etree.HTML(raw_html)  # albero nodi
     parsed_uri = urlparse(url)
-    tree = etree.HTML(html)
+
     listaCitazioni = []
 
-    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
-        1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
+    if parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
         reference_list = tree.xpath('//*[@id="articleCitations"]/div//p/text()')
+
         i = 1
         for refer in reference_list:
             xpath_ref = '/html/body/div/div[3]/div[2]/div[3]/div[7]/div/p[' + str(i) + ']'
@@ -332,100 +297,72 @@ def scraping_citazioni(url):
             i += 1
 
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
-        listaCitazioni = []
+        soup = BeautifulSoup(raw_html)
         reference_list = []
-        check = True
-        # uso BeautifulSoup per poter prendere una dopo l'altra le references
-        soup = BeautifulSoup(urllib2.urlopen(url))
-        for paraText in soup.findAll("h3"):  # prendo tutti gli h3 della pagina
-            p = paraText.contents[0].strip()  # strip mi toglie gli spazi iniziali e finali
-            if url.find("09behnk") != -1:
-                if p.find("Bibliography") != -1:  # p != "Notes"    se all'interno della pagina viene trovata la parola "bibliography
-                    while check:
-                        stringa = paraText.findNext('p')
-                        if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():
-                            reference_list.append(stringa.getText().encode("utf-8"))
-                            paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
-                            check = True  # check uguale a true finchè non ci sono più reference dopo
-                        else:  # nel caso non ci siano altre reference esco dal ciclo
-                            check = False
-            elif url.find("11smith-unna") != -1:
-                reference_list = []
-            elif url.find("09zuniga") != -1:
-                if p.find("Reference") != -1:
-                    stringa = paraText.findNext('p')  # prende tutti  tag p dopo la parola trovata Reference
-                    reference_list.append(stringa.getText().encode("utf-8"))
-            else:
-                if p.find("Reference") != -1 or p.find("Notes") != -1 or p.find("Bibliography") != -1:
-                    if url.find("11brook") != -1 or url.find("11beel") != -1:
-                        if p.find("Reference") != -1 or p.find("Notes") != -1:
-                            check = True
-                        else:
-                            check = False
-                    while check:
-                        stringa = paraText.findNext('p')
-                        if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():  # tutte le stringe che iniziano con [
-                            reference_list.append(stringa.getText().encode("utf-8"))
-                        if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():  # tutte le stringe che iniziano con [
-                            reference_list.append(stringa.getText().encode("utf-8"))  # encode perche alcune hanno caratteri speciali che poi non vengono riconosciuti (lettere accentate)
-                            paraText = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
-                            check = True
-                        else:  # se non ci sono altre reference esco dal ciclo
-                            check = False
-        count = True
-        i = 0
-        xpath_ref = []
-        # ricevo un array di xpath  per le reference nei casi di url specificati, navigo tutti i paragrafi alla ricerca di "["
-        # di ogni reference controllo sempre la successiva per sapere quando devo uscire dal ciclo e fermare.
-        if (url.find('09summerlin') != -1) or (url.find('09vanbergen') != -1) or (url.find('09westervelt') != -1):
-            while (count):
-                xp_span = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i) + ']/span/a/@name'
-                xp1_span = tree.xpath(xp_span)
-                if xp1_span:
-                    xp2_span = xp1_span[0].encode("utf-8")
-                    if xp2_span:
-                        xpath_ref.append(
-                            '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i) + ']/text()')
-                        xp_sec_span = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(
-                            i + 1) + ']/span/a/@name'
-                        xp1_sec_span = tree.xpath(xp_sec_span)
-                        if xp1_sec_span:
-                            xp2_sec_span = xp1_sec_span[0].encode("utf-8")
-                            if xp2_sec_span == "":
-                                count = False
-                        else:
-                            count = False
-                i += 1
-        elif url.find('09zuniga') != -1:
-            xpath_ref.append("/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[14]/text()")
-        elif url.find("11smith-unna") != -1:  # la pagina non ha reference, l'array e vuoto
-            xpath_ref = []
-        else:
-            while (count):
-                xp = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i) + ']/a/text()'
-                xp1 = tree.xpath(xp)
-                if xp1:
-                    xp2 = xp1[0].encode("utf-8")
-                    if xp2.startswith("[") == True:
-                        xpath_ref.append(
-                            '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(i) + ']/text()')
-                        xp_sec = '/html/body/form/table[3]/tr/td/table[5]/tr/td/table[1]/tr/td[2]/p[' + str(
-                            i + 1) + ']/a/text()'
-                        xp1_sec = tree.xpath(xp_sec)
-                        if xp1_sec:
-                            xp2_sec = xp1_sec[0].encode("utf-8")
-                            if xp2_sec.startswith("[") == False:
-                                count = False
-                        else:
-                            count = False
-                i += 1
+        primaCitTrovata = False
+
+        listah3 = soup.findAll("h3")
+
+        for nodoh3 in soup.findAll("h3"):  # prendo tutti gli h3 della pagina
+            testoh3 = nodoh3.contents[0].strip()   # contents => tag’s children
+            if testoh3.find("Reference") != -1 or testoh3.find("Bibliography") != -1:
+                altracit = True
+                while altracit:
+                    stringa = nodoh3.findNext('p')
+                    if stringa.getText().startswith('[') or stringa.getText()[0].isdigit():  # tutte le stringe che iniziano con [
+                        reference_list.append(stringa.getText().encode("utf-8"))  # encode perche alcune hanno caratteri speciali che poi non vengono riconosciuti (lettere accentate)
+                        nodoh3 = stringa  # cosi alla prossima iterazione posso passare alla reference successiva
+                        if not primaCitTrovata:
+                            primaCitTrovata = True
+                        altracit = True
+                    else:  # se non ci sono altre reference esco dal ciclo
+                        altracit = False
+
+            elif testoh3.find("Notes") != -1:
+                check = True
+                while check:
+                    for sibling in nodoh3.next_siblings:
+
+                            if sibling.name == "p":  # tag
+                                if sibling.getText()[0].isdigit():
+                                    check = True
+                                    # trovata citazione -> fai cose
+                                    reference_list.append(sibling)
+                                    if not primaCitTrovata:
+                                        primaCitTrovata = True
+                            elif sibling.name == "div":
+                                check = False
+
+        xpathfisso = "/html/body/form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/"
+
+        indexprimacit = 0
+        if len(reference_list) != 0:
+            testoprimacit = str(reference_list[0])[4:len(reference_list[0])-8]
+            allptag = soup.findAll('p')
+            for p in allptag:
+                if p.getText().find(testoprimacit) != -1:
+                    padre = p.findParent()
+                    for c in padre.contents:
+                        try:
+                            if c.name == "p":
+                                indexprimacit += 1
+                                if c.getText().find(testoprimacit) != -1:
+                                    print "index prima cit"
+                                    print indexprimacit
+                                    break
+                        except:
+                            pass
+                    break
+
         i = 0
         for refer in reference_list:
             citazione = {}
-            citazione["citazione"] = str(refer)
             citazione["start"] = str(0)
             citazione["end"] = len(str(refer))
-            path = trascodifica_path(xpath_ref[i])
+            refer = refer.replace('"', "'")
+            citazione["citazione"] = str(refer)
+            indice = indexprimacit + int(i)
+            path = trascodifica_path(xpathfisso + 'p[' + str(indice) + ']')
             citazione["path"] = str(path)
             listaCitazioni.append(citazione)
             i += 1
@@ -464,7 +401,5 @@ def contains_digits(string):
 
 
 if __name__ == "__main__":
-    print "this script (scrapingAutomatico) is being run directly from %s" % __name__
     main()
-else:
-    print "this script (scrapingAutomatico) is being imported into another module"
+

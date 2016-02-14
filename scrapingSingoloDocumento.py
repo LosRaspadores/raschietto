@@ -72,7 +72,4 @@ def domain_manager(domain, path, soup):
         return html
 
 if __name__ == "__main__":
-    print "this script (scrapingSingoloDocumento) is being run directly from %s" % __name__
     main()
-else:
-    print "this script (scrapingSingoloDocumento) is being imported into another module"
