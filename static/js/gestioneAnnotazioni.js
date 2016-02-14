@@ -153,11 +153,10 @@ function getTextNodes(node) { //=container.parentNode
 }
 
 
-/* Rimuove annotazioni inserite e non ancora salvate */ //TODO PER ANNOTAZIONI PRESENTI
+/* Rimuove annotazioni inserite e non ancora salvate */
 function eliminaAnnotazioneLocale(id){
     $('#modalConfermaEliminazione').data('id', id).modal('show');
 }
-
 
 function eliminaAnnotazione(id){
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
@@ -341,8 +340,6 @@ function aggiornaAnnotazione(azione){ // funzione che viene richiamata quando vi
     }
 }
 
-
-
 /* Metodo per annotare una citazione */
 function annotaCitazione(idCit){
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
@@ -493,7 +490,7 @@ function modificaAnnot(element){
 
     $('select[id="selectTipoAnnot"]').find('option:contains("'+tipo+'")').prop("selected",true).change();
 
-    // se l'annotazione � stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica TODO MOSTRARE FRAMMENTO
+    // se l'annotazione � stata fatta su un frammento mostro la textarea e il bottone e anche le opzioni commento e retorica
     if(frammentoSelezionato != ""){        
         $('textarea#selezione').css("display", "block");
         $('textarea#selezione').val(frammentoSelezionato);
@@ -572,7 +569,7 @@ function eliminaAnnotazioneGrafo(){
             if(annotazioniGrafoSessione[i].url == urlDoc){
                 var find = false;
                 for(j = 0; j < annotazioniGrafoSessione[i].annot.length; j++){
-                    if(annotazioniGrafoSessione[i].annot[j].prov_email.value == annotazioneModificata.prov_email.value && annotazioniGrafoSessione[i].annot[j].date.value == annotazioneModificata.date.value && annotazioniGrafoSessione[i].annot[j].type.value == annotazioneModificata.type.value && annotazioniGrafoSessione[i].annot[j].body_s.value == annotazioneModificata.body_s.value){
+                    if(annotazioniGrafoSessione[i].annot[j].provenance.value == annotazioneModificata.provenance.value && annotazioniGrafoSessione[i].annot[j].date.value == annotazioneModificata.date.value && annotazioniGrafoSessione[i].annot[j].type.value == annotazioneModificata.type.value && annotazioniGrafoSessione[i].annot[j].body_s.value == annotazioneModificata.body_s.value){
                         annotazioniGrafoSessione[i].annot[j]['deleted'] = "delete";
                         find = true;
                     }
@@ -765,7 +762,7 @@ $(document).ready(function(){
                         for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                             if(annotazioniSessione[i].annotazioni[j].id == idAnn){
 
-                                /* Se il frammento � stato modificato, aggiorno i dati */
+                                /* Se il frammento ? stato modificato, aggiorno i dati */
                                 if(typeof(oggettoSelezionato.selezione) != 'undefined'){
                                     annotazioniSessione[i].annotazioni[j].selezione = oggettoSelezionato.selezione;
                                     annotazioniSessione[i].annotazioni[j].idFrammento = oggettoSelezionato.id;
@@ -803,23 +800,28 @@ $(document).ready(function(){
             var numCit = '';
             var annotCit = '';
 
-            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined"){
+            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined" || typeof(annotazioneCitazione.type.value) != "undefined" ){
 //                source += '_ver1_cited['+infoAnnotazioneDaInserire["annotaCitazione"]+']' //TODO togliere
-                numCit = infoAnnotazioneDaInserire["annotaCitazione"];
+
                 annotCit = 'annotazione su citazione';
                 if(typeof(idFrammento) == "undefined"){
                     idFrammento = annotazioneCitazione.fs_value.value;
                     startOffset = annotazioneCitazione.start.value;
                     endOffset = annotazioneCitazione.end.value;
-                    selezione = annotazioneCitazione.body_l.value; //TODO _l o _ol ?
+                    selezione = annotazioneCitazione.body_l.value;
                     source = annotazioneCitazione.body_o.value;
+                    numCit = annotazioneCitazione.body_o.value.split("_");
+                    numCit = numCit[numCit.length-1].replace("cited", "");
+                    alert(numCit);
+                } else {
+                    numCit = infoAnnotazioneDaInserire["annotaCitazione"];
                 }
             }
             //costruisciAnnotazione(source, tipo, testo, idFrammento, start, end, selezione, numCit, annotCit)
             var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione, numCit, annotCit);
 
             /* Se l'annotazione e' su una citazione, la inserisco dinamicamente nel modal */
-            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined"){
+            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined" || typeof(annotazioneCitazione.type.value) != "undefined" ){
                 classCSS = getClassNameType(tipo);
                 col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
                 tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+classCSS.substring(9, classCSS.length)+'</td><td>'+getDateTime().replace("T", " ")+'</td><td>'+testo+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
@@ -879,6 +881,8 @@ $(document).ready(function(){
                         listaQueryDaInviare.push(creaQueryUpdate(annotazioniGrafoSessione[j].annot[i]));
                         if((typeof(annotazioniGrafoSessione[j].annot[i].update.tipo) != "undefined") && (annotazioniGrafoSessione[j].annot[i].update.tipo == "Autore")){
                             listaQueryDaInviare.push(creaTripleAutore(annotazioniGrafoSessione[j].annot[i].update.oggetto, annotazioniGrafoSessione[j].annot[i].body_s.value));
+                        } else if((typeof(annotazioniGrafoSessione[j].annot[i].type.value) == "cites")){
+                            listaQueryDaInviare.push(creaTriplaCit(annotazioniGrafoSessione[j].annot[i]));
                         }
                     } else {
                         listaQueryDaInviare.push(creaQueryDelete(annotazioniGrafoSessione[j].annot[i]));
@@ -1020,11 +1024,14 @@ $(document).ready(function(){
                     }
                 }
             }
-        }else if($("#modalAnnotCit").data('idCitGrafo') != undefined){
+        }else if($("#modalAnnotCit").data('idCitGrafo') != undefined){ // modifica citazione gi� presente sul grafo
+            var indice = $("#selectCit").find(":selected").attr("value")
+            var infoCit = prendiInfoCitazioni(indice);
             var idCit = $("#modalAnnotCit").data('idCitGrafo');
             var indexDoc = 0;
+            var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
             for(i = 0; i < listaAnnotGrafo1537.length; i++){
-                if(listaAnnotGrafo1537[i].url == $("ul.nav.nav-tabs li.active a").attr("id")){
+                if(listaAnnotGrafo1537[i].url == urlDoc){
                     indexDoc = i;
                 }
             }
@@ -1036,25 +1043,51 @@ $(document).ready(function(){
             annot['update']['autore'] = "<mailto:" + sessionStorage.email + ">";
             annot['update']['data_mod'] = getDateTime();
 
-            annot['update']['path'] = "path nuova citazione";
-            annot['update']['start_fragm'] = "start nuova citazione";
-            annot['update']['end_fragm'] = "end nuova citazione";
+            annot['update']['path'] = infoCit.path;
+            annot['update']['start_fragm'] = infoCit.start;
+            annot['update']['end_fragm'] = infoCit.end;
 
-            annot['update']['oggetto'] = "_ver1_cited[n]" //TODO prendere indice da listaCitazioni
-            annot['update']['label_oggetto'] = $("#selectCit").find(":selected").text();
+            var oggettoCit = urlDoc.replace(".html", "");
+            annot['update']['oggetto'] = oggettoCit+"_ver1_cited"+indice+"";
+            annot['update']['label_oggetto'] = infoCit.testo;
+
+            $('div#annotazioniPresenti tr#'+idCit+' td:nth-child(2)').html(annot.update.data_mod.replace("T", " "));
+            $('div#annotazioniPresenti tr#'+idCit+' td:nth-child(3)').html(annot.update.label_oggetto);
 
             annotazioniGrafoSessione = JSON.parse(sessionStorage.annotModificSessione);
-            var find = false;
-            for(i = 0; i < annotazioniGrafoSessione.length; i++){
-                if(annotazioniGrafoSessione[i].provenance.value == annot.provenance.value && annotazioniGrafoSessione[i].date.value == annot.date.value && annotazioniGrafoSessione[i].type.value == annot.type.value && annotazioniGrafoSessione[i].body_s.value == annot.body_s.value){
-                    annotazioniGrafoSessione[i] = annot;
-                    find = true;
-                }
-            }
+            var present = false;
+            if(annotazioniGrafoSessione.length == 0){
+                    annotDoc = {};
+                    annotDoc['url'] = urlDoc;
+                    annotDoc['annot'] = [];
+                    annotDoc['annot'].push(annot);
+                    annotazioniGrafoSessione.push(annotDoc);
+                } else {
+                    for(i = 0; i < annotazioniGrafoSessione.length; i++){
+                        if(annotazioniGrafoSessione[i].url == urlDoc){
+                            var find = false;
+                            for(j = 0; j < annotazioniGrafoSessione[i].annot.length; j++){
+                                if(annotazioniGrafoSessione[i].annot[j].provenance.value == annot.provenance.value && annotazioniGrafoSessione[i].annot[j].date.value == annot.date.value && annotazioniGrafoSessione[i].annot[j].type.value == annot.type.value && annotazioniGrafoSessione[i].annot[j].body_s.value == annot.body_s.value){
+                                    annotazioniGrafoSessione[i].annot[j] = annot;
+                                    find = true;
+                                }
+                            }
+                            if(!find){
+                                annotazioniGrafoSessione[i].annot.push(annot);
+                            }
+                            present = true;
+                        }
+                        break;
+                    }
 
-            if(!find){
-                annotazioniGrafoSessione.push(annot);
-            }
+                    if(!present){
+                        annotDoc = {};
+                        annotDoc['url'] = urlDoc;
+                        annotDoc['annot'] = [];
+                        annotDoc['annot'].push(annot);
+                        annotazioniGrafoSessione.push(annotDoc);
+                    }
+                }
 
             sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
         }else{
@@ -1096,5 +1129,4 @@ $(document).ready(function(){
     $("#modalConfermaEliminazione").on('hidden.bs.modal', function () {
             annotazioneModificata = {};
     });
-
 });

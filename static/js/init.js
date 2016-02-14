@@ -221,7 +221,7 @@ $(document).ready(function() {
                     if(annotazioniGrafoSessione[k].url == id){
                         indexDoc = k;
                         for(j = 0; j < annotazioniGrafoSessione[k].annot.length; j++){ // si controlla se le annotazioni sono state modificate o cancellate in locale
-                            if(annotazioniGrafoSessione[k].annot[j].provenance.value == annot_gest[i].provenance.value && annotazioniGrafoSessione[k].annot[j].date.value == annot_gest[i].date.value && annotazioniGrafoSessione[k].annot[j].type.value == annot_gest[i].type.value && annotazioniGrafoSessione[k].annot[j].body_s.value == annot_gest[i].body_s.value){
+                            if(annotazioniGrafoSessione[k].annot[j].provenance.value == annot_gest[i].provenance.value && annotazioniGrafoSessione[k].annot[j].date.value == annot_gest[i].date.value && annotazioniGrafoSessione[k].annot[j].type.value == annot_gest[i].type.value && annotazioniGrafoSessione[k].annot[j].body_s.value == annot_gest[i].body_s.value && annotazioniGrafoSessione[k].annot[j].body_o.value == annot_gest[i].body_o.value){
                                 find = true; // annotazione modificata
                                 index = j;
                                 if(typeof(annotazioniGrafoSessione[k].annot[j].deleted) != "undefined"){
@@ -233,11 +233,7 @@ $(document).ready(function() {
                 }
                 if(!deleted){ // se l'annotazione non e' stata cancellata localmente
                     if(find){
-                        if(typeof(annotazioniGrafoSessione[indexDoc].annot[index].update.data_mod) != "undefined"){
-                            data = parseDatetime(annotazioniGrafoSessione[indexDoc].annot[index].update.data_mod);
-                        } else {
-                            data = parseDatetime(annotazioniGrafoSessione[indexDoc].annot[index].date.value);
-                        }
+                        data = parseDatetime(annotazioniGrafoSessione[indexDoc].annot[index].update.data_mod);
                         if(typeof(annotazioniGrafoSessione[indexDoc].annot[index].update.tipo) != "undefined"){
                             tipo = annotazioniGrafoSessione[indexDoc].annot[index].update.tipo;
                             classe = getClassNameType(tipo).substring(9, getClassNameType(tipo).length);
@@ -246,7 +242,12 @@ $(document).ready(function() {
                             classe = getClassNameType(typeToIta(annot_gest[i].type.value)).substring(9, getClassNameType(typeToIta(annot_gest[i].type.value)).length);
                         }
                         if(typeof(annotazioniGrafoSessione[indexDoc].annot[index].update.oggetto) != "undefined"){
-                            oggetto = annotazioniGrafoSessione[indexDoc].annot[index].update.oggetto;
+                            if(tipo == "Citazione"){
+                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].update.label_oggetto;
+                            } else {
+                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].update.oggetto;
+                            }
+
                         } else { // se l'oggetto non e' stato modificato
                             if(tipo == "Funzione retorica"){
                                 oggetto = gestioneRetoriche(annotazioniGrafoSessione[indexDoc].annot[index].body_o.value);
