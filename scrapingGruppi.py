@@ -40,9 +40,7 @@ def scraping_gruppi():
         lista.append(data)
     return json.dumps(lista)
 
+
 if __name__ == "__main__":
-    print "this script (scrapingGruppi) is being run directly from %s" % __name__
     main()
-else:
-    print "this script (scrapingGruppi) is being imported into another module"
 

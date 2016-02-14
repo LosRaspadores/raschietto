@@ -153,7 +153,4 @@ def scraping_documenti():
 
 
 if __name__ == "__main__":
-    print "this script (scrapingDocumenti) is being run directly from %s" % __name__
     main()
-else:
-    print "this script (scrapingDocumenti) is being imported into another module"

@@ -687,7 +687,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print "this script (contactSparqlEndpoint) is being run directly from %s" % __name__
     main()
-else:
-    print "this script (contactSparqlEndpoint) is being imported into another module"

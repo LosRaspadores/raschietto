@@ -6,7 +6,6 @@ function inviaQuery(listaQuery){
             $('#alertMessage').text("Le nuove annotazioni sono state aggiunte.");
             $('#alertDoc').modal('show');
             listaQueryDaInviare = [];
-            $('span[class*="highlight"]').contents().unwrap();
             query = query_all_annotazioni($("ul.nav.nav-tabs li.active a").attr("id"));
             get_annotazioni(query, $("ul.nav.nav-tabs li.active a").attr("id"));
         }
@@ -224,7 +223,12 @@ function creaQueryUpdate(annotazione){
                 '?a oa:hasBody ?body . '+
                 '?a oa:hasTarget ?target . '+
                 '?target oa:hasSelector ?sel . '+
-                '?body rdf:subject <'+annotazione.body_s.value+'> . }';
+                '?body rdf:subject <'+annotazione.body_s.value+'> . ';
+    if(annotazione.type.value == "cites"){
+        query_end += '?body rdf:object <'+annotazione.body_o.value+'> . } ';
+    } else {
+        query_end += ' } ';
+    }
 
     if(typeof(annotazione.update.tipo) != "undefined"){
         query_delete += '?a rsch:type "'+annotazione.type.value+'"^^xsd:string . '+
@@ -279,19 +283,6 @@ function creaQueryUpdate(annotazione){
             query_insert += '?body rdf:object <'+ annotazione.update.oggetto +'> ; '+
                     'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
         }
-
-
-//        else if(tipo.toLowerCase() == "funzione retorica"){
-//            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
-//                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-//            query_insert += '?body rdf:object <'+ switchRetorica(annotazione.update.oggetto) +'> ; '+
-//                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-//        } else if(tipo.toLowerCase() == "citazione"){
-//            query_delete += '?body rdf:object <'+ annotazione.body_o.value +'> ; '+
-//                    'rdfs:label "'+annotazione.body_l.value+'"^^xsd:string . ';
-//            query_insert += '?body rdf:object <'+ annotazione.update.oggetto +'> ; '+
-//                    'rdfs:label "'+annotazione.update.label_oggetto+'"^^xsd:string . ';
-//        }
     }
 
     if(typeof(annotazione.update.path) != "undefined"){
@@ -307,7 +298,8 @@ function creaQueryUpdate(annotazione){
         if(tipo != tipoN){
             if(tipoN.toLowerCase() == "commento" || tipoN.toLowerCase() == "funzione retorica"){
             query_delete += '?body rdf:subject <'+ annotazione.body_s.value+'> . ';
-            query_insert += '?body rdf:subject <'+annotazione.target.value.replace('.html', '_ver1#')+annotazione.update.path+'-'+annotazione.update.start_fragm+'-'+annotazione.update.end_fragm+'> . ';
+            target = annotazione.target.value.replace('.html', '');
+            query_insert += '?body rdf:subject <'+target+'_ver1#'+annotazione.update.path+'-'+annotazione.update.start_fragm+'-'+annotazione.update.end_fragm+'> . ';
         }
         }
     }
@@ -364,19 +356,18 @@ function creaQueryDelete(annotazione){
 }
 
 function creaTripleAutore(nome, urlDoc){
-    triple ='PREFIX foaf:  <http://xmlns.com/foaf/0.1/> '+
+    triple = 'INSERT DATA {GRAPH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> { '+
+            'PREFIX foaf:  <http://xmlns.com/foaf/0.1/> '+
             'PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> '+
             'PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#> '+
             '<'+setIRIautore(nome)+'> a foaf:Person; '+
             'rdfs:label "'+nome+'"^^xsd:string; '+
-            'foaf:made <'+urlDoc+'> .';
+            'foaf:made <'+urlDoc+'> .}}';
     return triple;
 }
 
-function creaTriplaCit(urlDoc, citazione){
-    //if(urlDoc.indexOf(".html") != -1){
-    urlDoc = urlDoc.replace(".html", "_ver1");
-    //TODO completare con numero citazione
-    cit = "<"+urlDoc+">";
+function creaTriplaCit(citazione){
+    cit = 'INSERT DATA {GRAPH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> { '+
+          '<'+citazione.update.oggetto+'> <http://www.w3.org/2000/01/rdf-schema#label> "'+citazione.update.label_oggetto+'"^^<http://www.w3.org/2001/XMLSchema#string> . }}';
     return cit;
 }

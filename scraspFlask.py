@@ -21,10 +21,12 @@ from contactSparqlEndpoint import do_query_get, do_query_post, prefissi, sparql_
 import json
 from scrapingAutomatico import scraping_titolo, scarping_autore, scraping_doi, scraping_anno, scraping_citazioni, scraping_automatico_titolo
 from insertQuery import *
+import traceback
 
 
 # inizializzazione applicazione
 app = Flask(__name__)
+
 
 # valori di configurazione TODO DEBUG=True >>> eliminare dopo la migrazione sul server!!
 app.config.update(
@@ -52,58 +54,119 @@ def return_gruppi():
 
 @app.route('/scrapingAutomatico')
 def scrapingAutomatico():
-    listaAnnotazioni = []
     urlD = request.args.get('url')
-    doi = scraping_doi(urlD)  # dict
-    anno = scraping_anno(urlD)
-    listaAutori = scarping_autore(urlD)
-    listaCitazioni = scraping_citazioni(urlD)
-    titolo = scraping_automatico_titolo(urlD)
 
-    annAnno = costruisciAnnotazione(urlD, anno["xpath"], anno["start"], anno["end"], "hasPublicationYear", anno["anno"],
-                                    0)
-    query_Anno = query_annotazione(nome_grafo_gruppo, annAnno)
-    do_query_post(sparql_endpoint_remoto, query_Anno)
-    listaAnnotazioni.append(annAnno)
-
-    for autore in listaAutori:
-        annAutore = costruisciAnnotazione(urlD, autore["path"], autore["start"], autore["end"], "hasAuthor",
-                                          autore["autori"], 0)
-        query_autore = query_annotazione(nome_grafo_gruppo, annAutore)
-        do_query_post(sparql_endpoint_remoto, query_autore)
-        listaAnnotazioni.append(annAutore)
-
-    annTitolo = costruisciAnnotazione(urlD, titolo["path"], titolo["start"], titolo["end"], "hasTitle",
-                                      titolo["titolo"], 0)
-    query_titolo = query_annotazione(nome_grafo_gruppo, annTitolo)
-    do_query_post(sparql_endpoint_remoto, query_titolo)
-    listaAnnotazioni.append(annTitolo)
-
-    annDoi = costruisciAnnotazione(urlD, doi["xpath"], doi["start"], doi["end"], "hasDOI", doi["doi"], 0)
-    query_doi = query_annotazione(nome_grafo_gruppo, annDoi)
-    do_query_post(sparql_endpoint_remoto, query_doi)
-    listaAnnotazioni.append(annDoi)
-
-    for citazione in listaCitazioni:
-        i = 1
-        testoCitazione = citazione["citazione"].decode("utf-8")
-        annCitazione = costruisciAnnotazione(urlD, citazione["path"], citazione["start"], citazione["end"], "cites",
-                                             testoCitazione, i)
-        query_citazione = query_annotazione(nome_grafo_gruppo, annCitazione)
-        do_query_post(sparql_endpoint_remoto, query_citazione)
-        listaAnnotazioni.append(annCitazione)
-        i += 1
+    listaAnnotazioni = scraping(urlD)
 
     result = {}
     result["numero"] = len(listaAnnotazioni)
     return json.dumps(result)
 
 
-# @app.route('/scrapingAutomaticoDoi')
-# def return_doi():
-#      urlD = request.args.get('url')
-#      data = scraping_doi(urlD)
-#      return data
+@app.route('/scrapingForzato')
+def scrapingForzato():
+    urlD = request.args.get('url')
+
+    # elimitazione delle annotazioni automatiche del documento corrente (automatiche = quelle con la nostra provenance)
+    query_delete = query_delete_all_doc_nostraprovenance(urlD)
+    do_query_post(sparql_endpoint_remoto, query_delete)
+
+    listaAnnotazioni = scraping(urlD)
+
+    result = {}
+    result["numero"] = len(listaAnnotazioni)
+    return json.dumps(result)
+
+
+def scraping(urlD):
+
+    # aggiunte sull'endpoint triple relative alla nostra provenance
+    query_provenance = query_annotazione(nome_grafo_gruppo, PROVENANCE)
+    do_query_post(sparql_endpoint_remoto, query_provenance)
+
+    listaAnnotazioni = []
+
+    """
+    try:
+        anno = scraping_anno(urlD)
+        annAnno = costruisciAnnotazione(urlD, anno["xpath"], anno["start"], anno["end"], "hasPublicationYear", anno["anno"], 0)
+        query_Anno = query_annotazione(nome_grafo_gruppo, annAnno)
+        do_query_post(sparql_endpoint_remoto,query_Anno)
+        listaAnnotazioni.append(annAnno)
+        print "anno ok"
+    except Exception:
+        print "exc anno"
+        traceback.print_exc()
+        pass
+
+    try:
+        annUrl = costruisciAnnotazione(urlD, "document", "0", "0", "hasURL", urlD, 0)
+        query_url = query_annotazione(nome_grafo_gruppo, annUrl)
+        do_query_post(sparql_endpoint_remoto, query_url)
+        listaAnnotazioni.append(annUrl)
+        print "url ok"
+    except Exception:
+        print "exc url"
+        traceback.print_exc()
+        pass
+
+    try:
+        listaAutori = scarping_autore(urlD)
+        for autore in listaAutori:
+            annAutore = costruisciAnnotazione(urlD, autore["path"], autore["start"], autore["end"], "hasAuthor", autore["autori"].decode("utf-8"), 0)
+            query_autore = query_annotazione(nome_grafo_gruppo, annAutore)
+            do_query_post(sparql_endpoint_remoto, query_autore)
+            listaAnnotazioni.append(annAutore)
+        print "autori ok"
+    except Exception:
+        print "exc autori"
+        traceback.print_exc()
+        pass
+
+    try:
+        titolo = scraping_automatico_titolo(urlD)
+        annTitolo = costruisciAnnotazione(urlD, titolo["path"], titolo["start"], titolo["end"], "hasTitle", titolo["titolo"].decode("utf-8"), 0)
+        query_titolo = query_annotazione(nome_grafo_gruppo, annTitolo)
+        do_query_post(sparql_endpoint_remoto, query_titolo)
+        listaAnnotazioni.append(annTitolo)
+        print "titolo ok"
+    except Exception:
+        print "exc titolo"
+        traceback.print_exc()
+        pass
+
+    try:
+        doi = scraping_doi(urlD)  # dict
+        annDoi = costruisciAnnotazione(urlD, doi["xpath"], doi["start"], doi["end"], "hasDOI", doi["doi"], 0)
+        query_doi = query_annotazione(nome_grafo_gruppo, annDoi)
+        do_query_post(sparql_endpoint_remoto,query_doi)
+        listaAnnotazioni.append(annDoi)
+        print "doi ok"
+    except Exception:
+        print "exc doi"
+        traceback.print_exc()
+        pass"""
+
+    try:
+        listaCitazioni = scraping_citazioni(urlD)
+        print "tot citazioni"
+        print len(listaAnnotazioni)
+        i = 1
+        for citazione in listaCitazioni:
+            annCitazione = costruisciAnnotazione(urlD, citazione["path"], citazione["start"], citazione["end"], "cites", citazione["citazione"].decode("utf-8"), i)
+            query_citazione = query_annotazione(nome_grafo_gruppo, annCitazione)
+            do_query_post(sparql_endpoint_remoto, query_citazione)
+            listaAnnotazioni.append(annCitazione)
+            i += 1
+        print "citazioni ok"
+    except Exception:
+        print "exc citazioni"
+        traceback.print_exc()
+        pass
+
+    print "scraping"
+
+    return listaAnnotazioni
 
 @app.route('/scrapingCitazioni')
 def return_citazioni():
@@ -112,60 +175,9 @@ def return_citazioni():
     return json.dumps(data)
 
 
-@app.route('/scrapingAutomaticoForzato')
-def scrapingAutomaticoForzato():
-    listaAnnotazioni = []
-    urlD = request.args.get('url')
-    query_delete = query_delete_all_doc_nostraprovenance(urlD)
-    do_query_post(sparql_endpoint_remoto, query_delete)
-    doi = scraping_doi(urlD)  # dict
-    anno = scraping_anno(urlD)
-    listaAutori = scarping_autore(urlD)
-    listaCitazioni = scraping_citazioni(urlD)
-    titolo = scraping_automatico_titolo(urlD)
-
-    annAnno = costruisciAnnotazione(urlD, anno["xpath"], anno["start"], anno["end"], "hasPublicationYear", anno["anno"],
-                                    0)
-    query_Anno = query_annotazione(nome_grafo_gruppo, annAnno)
-    # do_query_post(sparql_endpoint_remoto,query_Anno)
-    listaAnnotazioni.append(annAnno)
-
-    for autore in listaAutori:
-        annAutore = costruisciAnnotazione(urlD, autore["path"], autore["start"], autore["end"], "hasAuthor", autore["autori"].decode("utf-8"), 0)
-        query_autore = query_annotazione(nome_grafo_gruppo, annAutore)
-        # do_query_post(sparql_endpoint_remoto, query_autore)
-        listaAnnotazioni.append(annAutore)
-
-    annTitolo = costruisciAnnotazione(urlD, titolo["path"], titolo["start"], titolo["end"], "hasTitle", titolo["titolo"].decode("utf-8"), 0)
-    query_titolo = query_annotazione(nome_grafo_gruppo, annTitolo)
-    # do_query_post(sparql_endpoint_remoto, query_titolo)
-    listaAnnotazioni.append(annTitolo)
-
-    annDoi = costruisciAnnotazione(urlD, doi["xpath"], doi["start"], doi["end"], "hasDOI", doi["doi"], 0)
-    query_doi = query_annotazione(nome_grafo_gruppo, annDoi)
-    # do_query_post(sparql_endpoint_remoto,query_doi)
-    listaAnnotazioni.append(annDoi)
-
-    for citazione in listaCitazioni:
-        i = 1
-        annCitazione = costruisciAnnotazione(urlD, citazione["path"], citazione["start"], citazione["end"], "cites", citazione["citazione"].decode("utf-8"), i)
-        query_citazione = query_annotazione(nome_grafo_gruppo, annCitazione)
-        # do_query_post(sparql_endpoint_remoto, query_citazione)
-        listaAnnotazioni.append(annCitazione)
-        i += 1
-
-    result = {}
-    result["numero"] = len(listaAnnotazioni)
-    return json.dumps(result)
-
 
 @app.route('/getDocumenti', methods=['GET', 'POST'])  # prende il titolo dei documenti quando vengono caricati
 def return_titolo():
-    # url = request.args.get('url')
-    # item_list = json.loads(url)
-    # url = request.args.get('url')  #  riceve: urlDoc = JSON.stringify(docTemp);
-    # if url is not None:
-    #     item_list = json.loads(url)  # load s => stringa
 
     item_list = []
     read_file = open('cacheDoc.json', 'r')
@@ -210,7 +222,6 @@ def check_Documento_In_Cache():
 
     is_in = 0
     for res in result:
-        print (res["url"])
         if url_doc == res["url"]:
             is_in = 1
             break
@@ -248,7 +259,6 @@ def salvaAnnotazioni():
     query = request.args.get('query')
     lista_query = json.loads(query)
     for q in lista_query:
-        # print q
         do_query_post(sparql_endpoint_remoto, q)
     return "ok"
 

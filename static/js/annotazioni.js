@@ -69,9 +69,9 @@ function get_annotazioni(query, urlDoc){
             if(lista_annotazioni.length != 0){
                 gestioneAnnotazioni(lista_annotazioni, urlDoc);
             } else {
-                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+                $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.\nRicerca automatica di annotazioni in corso..");
                 $('#alertDoc').modal('show');
-                //scraper(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
+                scrapingAutomatico(urlDoc);  //lancia lo scraper automaticamente se non ci sono annotazioni sul documento
             }
         },
         //there is no error handling for JSONP request
@@ -110,20 +110,26 @@ function gestioneAnnotazioni(lista_annotazioni, urlDoc){
             }
         };
     };
+
     salvaAnnotazioniJSON(urlDoc, annotazioni_da_salvare);
     if(annotazioni_da_salvare.length == 0){
         $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
         $('#alertDoc').modal('show');
-        //scraper(urlDoc);
+        scrapingAutomatico(urlDoc);
     } else {
+        // se ci sono ann non scartate
+        var numSuDoc = 0;
+        if(sudocumento){
+            numSuDoc = annotazioniSuDoc(urlDoc);
+        }
         if(sudocumento && !suframmento){
-            var numSuDoc = annotazioniSuDoc(urlDoc);
             if(numSuDoc != 0){
                 $('#alertMessage').text("Ci sono solo annotazioni sull'intero documento.");
                 $('#alertDoc').modal('show');
             } else {
                 $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
                 $('#alertDoc').modal('show');
+                scrapingAutomatico(urlDoc);
             }
         }
         stileAnnotazioniMultiple();
@@ -131,35 +137,53 @@ function gestioneAnnotazioni(lista_annotazioni, urlDoc){
 };
 
 
-function scraper(urlDoc){
+function scrapingAutomatico(urlDoc){
+    $('body').addClass("loading");
     $.ajax({
         url: '/scrapingAutomatico',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
+            $('body').removeClass("loading");
             res = JSON.parse(result);
-            query = query_all_annotazioni(urlDoc);
-            get_annotazioni(query, urlDoc);
+            if(res.numero != 0){
+                allAnnotazioni = query_all_annotazioni(urlDoc);
+                get_annotazioni(allAnnotazioni, urlDoc)
+            } else {
+                $('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+                $('#alertDoc').modal('show');
+            }
         },
         error: function(){
-
+            $('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+            $('#alertDoc').modal('show');
+            $('body').removeClass("loading");
         }
     });
 }
 
 
-function lancia_scraper(urlDoc){
+function scrapingForzato(urlDoc){
+    $('body').addClass("loading");
     $.ajax({
-        url: '/scrapingAutomaticoForzato',
+        url: '/scrapingForzato',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
+            $('body').removeClass("loading");
             res = JSON.parse(result);
-            allAnnotazioni = query_all_annotazioni(urlDoc);
-            get_annotazioni(allAnnotazioni, urlDoc)
+            if(res.numero != 0){
+                allAnnotazioni = query_all_annotazioni(urlDoc);
+                get_annotazioni(allAnnotazioni, urlDoc)
+            } else {
+                $('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+                $('#alertDoc').modal('show');
+            }
         },
         error: function(){
-
+            a$('#alertMessage').text("La ricerca automatica di annotazioni non ha prodotto nessun risultato.");
+            $('#alertDoc').modal('show');
+            $('body').removeClass("loading");
         }
     });
 }
@@ -237,6 +261,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
+        path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
 
         //if rivista statistica
         path = path.replace("div[1]/div[2]/div[2]/div[3]/", ".//*[@id='" + id +"']/div/div/");
@@ -249,12 +274,15 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         //if rivista statistica or if antropologia e teatro
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
+        console.log("path: " + path + " - start " + start + " - end " + end)
+
         //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
         var evidenziata = false;
         try {
             //The expression is a legal expression.
             var nodo = document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
             if (nodo != null){
+                console.log("path: " + path + " - start " + start + " - end " + end)
                 evidenziata = setRange(nodo, start, end, classCSS, ann);
             };
         } catch (ex) {
@@ -588,6 +616,7 @@ function displayAnnSuDoc(ann){
 
 // visualizzazione annotazioni senza fragment path del documento corrente sul pannello laterale
 function annotazioniSuDoc(url_doc){
+    $("#ann_sul_doc").html("<p></p>");
     var numAnn = 0;
     for(var i=0; i<listaAllAnnotazioni.length; i++){
         if(listaAllAnnotazioni[i].url == url_doc){
@@ -600,7 +629,7 @@ function annotazioniSuDoc(url_doc){
                         var out = displayAnnSuDoc(listaAllAnnotazioni[i].listaGrafi[j].annotazioni[z]);
                         if (out != ""){
                             $("#ann_sul_doc").append(out);
-                            numAnn++;
+                            numAnn = numAnn + 1;
                         }
                     }
                 }
@@ -632,6 +661,13 @@ $( document ).ready(function() {
         } else {
             // la tab attiva e' la tab home
             $("#ann_sul_doc").html('<p>Nessun documento selezionato</p>');
+        }
+    });
+
+    $('#buttonScraper').click(function(){
+        var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
+        if(urlDoc != "homeTab"){
+            scrapingForzato(urlDoc);
         }
     });
 

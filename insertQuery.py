@@ -14,12 +14,10 @@ __author__ = 'Los Raspadores'
 
 # moduli importati
 from SPARQLWrapper import SPARQLWrapper, JSON, N3, TURTLE # per interrogare uno SPARQL end-point
-
 from rdflib import Namespace  # modulo Namespace per crearne di nuovi
-
 import re
 import datetime
-from time import gmtime, strftime
+from time import strftime, localtime
 
 
 # endpoint
@@ -90,7 +88,6 @@ def setIRIautore(nome_autore):
     prefix_rsch = "http://vitali.web.cs.unibo.it/raschietto/person/"
     uri = prefix_rsch   # =prefix/[inizialeprimonome]-[cognome]
     list = nome_autore.split(" ")
-    # print list
     length = len(list)
     if length == 1:
         uri += list[0]
@@ -100,17 +97,17 @@ def setIRIautore(nome_autore):
         uri += list[0][0:1] + "-" + list[1] + list[2]
     else:
         uri += list[0][0:1] + "-" + list[length-2] + list[length-1]
-
     uri = uri.decode("utf-8")
     return uri
 
 
-# ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm
+# ottenere data e ora locale nel formato specificato YYYY-MM-DDTHH:mm
 def getDateTime():
     datetime.datetime.now()
-    return strftime("%Y-%m-%dT%H:%M", gmtime())
+    return strftime("%Y-%m-%dT%H:%M", localtime())
 
 
+# triple ontologia frbr e fabio relative a un documento annotato
 def tripleFRBRdocument(url_doc):
     if url_doc.endswith(".html"):
         url_nohtml = url_doc[:-len(".html")]
@@ -125,10 +122,12 @@ def tripleFRBRdocument(url_doc):
     return tripleRFBR
 
 
-# urldoc, path, end, start, tipo, valore("bla") # titolo url autore anno doi
 def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
-    data = getDateTime()  # formatted
-    urlnohtml = urldoc[:-len(".html")]
+    data = getDateTime()  # data e ora locale nel formato specificato YYYY-MM-DDTHH:mm
+    if urldoc.find(".html"):
+        urlnohtml = urldoc[:-len(".html")]
+    else:  # gli url di alcuni documenti non finiscono con .html
+        urlnohtml = urldoc
     target = "oa:hasTarget [ a oa:SpecificResource ;"\
                 "oa:hasSelector [ a oa:FragmentSelector ;"\
                     "rdf:value \"" + path + "\"^^xsd:string ;"\
@@ -149,7 +148,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
             rdf:predicate dcterms:title ;
             rdf:object \"""" + valore + """\"^^xsd:string ."""
     elif tipo == "hasAuthor":
-        author = setIRIautore(valore)
+        author = setIRIautore(valore)  # iri autore formato corretto (cioe' come da specifiche)
         ann = """[] a oa:Annotation ;
             rdfs:label "Autore"^^xsd:string ;
             rsch:type "hasAuthor"^^xsd:string ;
@@ -199,7 +198,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
             rdf:subject  <""" + urlnohtml + """_ver1> ;
             rdf:predicate fabio:hasURL ;
             rdf:object \"""" + urldoc + """\"^^xsd:anyURL ."""
-    elif tipo == "cites":  # citazione
+    elif tipo == "cites":
         ann = """[] a oa:Annotation ;
             rdfs:label "Citazione"^^xsd:string ;
             rsch:type "cites"^^xsd:string ;
@@ -212,9 +211,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
             rdf:predicate cito:cites ;
             rdf:object <""" + urldoc + "ver1_cited""" + str(numcit) + """>.
         <""" + urlnohtml + """_ver1_cited""" + str(numcit) + """> rdfs:label \"""" + valore + """\"^^xsd:string ."""
-    # print(ann)
     return ann
-
 
 
 # per query insert e delete
@@ -226,7 +223,6 @@ def do_query_post(endpoint, query):
 
 
 def query_annotazione(nome_grafo, annotazione):
-    annotazione += PROVENANCE
     query = prefissi + """
                 INSERT DATA {
                     GRAPH <%s> { %s }
@@ -375,7 +371,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print "this script (contactSparqlEndpoint) is being run directly from %s" % __name__
     main()
-else:
-    print "this script (contactSparqlEndpoint) is being imported into another module"

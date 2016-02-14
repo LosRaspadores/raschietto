@@ -101,8 +101,4 @@ $(document).ready(function() {
         readerMode();
     });
 
-    /*
-        prop() // attr()
-        con le checkboxes uso prop(), attr() potrebbe dare risultati indesiderati
-    */
 });
