@@ -24,8 +24,8 @@
         <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" type="text/css" href="/static/css/index.css">
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Exo:400,900">
-        <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Roboto:400,900'>
         <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Playball'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
     </head>
 
     <body>
@@ -92,7 +92,7 @@
                         <li>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonScraper" data-toggle="tooltip" data-placement="bottom" title="Forza creazione di annotazioni"><span class="glyphicon glyphicon-filter"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonAnnotDoc" data-tooltip="tooltip" data-placement="bottom" title="Inserisci un'annotazione sul documento"><span class="glyphicon glyphicon-pencil"></span></button>
-                            <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-toggle="modal" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
+                            <button type="button" class="btn btn-default navbar-btn" id="buttonCit" data-tooltip="tooltip" data-placement="bottom" title="Inserisci e gestisci citazioni" data-target="#modalAnnotCit"><span class="glyphicon glyphicon-file"></span></button>
                             <button type="button" class="btn btn-default navbar-btn" id="buttonGest" data-tooltip="tooltip" data-placement="bottom" title="Gestisci e salva le annotazioni create" data-toggle="modal" data-target="#modalGestAnnotazioni"><span class="glyphicon glyphicon-floppy-disk"></span></button>
                         </li>
                       </ul>
@@ -315,7 +315,7 @@
                             </div>
                     </div>
                     <div class="modal-footer">
-                        <button id="annullaGest" type="button" class="btn btn-danger" data-dismiss="modal">Annulla</button>
+                        <button id="annullaGest" type="button" class="btn btn-danger" data-dismiss="modal">Chiudi</button>
                         <button id="salvaGest" type="button" class="btn btn-success">Salva</button>
                     </div>
                  </div>
@@ -354,7 +354,6 @@
                         <div class="modal-body">
                             <textarea class="form-control" rows="3" id="selezione" readonly></textarea>
                             <button id="bottonemodFramm" type="button" class="btn btn-success" data-dismiss="modal">Modifica Testo Selezionato</button>
-                            <!--<div id="modificaSelezioneFramm"></div>-->
                                 <div class="form-group" id="divInsert">
                                     <label for="selectTipoAnnot">Seleziona il tipo di annotazione</label>
                                     <div>

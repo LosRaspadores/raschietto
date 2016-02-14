@@ -19,7 +19,7 @@ from rdflib import Namespace  # modulo Namespace per crearne di nuovi
 
 import re
 import datetime
-from time import gmtime, strftime
+from time import gmtime, strftime, localtime
 
 
 # endpoint
@@ -33,10 +33,10 @@ USER = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 nome_grafo_gruppo = "http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"
 
 # provenance gruppo
-PROVENANCE = """<mailto:los.raspadores@gmail.com> a foaf:mbox ;
-            schema:email "los.raspadores@gmail.com" ;
-            foaf:name "LosRaspadores"^^xsd:string ;
-            rdfs:label "LosRaspadores"^^xsd:string ."""
+PROVENANCE = """<mailto:los.raspadores@gmail.com> a <http://xmlns.com/foaf/0.1/mbox> ;
+    <http://www.w3.org/2000/01/rdf-schema#label> "LosRaspadores"^^<http://www.w3.org/2001/XMLSchema#string> ;
+    <http://schema.org/email> "los.raspadores@gmail.com" ;
+    <http://xmlns.com/foaf/0.1/name> "LosRaspadores"^^<http://www.w3.org/2001/XMLSchema#string> ."""
 
 # dichiarazione namespace
 FOAF = Namespace("http://xmlns.com/foaf/0.1/")
@@ -67,6 +67,7 @@ prefissi = """  PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 def setIRIautore(nome_autore):
     nome_autore = nome_autore.strip()
     nome_autore = nome_autore.lower()
+    nome_autore = nome_autore.encode("utf-8")
     for ch in ['\\', ';', '&', '`', '*', '_', '{', '}', '[', ']', '(', ')', '>', '#', '+', '-', '.', '!', '$', '\'']:
         if ch in nome_autore:
             nome_autore = nome_autore.replace(ch, "")
@@ -86,20 +87,10 @@ def setIRIautore(nome_autore):
     for ch in ['ù']:
         if ch in nome_autore:
             nome_autore = nome_autore.replace(ch, "u")
-    """
-    rExps = [{'re': '/[\xE0-\xE6]/g', 'ch': 'a'},
-             {'re': '/[\xE8-\xEB]/g', 'ch': 'e'},
-             {'re': '/[\xEC-\xEF]/g', 'ch': 'i'},
-             {'re': '/[\xF2-\xF6]/g', 'ch': 'o'},
-             {'re': '/[\xF9-\xFC]/g', 'ch': 'u'}]
-    for item in rExps:
-        nome_autore = re.sub(item["re"], item["ch"], nome_autore)
-    """
-
     prefix_rsch = "http://vitali.web.cs.unibo.it/raschietto/person/"
     uri = prefix_rsch   # =prefix/[inizialeprimonome]-[cognome]
     list = nome_autore.split(" ")
-    print list
+    # print list
     length = len(list)
     if length == 1:
         uri += list[0]
@@ -110,13 +101,14 @@ def setIRIautore(nome_autore):
     else:
         uri += list[0][0:1] + "-" + list[length-2] + list[length-1]
 
+    uri = uri.decode("utf-8")
     return uri
 
 
 # ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm
 def getDateTime():
     datetime.datetime.now()
-    return strftime("%Y-%m-%dT%H:%M", gmtime())
+    return strftime("%Y-%m-%dT%H:%M", localtime())
 
 
 def tripleFRBRdocument(url_doc):
@@ -140,9 +132,9 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     target = "oa:hasTarget [ a oa:SpecificResource ;"\
                 "oa:hasSelector [ a oa:FragmentSelector ;"\
                     "rdf:value \"" + path + "\"^^xsd:string ;"\
-                    "oa:start \"" + start + "\"^^xsd:nonNegativeInteger ;"\
-                    "oa:end  \"" + end + "\"^^xsd:nonNegativeInteger ] ;"\
-                "oa:hasSource <" + urldoc + "> ] ."
+                    "oa:start \"" + str(start) + "\"^^xsd:nonNegativeInteger ;"\
+                    "oa:end  \"" + str(end) + "\"^^xsd:nonNegativeInteger ] ;"\
+                "oa:hasSource <" + str(urldoc) + "> ] ."
 
     if tipo == "hasTitle":
         ann = """[] a oa:Annotation ;
@@ -194,7 +186,7 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
                 rdfs:label \"""" + valore + """\"^^xsd:string ;
                 rdf:subject <""" + urlnohtml + """_ver1> ;
                 rdf:predicate prism:doi ;
-                rdf:object \"""" + valore + """\"^^xsd:date ."""
+                rdf:object \"""" + valore + """\"^^xsd:string ."""
     elif tipo == "hasURL":
         ann = """[] a oa:Annotation ;
             rdfs:label "URL"^^xsd:string ;
@@ -223,18 +215,6 @@ def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     return ann
 
 
-def get_fragment_path(path):
-    arr = path.split("_")
-    for i in range(len(arr)):
-        if not(contains_digits(arr[i])):
-            arr[i] = arr[i] + "1"
-        else:
-            if "h" in arr[i]:
-                if len(arr[i]) == 2:
-                    arr[i] = arr[i]+"1"
-    path = "_".join(arr)
-    path = path.replace("1_html1_body1_", "")
-    return path
 
 # per query insert e delete
 def do_query_post(endpoint, query):
@@ -245,12 +225,12 @@ def do_query_post(endpoint, query):
 
 
 def query_annotazione(nome_grafo, annotazione):
+    annotazione += PROVENANCE
     query = prefissi + """
                 INSERT DATA {
                     GRAPH <%s> { %s }
                 }""" % (nome_grafo, annotazione)
     return query
-
 
 
 def query_delete_all_doc_nostraprovenance(url_doc):
@@ -272,28 +252,25 @@ def contains_digits(string):
     digits = re.compile('\d')
     return bool(digits.search(string))
 
-def get_fragment_path(path):
-    arr = path.split("_")
-    for i in range(len(arr)):
-        if not(contains_digits(arr[i])):
-            arr[i] = arr[i] + "1"
-        else:
-            if "h" in arr[i]:
-                if len(arr[i]) == 2:
-                    arr[i] = arr[i]+"1"
-    path = "_".join(arr)
-    path = path.replace("html1_body1_", "")
-    return path
+
+def xpathToFragmentPath(xpath):
+    xpath = xpath.replace("/html/body/", "")
+    xpath = xpath.replace("/text()", "")
+    xpath_steps = xpath.split("/")
+    fragment_path = ""
+    for step in xpath_steps:
+        if not contains_digits(step):
+            step += "1"
+        if step == "h1" or step == "h2" or step == "h3" or step == "h4" or step == "h5" or step == "h6":
+            if len(step) == 2:
+                step += "1"
+        fragment_path += step + "_"
+    fragment_path = fragment_path[:-1]
+    fragment_path = fragment_path.replace("[", "")
+    fragment_path = fragment_path.replace("]", "")
+    return fragment_path
 
 def main():
-    """
-    print(setIRIautore(" Màrio  "))
-    print(setIRIautore("Marìo   Rossi"))
-    print(setIRIautore("Ma&rio Dè Rùssi  "))
-    print(setIRIautore("M. Dé Rossi"))
-    print(setIRIautore("M{ar}io De Rossi B*ian;chi"))
-    print(setIRIautore("M[a]riò De Rossi Bianc.;h:i Vèrdi Gialli"))
-    """
 
     path = "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"
     start = "0"
@@ -336,10 +313,10 @@ def main():
     triple += PROVENANCE + documentFRBR
 
     query = query_delete_all_doc_nostraprovenance(url)
-    do_query_post(sparql_endpoint_locale, query)
+    # do_query_post(sparql_endpoint_locale, query)
 
     query = query_annotazione(nome_grafo_gruppo, triple)
-    do_query_post(sparql_endpoint_locale, query)
+    # do_query_post(sparql_endpoint_locale, query)
 
 
 

@@ -51,7 +51,7 @@ import rdflib  # per leggere e manipolare grafi RDF
 from SPARQLWrapper import SPARQLWrapper, JSON, N3, TURTLE # per interrogare uno SPARQL end-point
 from rdflib.namespace import RDF  # namespace per RDF
 from rdflib import Namespace  # modulo Namespace per crearne di nuovi
-import json
+import json, re
 from urlparse import urljoin
 
 # endpoint
@@ -457,6 +457,7 @@ def queryFRBRdocument(url_doc):
 
 # 'CLEAR GRAPH' per rimuovere le triple da un grafo
 def query_clear_graph(nome_grafo):
+    # CLEAR GRAPH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537>
     query = """CLEAR GRAPH <%s>""" % nome_grafo
     return query
 
@@ -515,6 +516,7 @@ def query_select_from_tuttigafi(lista_grafi):
 
 # per query insert e delete
 def do_query_post(endpoint, query):
+    # /update?user="http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537"&pass="FF79%bAW"
     sparql_endpoint = SPARQLWrapper(endpoint+"/update?user=%s&pass=%s" % (USER, PASS), returnFormat="json")
     sparql_endpoint.setQuery(query)
     sparql_endpoint.setMethod('POST')
@@ -557,22 +559,38 @@ def rfrbDocToEndpoint(url_doc):
     query = query_annotazione(nome_grafo_gruppo, queryFRBRdocument(url_doc))
     do_query_post(sparql_endpoint_remoto, query)
 
+def contains_digits(string):
+    digits = re.compile('\d')
+    return bool(digits.search(string))
+
+
+def xpathToFragmentPath(xpath):
+    xpath = xpath.replace("/html/body/", "")
+    xpath = xpath.replace("/text()", "")
+    xpath_steps = xpath.split("/")
+    fragment_path = ""
+    for step in xpath_steps:
+        if not contains_digits(step):
+            step += "1"
+        if step == "h1" or step == "h2" or step == "h3" or step == "h4" or step == "h5" or step == "h6":
+            if len(step) == 2:
+                step += "1"
+        fragment_path += step + "_"
+    fragment_path = fragment_path[:-1]
+    fragment_path = fragment_path.replace("[", "")
+    fragment_path = fragment_path.replace("]", "")
+    return fragment_path
+
+
 
 def main():
 
-    """
-    query = query_insert_file(nome_grafo_gruppo, "travel.owl")
-    do_query_post(sparql_endpoint_locale, query)
-
     query = query_clear_graph(nome_grafo_gruppo)
-    do_query_post(sparql_endpoint_locale, query)
+    do_query_post(sparql_endpoint_remoto, query)
+    #do_query_post(sparql_endpoint_locale, query)
+
+
     """
-
-    query = query_clear_graph(nome_grafo_gruppo)
-    #do_query_post(sparql_endpoint_remoto, query)
-    do_query_post(sparql_endpoint_locale, query)
-
-
     url_doc = "http://www.dlib.org/dlib/july15/downs/07downs.html"
 
 
@@ -620,12 +638,11 @@ def main():
     #do_query_post(sparql_endpoint_remoto, query)
     do_query_post(sparql_endpoint_locale, query)
 
-    """
+
     query = query_delete_all_doc_nostraprovenance(url_doc)
     do_query_post(sparql_endpoint_remoto, query)
     #do_query_post(sparql_endpoint_locale, query)
     """
-
 
     annota = """[] a oa:Annotation ;
         rdfs:label "Titolo"^^xsd:string ;
@@ -656,18 +673,17 @@ def main():
     <http://rivista-statistica.unibo.it/article/view/4594_ver1> a fabio:Expression;
         fabio:hasRepresentation <http://rivista-statistica.unibo.it/article/view/4594.html>."""
 
-"""
+    """
     query = query_annotazione(nome_grafo_gruppo, annota)
     do_query_post(sparql_endpoint_remoto, query)
-    #do_query_post(sparql_endpoint_locale, query)"""
+    do_query_post(sparql_endpoint_locale, query)
 
-"""
     query = query_select_from_tuttigafi(lista)
     do_query_get(sparql_endpoint_locale, query)
 
     query = query_select_all_grafo(nome_grafo_gruppo)
     do_query_get(sparql_endpoint_remoto, query)
-"""
+    """
 
 
 if __name__ == "__main__":

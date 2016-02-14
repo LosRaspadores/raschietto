@@ -109,6 +109,7 @@ function filtriMultiple(){
         $(".highlightMultipleTipoUguale").css("border", "none");
     } else {
         $(".highlightMultipleTipoDiverso").css("background-color", "#dae0e6");
-        $(".highlightMultipleTipoUguale").css("border", "1px solid #57595c");
+        $(".highlightMultipleTipoUguale").css("border-bottom", "1px solid #57595c");
+        $(".highlightMultipleTipoUguale").css("border-top", "1px solid #57595c");
     };
 }

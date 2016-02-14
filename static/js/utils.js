@@ -63,12 +63,12 @@ function setIRIautore(nome_autore){
 }
 
 /*
-console.log(setIRIautore(" Màrio  "));
-console.log(setIRIautore("Marìo   Rossi"));
-console.log(setIRIautore("Ma&rio Dè Rùssi  "));
-console.log(setIRIautore("M. Dé Rossi"));
+console.log(setIRIautore(" Mï¿½rio  "));
+console.log(setIRIautore("Marï¿½o   Rossi"));
+console.log(setIRIautore("Ma&rio Dï¿½ Rï¿½ssi  "));
+console.log(setIRIautore("M. Dï¿½ Rossi"));
 console.log(setIRIautore("M{ar}io De Rossi B*ian;chi"));
-console.log(setIRIautore("M[a]riò De Rossi Bianc.;h:i Vèrdi Gialli"));
+console.log(setIRIautore("M[a]riï¿½ De Rossi Bianc.;h:i Vï¿½rdi Gialli"));
 */
 
 
@@ -78,7 +78,7 @@ function getDateTime(){
     return datetime = currentdate.getFullYear() + "-"
                     + addZero(currentdate.getMonth()+1)  + "-"
                     + addZero(currentdate.getUTCDate()) + "T"
-                    + currentdate.getHours() + ":"
+                    + addZero(currentdate.getHours()) + ":"
                     + addZero(currentdate.getMinutes());
 
 }
@@ -127,6 +127,12 @@ var listaAnnotGrafo1537 = [];
 
  
 function salvaAnnotazioniJSON(url, listaAnnotazioni){
+    for(j = 0; j < listaAllAnnotazioni.length; j++){
+        if(listaAllAnnotazioni[j].url == url){
+            listaAllAnnotazioni.splice(j, 1);
+        }
+    }
+
     annot_grafo = {};
     annot_grafo['url'] = url;
     annot_grafo['listaGrafi'] = [];
@@ -318,7 +324,7 @@ function getRangeContent(fragmentPath, start, end, urlDoc){
 	var content = "";
 	var path = getXPath(fragmentPath);
 	var id = urlDoc.replace(/([/|_.|_:|_-])/g, '');
-        if (path.indexOf('tbody') == -1 ) { // se non c'è tbody
+        if (path.indexOf('tbody') == -1 ) { // se non c'ï¿½ tbody
             path = path.replace(/\/tr/g, '/tbody[1]/tr');
         }
         path = path.replace("form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/", ".//*[@id='" + id +"']//table/");
@@ -343,7 +349,7 @@ function getRangeContent(fragmentPath, start, end, urlDoc){
             };
         } catch (ex) {
             //The expression is NOT a legal expression.
-            //se per esempio il fragmentPath è incompleto o relativo
+            //se per esempio il fragmentPath ï¿½ incompleto o relativo
             //l'annotazione viene scartata
         }
 	return content;
@@ -379,8 +385,8 @@ function getContent(nodo, start, end){
                     end = end -lunghezzaNodoCorrente;
                     // si passa al  al nodo successivo
                 }
-            } else {  // cioè if(start < lunghezzaNodoCorrente)
-                // lo start offset è nel nodo corrente
+            } else {  // cioï¿½ if(start < lunghezzaNodoCorrente)
+                // lo start offset ï¿½ nel nodo corrente
                 if(!trovatoNodoStart){
                     rangeObject.setStart(nodoCorrente, start);
                 };

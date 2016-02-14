@@ -1,5 +1,8 @@
-$(document).ready(function() {
+/* Variabile globale contenente le citazioni di un documento */
+listaCitazioni = []
 
+
+$(document).ready(function() {
     listaGruppiCompleta = [];
 
     //documenti
@@ -32,6 +35,7 @@ $(document).ready(function() {
     $('#insertComm').css('display', 'none');
     $('#insertfunzRet').css('display', 'none');
     $('#salvaInsert').prop('disabled', 'disabled');
+    $('#salvaInsertCit').prop('disabled', 'disabled');
 
 
     // gestione tab home
@@ -48,6 +52,7 @@ $(document).ready(function() {
         $("#home").load("/static/homeText.txt");
         $("#home").addClass("in active");
         $("#ann_sul_doc").html("<p>Nessun documento selezionato</p>");
+        $('body').removeClass("loading");
     });
 
     // seconda nav fissa dopo lo scrolling della pagina
@@ -89,33 +94,8 @@ $(document).ready(function() {
         handle: ".modal-content"
     });
 
-    var year = new Date().getFullYear();
-    for(i = year; i >=  1800; i--){
-        $('select#anno').append('<option value="'+i+'">'+i+'</option>');
-    }
-
-    //TODO prendere le citazioni dall'oggetto che le contiene
-    /*  getListaCitazioni(listaCitazioni) */
-    var listaCitazioni = []
-    var cit1 = {}
-    cit1["testo"] = "[2] Gabriel, Christoph. 2011. 'Corpus of Argentinean Spanish'. In: Hedeland, Hanna et al. (Eds.), Multilingual Resources and Multilingual Applications Proceedings of the Conference of the German Society for Computational Linguistics and Language Technology (GSCL) 2011. Hamburg: Universit�t. (Arbeiten zur Mehrsprachigkeit: Working Papers in Multilingualism; Folge B: Serie B; 96).";
-    cit1["numero"] = 2;
-    cit1["path"] = "form1_h2";
-    cit1["start"] = "0"
-    cit1["end"] = "130";
-    listaCitazioni.push(cit1)
-
-    var cit2 = {}
-    cit2["testo"] = "[3] Hedeland, Hanna et al. 2011. 'Multilingual Corpora at the Hamburg Centre for Language Corpora.' In: Hedeland, Hanna et al. (Eds.), Multilingual Resources and Multilingual Applications Proceedings of the Conference of the German Society for Computational Linguistics and Language Technology (GSCL) 2011. Hamburg: Universit�t. (Arbeiten zur Mehrsprachigkeit: Working Papers in Multilingualism; Folge B: Serie B; 96).";
-    cit2["numero"] = 3;
-    cit2["path"] = "form1_p2";
-    cit2["start"] = "0"
-    cit2["end"] = "90";
-    listaCitazioni.push(cit2)
-
-
     $('ul#bottoniAnnotator button').click(function(e){
-        /* I bottoni della nav bar non sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar non sono funzionali se non c'� un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
             var mess = '';
             if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
@@ -141,8 +121,8 @@ $(document).ready(function() {
                 $('#insertAnnoPub').css('display', 'none');
                 $('#insertTitolo').css('display', 'none');
                 $('#insertURL').css('display', 'none');
-                $('#insertComm').css('display', 'none');
                 $('#insertDOI').css('display', 'none');
+                $('#insertComm').css('display', 'none');
                 $('#insertfunzRet').css('display', 'none');
                 break;
             case "anno":
@@ -218,20 +198,11 @@ $(document).ready(function() {
         }
    });
 
-    $('#buttonCit').click(function(){ //TODO lo fa solo la prima volta
-        var id = $("ul.nav.nav-tabs li.active a").attr("id");
-        if(id != 'homeTab'){
-            //getCitazioni(id);
-            var cit = '';
-            for(var i = 0; i < listaCitazioni.length; i++){
-                if(listaCitazioni[i].testo.length > 70){
-                    cit = listaCitazioni[i].testo.substring(0, 70)+'...';
-                } else {
-                cit = listaCitazioni[i].testo;
-                }
-                $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>');
-            };
-        };
+    $('#buttonCit').click(function(){
+        var url = $("ul.nav.nav-tabs li.active a").attr("id");
+        if(url != 'homeTab'){
+            getCitazioni(url);
+        }
     });
 
 
@@ -287,7 +258,7 @@ $(document).ready(function() {
                             if(tipo == "Funzione retorica"){
                                 oggetto = gestioneRetoriche(annotazioniGrafoSessione[indexDoc].annot[index].body_o.value);
                             } else if(tipo == "Citazione" || tipo == "Autore"){
-                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_ol.value;
+                                oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_l.value;
                             } else {
                                 oggetto = annotazioniGrafoSessione[indexDoc].annot[index].body_o.value;
                             }
@@ -300,7 +271,7 @@ $(document).ready(function() {
                         if(tipo == "Funzione retorica"){
                             oggetto = gestioneRetoriche(annot_gest[i].body_o.value);
                         } else if(tipo == "Citazione" || tipo == "Autore"){
-                            oggetto = annot_gest[i].body_ol.value;
+                            oggetto = annot_gest[i].body_l.value;
                         } else {
                             oggetto = annot_gest[i].body_o.value;
                         }
@@ -326,7 +297,7 @@ $(document).ready(function() {
                 if(annotazioniSessione[i].doc == id){
                     for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                         tipo = annotazioniSessione[i].annotazioni[j].tipo;
-                        data = annotazioniSessione[i].annotazioni[j].data.replace("T", " ");
+                        data = parseDatetime(annotazioniSessione[i].annotazioni[j].data);
                         selezione = annotazioniSessione[i].annotazioni[j].selezione;
                         oggetto = annotazioniSessione[i].annotazioni[j].oggetto;
 
@@ -337,6 +308,7 @@ $(document).ready(function() {
                         if(tipo == 'Citazione'){
                             span = '<span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Annota citazione" onclick="annotaCitazione('+idAnn+')">'
                             alert = 'citazione';
+                            oggetto = oggetto.substring(0, (oggetto.length)-1)
                         }
                         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
                         tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ tipo+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica '+alert+'"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina '+alert+'"></span>'+span+'</td></tr>';
@@ -370,6 +342,7 @@ $(document).ready(function() {
                         addTab(result, urlDoc, title);
                         query = query_all_annotazioni(urlDoc);
                         get_annotazioni(query, urlDoc);
+                        annotazioniSuDoc(urlDoc);
                         filtriAttivi();
                     },
                     error: function(error) {
@@ -378,43 +351,16 @@ $(document).ready(function() {
                     }
                 });
             }else{
-                if(numTabs <= 1){
-                    var title = $(this).text()
-                    $(this).addClass("active").siblings().removeClass("active");
-                    $.ajax({
-                        url: '/scrapingSingoloDocumento',
-                        type: 'GET',
-                        data: {url: urlDoc},
-                        success: function(result) {
-                            addTab(result, urlDoc, title);
-                            query = query_all_annotazioni(urlDoc);
-                            get_annotazioni(query, urlDoc);
-                            filtriAttivi();
-                        },
-                        error: function(error) {
-                            $('#alertMessage').text("Errore nel caricamento del documento.");
-                            $('#alertDoc').modal('show');
-                        }
-                    });
-                }else{
-                    $('#alertMessage').text("Ingrandisci la pagina per aprire piu' documenti.");
-                    $('#alertDoc').modal('show');
-                }
+                $('#alertMessage').text("Puoi aprire 4 documenti contemporaneamente.");
+                $('#alertDoc').modal('show');
             }
         }
-
     });
 
-    //collegamento bottone lancia scraper
-    $('#buttonScraper').click(function(){
-        var href = $("ul.nav.nav-tabs li.active a").attr("id");
-        lancia_scraper(query, href);
-
-    });
 
     //quando viene premuto il bottone per caricare un nuovo url
     $("#nuovoDoc").click(function(){
-        urlNuovoDoc = $("#uriNuovoDoc").val();
+        urlNuovoDoc = $.trim($("#uriNuovoDoc").val());
         $("#uriNuovoDoc").val("");
         if(urlNuovoDoc !== ""){
             if(isOpen(urlNuovoDoc)){
@@ -430,6 +376,7 @@ $(document).ready(function() {
                             addTab(result, urlNuovoDoc, urlNuovoDoc);
                             query = query_all_annotazioni(urlNuovoDoc);
                             get_annotazioni(query, urlNuovoDoc);
+                            annotazioniSuDoc(urlNuovoDoc);
                             filtriAttivi();
                         },
                         error: function(error) {
@@ -450,7 +397,7 @@ $(document).ready(function() {
                             }
                         },
                         error: function(error) {
-                            console.log("error");
+
                         }
                     });
                 }else{
@@ -459,7 +406,7 @@ $(document).ready(function() {
                 }
             }
         } else {
-            $('#alertMessage').text("L'URI inserito non è valido.");
+            $('#alertMessage').text("L'URI inserito non ? valido.");
             $('#alertDoc').modal('show');
         }
     });
@@ -484,7 +431,7 @@ function addTab(text, urlP, title){
     $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
     $("#"+url+"t").html(text);
 }
-function closeTab(element){
+function closeTab(element){ //TODO svuoti l'oggetto contenente le citazioni listaCitazioni = []
     var tabContentId = $(element).parent().attr("href");
     var tabId = $(element).parent().attr("id");
     $(element).parent().parent().remove(); //remove li of tab
@@ -506,6 +453,8 @@ function closeTab(element){
     if(numTabs == 1){
         $('#homeTab').trigger("click");
     };
+
+    listaCitazioni = [];
 }
 
 function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionato
@@ -515,37 +464,42 @@ function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionat
     filtriGruppo(urlGruppo, urlD);
 }
 
-function citazioniWidget(lista_cit){
-        var cit = '';
-        $('#modalAnnotCit div.modal-body').html('<form><div class="form-group" id="insertCit"><label for="selectCit">Scegli un riferimento bibliografico</label>'
-                                   + '<select class="form-control" id="selectCit"><option value=""></option></select></div></form>');
-        for(i = 0; i < lista_cit.length; i++){
-            if(lista_cit[i].cit.length > 50){
-            cit = lista_cit[i].cit.substring(0, 50)+'...';
-            } else {
-            cit = lista_cit[i].cit;
-            }
-            $('#selectCit').append('<option value="">'+cit+'</option>');
-        }
-   }
-
+/* Ottenere le citazioni del documento */
 function getCitazioni(urlDoc){
-        $.ajax({
-            url: '/scrapingCitazioni',
-            type: 'GET',
-            data: {url: urlDoc},
-            success: function(result) {
-                lista_cit = JSON.parse(result);
-                if(lista_cit.length > 0){
-                    citazioniWidget(lista_cit)
-                } else {
-                    $('#alertMessage').text("Nessuna citazione presente nel documento selezionato.");
-                    $('#alertDoc').modal('show');
+    listaCitazioni = []
+    $("#selectCit").empty();
+    //chiamata ajax per ottenere le citazioni
+    $.ajax({
+        url: '/scrapingCitazioni',
+        type: 'GET',
+        data: {url: urlDoc},
+        success: function(result) {
+            listaCitazioni = JSON.parse(result)
+            if(listaCitazioni.length > 0){
+                var cit = '';
+                $("#selectCit").append('<option value=" "></option>');
+                for(var i = 0; i < listaCitazioni.length; i++){
+                    var path = listaCitazioni[i].path;
+                    var start = listaCitazioni[i].start;
+                    var end = listaCitazioni[i].end;
+                    var testo = listaCitazioni[i].citazione;
+                    if(listaCitazioni[i].citazione.length > 70){
+                        cit = listaCitazioni[i].citazione.substring(0, 70)+'...';
+                        } else {
+                        cit = listaCitazioni[i].citazione;
+                        }
+                    $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>'); //mettergli come id, l'indice+1, cosi lo ritrovo quando devo modificare o annotare la citazione
                 }
-            },
-            error: function(error) {
-                $('#alertMessage').text(error);
+                $('#modalAnnotCit').modal('show');
+            }else{
+                $('#alertMessage').text("Non ci sono citazioni in questo documento.");
                 $('#alertDoc').modal('show');
             }
-        });
-    }
+        },
+        error: function(error) {
+            $('#alertMessage').text("Errore nello scraping delle citazioni.");
+            $('#alertDoc').modal('show');
+        }//,
+//        timeout: 3000
+    });
+}

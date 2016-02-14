@@ -35,7 +35,6 @@ function getGruppi(){
                             }
                         }
                     }
-
                     listaGruppi(listaGruppiCompleta);
                 }
             });
@@ -64,7 +63,7 @@ function getDocFromSparql(){
     urlG = "http://tweb2015.cs.unibo.it:8080/data/query?query=" + urlQuery + "&format=json";
     return $.ajax({
         url: urlG,
-        dataType: 'jsonp',
+        dataType: 'jsonp'
     });
 }
 
@@ -90,9 +89,8 @@ function getDocumenti(){
 //    }
 //
 //    urlDoc = JSON.stringify(docTemp);
-
     $.ajax({
-        url:'/getDocumenti',
+        url: '/getDocumenti',
         type: 'GET',
         success: function(result){
             res = JSON.parse(result);
