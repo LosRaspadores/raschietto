@@ -800,7 +800,7 @@ $(document).ready(function(){
             var numCit = '';
             var annotCit = '';
 
-            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined" || typeof(annotazioneCitazione.type.value) != "undefined" ){
+            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined" || typeof(annotazioneCitazione.type) != "undefined" ){
 //                source += '_ver1_cited['+infoAnnotazioneDaInserire["annotaCitazione"]+']' //TODO togliere
 
                 annotCit = 'annotazione su citazione';
@@ -821,7 +821,7 @@ $(document).ready(function(){
             var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione, numCit, annotCit);
 
             /* Se l'annotazione e' su una citazione, la inserisco dinamicamente nel modal */
-            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined" || typeof(annotazioneCitazione.type.value) != "undefined" ){
+            if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined" || typeof(annotazioneCitazione.type) != "undefined" ){
                 classCSS = getClassNameType(tipo);
                 col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
                 tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+classCSS.substring(9, classCSS.length)+'</td><td>'+getDateTime().replace("T", " ")+'</td><td>'+testo+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica annotazione"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina annotazione"></span></td></tr>';
@@ -890,6 +890,7 @@ $(document).ready(function(){
                 }
             }
         }
+        listaQueryDaInviare.push(creaQueryInsertAnnotazioni(""));
         annotazioniGrafoSessione.splice(indexDoc, 1);
         sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
         $('#modalGestAnnotazioni').modal('hide');

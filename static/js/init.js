@@ -477,8 +477,8 @@ function getCitazioni(urlDoc){
                     var start = listaCitazioni[i].start;
                     var end = listaCitazioni[i].end;
                     var testo = listaCitazioni[i].citazione;
-                    if(listaCitazioni[i].citazione.length > 70){
-                        cit = listaCitazioni[i].citazione.substring(0, 70)+'...';
+                    if(listaCitazioni[i].citazione.length > 60){
+                        cit = listaCitazioni[i].citazione.substring(0, 60) + '...';
                         } else {
                         cit = listaCitazioni[i].citazione;
                         }

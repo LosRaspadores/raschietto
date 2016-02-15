@@ -73,8 +73,8 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
     }
     var subjectBody = '_ver1';
     if(annotCit.length > 0){ //-> annot su cit. (il soggetto del body è url_ver1_cited[n])
-        alert("annot su cit")
-        subjectBody += '_cited['+numCit+']'
+        subjectBody += '_cited' + numCit;
+        urlSubject += '_cited' + numCit;
     }
 
     var target = 'oa:hasTarget [ a oa:SpecificResource ;' +
@@ -92,7 +92,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
             'oa:hasBody _:title ;' + target +
             '_:title a rdf:Statement;' +
                 'rdfs:label "' + valore + '"^^xsd:string ;' +
-                'rdf:subject <' + url_nohtml + subjectBody+'> ;' + //TODO
+                'rdf:subject <' + url_nohtml + subjectBody+'> ;' +
                 'rdf:predicate dcterms:title ;' +
                 'rdf:object "' + valore + '"^^xsd:string .';
     } else if (tipo == "URL"){
@@ -104,7 +104,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
             'oa:hasBody _:url ;' + target +
             '_:url a rdf:Statement;' +
                 'rdfs:label "' + valore + '"^^xsd:string ;' +
-                'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
+                'rdf:subject <' + url_nohtml + subjectBody+'> ;' +
                 'rdf:predicate fabio:hasURL ;' +
                 'rdf:object "' + valore + '"^^xsd:anyURL .';
     } else if (tipo == "Anno pubblicazione"){
@@ -116,7 +116,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:year ;' + target +
                 '_:year a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
+                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +
                     'rdf:predicate fabio:hasPublicationYear ;' +
                     'rdf:object "' + valore + '"^^xsd:date .';
     } else if (tipo == "Autore"){
@@ -129,7 +129,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:author ;' + target +
                 '_:author a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
+                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +
                     'rdf:predicate dcterms:creator;' +
                     'rdf:object <' + uri_autore +  '>.' +
                 '<' + uri_autore +  '> a foaf:Person;' +
@@ -144,7 +144,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:doi ;' + target +
                 '_:doi a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +  //TODO
+                    'rdf:subject <' + url_nohtml + subjectBody+'> ;' +
                     'rdf:predicate prism:doi ;' +
                     'rdf:object "' + valore + '"^^xsd:string .';
     } else if (tipo == "Commento"){
@@ -156,7 +156,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:commento ;' + target +
                 '_:commento a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url + '#' + path + '> ;' +  //TODO ????
+                    'rdf:subject <' + urlSubject + '#' + path + '> ;' +
                     'rdf:predicate schema:comment;' +
                     'rdf:object "' + valore + '"^^xsd:string .';
     } else if (tipo == "Funzione retorica"){
@@ -183,7 +183,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                     'rdf:subject <' + url_nohtml + '_ver1> ;' +
                     'rdf:predicate cito:cites ;' +
                     'rdf:object <' + url_nohtml + '_ver1_cited['+numCit+']>.'+
-                '<' + url_nohtml + '_ver1_cited['+numCit+']> rdfs:label "' + valore + '"^^xsd:string.';
+                '<' + url_nohtml + '_ver1_cited'+numCit+'> rdfs:label "' + valore + '"^^xsd:string.';
     }
     var documentFRBR = queryFRBRdocument(url);
     annotazione += documentFRBR;
@@ -192,9 +192,11 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
 
 function creaQueryInsertAnnotazioni(lista){
     var triple = "";
-    for (var i=0; i<lista.annotazioni.length; i++){
-        var item = lista.annotazioni[i];
-        triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance, item.numCit, item.annotCit);
+    if(lista != ""){
+        for (var i=0; i<lista.annotazioni.length; i++){
+            var item = lista.annotazioni[i];
+            triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance, item.numCit, item.annotCit);
+        }
     }
     triple += setProvenanceUtente();
     var query = prefissi + "INSERT DATA {GRAPH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> {" + triple + "}}";

@@ -201,6 +201,7 @@ function filtriGruppo(gruppo, urlDoc){
             }
         }
     }
+    stileAnnotazioniMultiple();
 }
 
 

@@ -124,6 +124,9 @@ def tripleFRBRdocument(url_doc):
 
 def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):
     data = getDateTime()  # data e ora locale nel formato specificato YYYY-MM-DDTHH:mm
+    valore = valore.replace('"', "'")
+    valore = valore.replace("\n", "")
+
     if urldoc.find(".html"):
         urlnohtml = urldoc[:-len(".html")]
     else:  # gli url di alcuni documenti non finiscono con .html
@@ -267,107 +270,9 @@ def xpathToFragmentPath(xpath):
     fragment_path = fragment_path.replace("]", "")
     return fragment_path
 
+
 def main():
-
-    path = "form1_table3_tbody1_tr1_td1_table5_tbody1_tr1_td1_table1_tbody1_tr1_td2_p2"
-    start = "0"
-    end = "20"
-    url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
-    # (urldoc, path, start, end, tipo, valore):
-
-    triple = ""
-
-    titolo = "Data Stewardship in the Earth Sciences"
-    ann = costruisciAnnotazione(url, path, start, end, "hasTitle", titolo, -1)
-    triple += ann
-    #query = query_annotazione(nome_grafo_gruppo, ann)
-    #do_query_post(sparql_endpoint_remoto, query)
-
-    ann = costruisciAnnotazione(url, path, start, end, "hasURL", url, -1)
-    triple += ann
-
-    autore = "Robert R. Downs"
-    ann = costruisciAnnotazione(url, path, start, end, "hasAuthor", autore, -1)
-    #triple += ann
-
-    anno = "2015"
-    ann = costruisciAnnotazione(url, path, start, end, "hasPublicationYear", anno, -1)
-    triple += ann
-
-    doi = "10.1045/july2015-downs"
-    ann = costruisciAnnotazione(url, path, start, end, "hasDOI", doi, -1)
-    triple += ann
-
-    cit = "Between Memory and Paperbooks: Baconianism and Natural History in Sevent"
-    ann = costruisciAnnotazione(url, path, start, end, "cites", cit, 1)
-    triple += ann
-
-
-    # per ogni cosa trovata dallo scraper
-
-    # triple relative al documento
-    documentFRBR = tripleFRBRdocument(url)
-    triple += PROVENANCE + documentFRBR
-
-    query = query_delete_all_doc_nostraprovenance(url)
-    # do_query_post(sparql_endpoint_locale, query)
-
-    query = query_annotazione(nome_grafo_gruppo, triple)
-    # do_query_post(sparql_endpoint_locale, query)
-
-
-
-    """
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
-    url = "http://rpd.unibo.it/article/view/5355"
-    pathgenerale = "/html/body/div/div/div[2]/div[3]/"
-    pathparziale = "div[2]/h3/text()"
-    titolo = "La valutazione"
-
-
-    #albero nodi metodo 1
-    br = mechanize.Browser()
-    response = br.open(url)
-    dochtml = response.read()  # raw html source code
-    albero = etree.HTML(dochtml)
-    nodo = albero.xpath(pathgenerale + pathparziale)
-    nodo = '\n'.join(nodo)
-    start = nodo.find(titolo)
-    end = start + len(titolo)
-    print start
-    print end
-
-    # open url metodo 2
-    url = "http://rpd.unibo.it/article/view/5355"
-    url = "http://www.dlib.org/dlib/july15/downs/07downs.html"
-    pathgenerale = "/html/body/div/div/div[2]/div[3]/"
-    pathparziale = "div[2]/h3/text()"
-    path = pathgenerale + pathparziale
-    albero = lxml.html.parse(url).getroot()
-    nodo = albero.xpath(pathgenerale + pathparziale)  # lista
-    start = nodo[0].find(titolo)  # indice del
-    if start == -1:
-        print "qualcosa non va"
-    end = start + len(titolo)
-    print path
-    path = path[11:-7]
-    path_step_list = path.split("/")
-    path = ""
-    for step in path_step_list:
-        if not contains_digits(step):
-            step += "[1]"
-        # h
-        path += step + "/"
-    path = path[:-1]
-    # mpath = '/'.join(path_step_list) not work
-    path = path.replace("[", "")
-    path = path.replace("]", "")
-    path = path.replace("/", "_")
-    print path
-    print start
-    print end
-    """
+    print "insertquery"
 
 
 if __name__ == "__main__":

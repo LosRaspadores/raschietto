@@ -33,7 +33,7 @@ def scraping_gruppi():
     soup = BeautifulSoup(html)
     table = soup.find("table", cellpadding="5")
     for r in table.findAll('tr')[1:]:
-        list =  r.findAll("font")
+        list = r.findAll("font")
         data = {}
         data['id'] = list[0].text
         data['nome'] = list[1].text

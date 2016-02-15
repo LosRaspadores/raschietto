@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
-import lxml
-import re
-from lxml import etree, html
-import unicodedata
 
 __author__ = 'Los Raspadores'
 
@@ -298,14 +294,26 @@ def scraping_citazioni(url):
 
     elif parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
         soup = BeautifulSoup(raw_html)
-        reference_list = []
         primaCitTrovata = False
-
-        listah3 = soup.findAll("h3")
 
         for nodoh3 in soup.findAll("h3"):  # prendo tutti gli h3 della pagina
             testoh3 = nodoh3.contents[0].strip()   # contents => tag’s children
-            if testoh3.find("Reference") != -1 or testoh3.find("Bibliography") != -1:
+            if testoh3.find("Notes") != -1:
+                reference_list = []
+                nodo = nodoh3
+                check = nodo.findNext("p") != -1
+                while check:
+                    if nodo.findNext("p") is not None:
+                        if nodo.findNext("p").getText()[0].isdigit():
+                            nodo = nodo.findNext("p")
+                            reference_list.append(nodo.getText().encode("utf-8"))
+                        else:
+                            nodo = nodo.findNext("p")
+                    else:
+                        check = False
+
+            elif testoh3.find("Reference") != -1 or testoh3.find("Bibliography") != -1:
+                reference_list = []
                 altracit = True
                 while altracit:
                     stringa = nodoh3.findNext('p')
@@ -317,21 +325,6 @@ def scraping_citazioni(url):
                         altracit = True
                     else:  # se non ci sono altre reference esco dal ciclo
                         altracit = False
-
-            elif testoh3.find("Notes") != -1:
-                check = True
-                while check:
-                    for sibling in nodoh3.next_siblings:
-
-                            if sibling.name == "p":  # tag
-                                if sibling.getText()[0].isdigit():
-                                    check = True
-                                    # trovata citazione -> fai cose
-                                    reference_list.append(sibling)
-                                    if not primaCitTrovata:
-                                        primaCitTrovata = True
-                            elif sibling.name == "div":
-                                check = False
 
         xpathfisso = "/html/body/form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/"
 
@@ -358,9 +351,9 @@ def scraping_citazioni(url):
         for refer in reference_list:
             citazione = {}
             citazione["start"] = str(0)
-            citazione["end"] = len(str(refer))
+            citazione["end"] = len(str(refer.encode("utf-8")))
             refer = refer.replace('"', "'")
-            citazione["citazione"] = str(refer)
+            citazione["citazione"] = str(refer.encode("utf-8"))
             indice = indexprimacit + int(i)
             path = trascodifica_path(xpathfisso + 'p[' + str(indice) + ']')
             citazione["path"] = str(path)

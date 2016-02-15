@@ -82,8 +82,7 @@ function get_annotazioni(query, urlDoc){
             $('#alertDoc').modal('show');
             $('body').removeClass("loading");
         },
-        beforeSend: function() { $('body').addClass("loading"); },
-        complete: function() { $('body').removeClass("loading"); }
+        beforeSend: function() { $('body').addClass("loading"); }
     });
 };
 
@@ -113,7 +112,7 @@ function gestioneAnnotazioni(lista_annotazioni, urlDoc){
 
     salvaAnnotazioniJSON(urlDoc, annotazioni_da_salvare);
     if(annotazioni_da_salvare.length == 0){
-        $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+        $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.\nRicerca automatica di annotazioni in corso..");
         $('#alertDoc').modal('show');
         scrapingAutomatico(urlDoc);
     } else {
@@ -134,6 +133,7 @@ function gestioneAnnotazioni(lista_annotazioni, urlDoc){
         }
         stileAnnotazioniMultiple();
     }
+    $('body').removeClass("loading")
 };
 
 
@@ -351,24 +351,31 @@ function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
         case "http://salt.semanticauthoring.org/ontologies/sro#Abstract":
+        case "sro:Abstract":
             out = "Abstract";
             break;
         case "http://purl.org/spar/deo/Introduction":
+        case "deo:Introduction":
             out = "Introduction";
             break;
         case "http://purl.org/spar/deo/Materials":
+        case "deo:Materials":
             out = "Materials";
             break;
         case "http://purl.org/spar/deo/Methods":
+        case "deo:Methods":
             out = "Methods";
             break;
         case "http://purl.org/spar/deo/Results":
+        case "deo:Results":
             out = "Results";
             break;
         case "http://salt.semanticauthoring.org/ontologies/sro#Discussion":
+        case "sro:Discussion":
             out = "Discussion";
             break;
         case "http://salt.semanticauthoring.org/ontologies/sro#Conclusion":
+        case "sro:Conclusion":
             out = "Conclusion";
             break;
     }
