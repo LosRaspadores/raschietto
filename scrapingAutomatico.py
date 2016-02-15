@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 # python v 2.7
+import lxml
+import re
+from lxml import etree, html
+import unicodedata
 
 __author__ = 'Los Raspadores'
 

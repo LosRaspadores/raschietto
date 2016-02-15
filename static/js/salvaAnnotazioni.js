@@ -31,24 +31,6 @@ function queryFRBRdocument(url_doc){
     return query;
 };
 
-/* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
-function getDateTime(){
-    var currentdate = new Date();
-    return datetime = currentdate.getFullYear() + "-"
-                    + (currentdate.getMonth() + 1) + "-"
-                    + currentdate.getUTCDate() + "T"
-                    + currentdate.getHours() + ":"
-                    + addZero(currentdate.getMinutes());
-
-}
-
-function addZero(i) {
-    if (i < 10) {
-        i = "0" + i;
-    };
-    return i;
-}
-
 
 /* provenance di un annotazione fatta dall'utente correntemente autenticato */
 function setProvenanceUtente(){
@@ -66,7 +48,11 @@ function setProvenanceUtente(){
 function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, numCit, annotCit){
     var annotazione = "";
     mailautore =  sessionStorage.email;
-    var url_nohtml = url.slice(0, -5);
+    var url_nohtml = url;
+    if(url.slice(-5) == ".html"){
+        url_nohtml = url.slice(0, -5);
+    }
+    var urlSubject = url;
     if (path == "document"){
         start = 0;
         end = 0;
@@ -168,7 +154,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                 'oa:hasBody _:retoric ;' + target +
                 '_:retoric a rdf:Statement;' +
                     'rdfs:label "' + valore + '"^^xsd:string ;' +
-                    'rdf:subject <' + url + '#' + path + '> ;' +  //TODO ?????
+                    'rdf:subject <' + urlSubject + '#' + path + '> ;' +
                     'rdf:predicate sem:denotes ;' +
                     'rdf:object ' + switchRetorica(valore) + '.';
     } else if (tipo == "Citazione"){

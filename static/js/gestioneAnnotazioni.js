@@ -801,8 +801,7 @@ $(document).ready(function(){
             var annotCit = '';
 
             if(typeof(infoAnnotazioneDaInserire["annotaCitazione"]) != "undefined" || typeof(annotazioneCitazione.type) != "undefined" ){
-//                source += '_ver1_cited['+infoAnnotazioneDaInserire["annotaCitazione"]+']' //TODO togliere
-
+                numCit = infoAnnotazioneDaInserire["annotaCitazione"];
                 annotCit = 'annotazione su citazione';
                 if(typeof(idFrammento) == "undefined"){
                     idFrammento = annotazioneCitazione.fs_value.value;
@@ -817,7 +816,7 @@ $(document).ready(function(){
                     numCit = infoAnnotazioneDaInserire["annotaCitazione"];
                 }
             }
-            //costruisciAnnotazione(source, tipo, testo, idFrammento, start, end, selezione, numCit, annotCit)
+            
             var idAnn = costruisciAnnotazione(source, tipo, testo, idFrammento, startOffset, endOffset, selezione, numCit, annotCit);
 
             /* Se l'annotazione e' su una citazione, la inserisco dinamicamente nel modal */
@@ -847,13 +846,12 @@ $(document).ready(function(){
                     annotazioneSingola = {};
                     annotazioneSingola["tipo"] = annotazioniSessione[i].annotazioni[j].tipo;
                     annotazioneSingola["data"] = annotazioniSessione[i].annotazioni[j].data;
-                    annotazioneSingola["valore"] = annotazioniSessione[i].annotazioni[j].oggetto; //TODO controllare che non ci sia il num della cit
+                    annotazioneSingola["valore"] = annotazioniSessione[i].annotazioni[j].oggetto;
                     annotazioneSingola["url"] = annotazioniSessione[i].annotazioni[j].source;
                     annotazioneSingola["id"] = annotazioniSessione[i].annotazioni[j].idFrammento;
                     annotazioneSingola["start"] = annotazioniSessione[i].annotazioni[j].start;
                     annotazioneSingola["end"] = annotazioniSessione[i].annotazioni[j].end;
                     annotazioneSingola["provenance"] = annotazioniSessione[i].annotazioni[j].autore;
-
                     annotazioneSingola["numCit"] = annotazioniSessione[i].annotazioni[j].numCit;
                     annotazioneSingola["annotCit"] = annotazioniSessione[i].annotazioni[j].annotCit;
 
@@ -867,7 +865,6 @@ $(document).ready(function(){
 
         if(numeroAnnot != 0){
             var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
-            console.log(query)
             listaQueryDaInviare.push(query);
         }
 
@@ -890,7 +887,9 @@ $(document).ready(function(){
                 }
             }
         }
+        
         listaQueryDaInviare.push(creaQueryInsertAnnotazioni(""));
+        
         annotazioniGrafoSessione.splice(indexDoc, 1);
         sessionStorage.annotModificSessione = JSON.stringify(annotazioniGrafoSessione);
         $('#modalGestAnnotazioni').modal('hide');
@@ -902,7 +901,6 @@ $(document).ready(function(){
                 }
             }
         }
-
     });
 
     /* Eliminare annotazioni o citazioni in locale */
@@ -1004,7 +1002,6 @@ $(document).ready(function(){
                 if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
                     for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
                         if(annotazioniSessione[i].annotazioni[j].id == idCit){
-//                            annotazioniSessione[i].annotazioni[j].oggetto = infoCit.testo+indice;
                             annotazioniSessione[i].annotazioni[j].oggetto = infoCit.testo;
                             annotazioniSessione[i].annotazioni[j].idFrammento = infoCit.path;
                             annotazioniSessione[i].annotazioni[j].start = infoCit.start;
@@ -1101,13 +1098,10 @@ $(document).ready(function(){
             var start = infoCitazione.start;
             var end = infoCitazione.end;
 
-            //costruisciAnnotazione(source, tipo, testo, idFrammento, start, end, selezione, numCit, annotCit)
-//            costruisciAnnotazione($("ul.nav.nav-tabs li.active a").attr("id"), 'Citazione', testo.replaceAll('"', "'")+indiceCit, path, start, end, testo, indiceCit);
             costruisciAnnotazione($("ul.nav.nav-tabs li.active a").attr("id"), 'Citazione', testo.replaceAll('"', "'"), path, start, end, testo, indiceCit, '');
 
             $("#modalAnnotCit").modal("hide");
-        } 
-
+        }
     });
 
     $("#modalAnnotDoc").on('hidden.bs.modal', function () {

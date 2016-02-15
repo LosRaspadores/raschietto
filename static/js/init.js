@@ -87,8 +87,9 @@ $(document).ready(function() {
         handle: ".modal-content"
     });
 
+    /* Gestione dei bottoni modalita' annotator */
     $('ul#bottoniAnnotator button').click(function(e){
-        /* I bottoni della nav bar non sono funzionali se non c'ï¿½ un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar NON sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
             var mess = '';
             if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
@@ -101,6 +102,10 @@ $(document).ready(function() {
             e.stopPropagation();
         }else if($(this).attr("id") == "buttonAnnotDoc"){ //Il modal per l'inserimento delle annotazioni ha bisogno di verificare che ci sia o meno un frammento di testo selezionato
             verificaTab()
+        }else if($(this).attr("id") == "buttonCit"){
+            if($("ul.nav.nav-tabs li.active a").attr("id") != 'homeTab'){
+                getCitazioni($("ul.nav.nav-tabs li.active a").attr("id"));
+            }
         }
     });
 
@@ -190,13 +195,6 @@ $(document).ready(function() {
                 break;
         }
    });
-
-    $('#buttonCit').click(function(){
-        var url = $("ul.nav.nav-tabs li.active a").attr("id");
-        if(url != 'homeTab'){
-            getCitazioni(url);
-        }
-    });
 
 
     /* Riempie modale di gestione delle annotazioni */
@@ -425,7 +423,7 @@ function addTab(text, urlP, title){
     $("div.tab-content").append("<div class='tab-pane fade active in' id='"+url+"'><div id='"+url+"t'></div></div>");
     $("#"+url+"t").html(text);
 }
-function closeTab(element){ //TODO svuoti l'oggetto contenente le citazioni listaCitazioni = []
+function closeTab(element){
     var tabContentId = $(element).parent().attr("href");
     var tabId = $(element).parent().attr("id");
     $(element).parent().parent().remove(); //remove li of tab
@@ -438,7 +436,6 @@ function closeTab(element){ //TODO svuoti l'oggetto contenente le citazioni list
         }
     }
 
-    console.log("lista");
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         console.log(listaAllAnnotazioni[j].url);
     }
@@ -447,8 +444,6 @@ function closeTab(element){ //TODO svuoti l'oggetto contenente le citazioni list
     if(numTabs == 1){
         $('#homeTab').trigger("click");
     };
-
-    listaCitazioni = [];
 }
 
 function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionato
@@ -462,7 +457,6 @@ function mostraAnnotGruppo(element){ // mostra annotazioni del gruppo selezionat
 function getCitazioni(urlDoc){
     listaCitazioni = []
     $("#selectCit").empty();
-    //chiamata ajax per ottenere le citazioni
     $.ajax({
         url: '/scrapingCitazioni',
         type: 'GET',
@@ -482,18 +476,17 @@ function getCitazioni(urlDoc){
                         } else {
                         cit = listaCitazioni[i].citazione;
                         }
-                    $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>'); //mettergli come id, l'indice+1, cosi lo ritrovo quando devo modificare o annotare la citazione
+                    $("#selectCit").append('<option value="'+(i+1)+'">'+cit+'</option>');
                 }
                 $('#modalAnnotCit').modal('show');
             }else{
-                $('#alertMessage').text("Non ci sono citazioni in questo documento.");
+                $('#alertMessage').text("Citazioni non trovate.");
                 $('#alertDoc').modal('show');
             }
         },
         error: function(error) {
-            $('#alertMessage').text("Errore nello scraping delle citazioni.");
+            $('#alertMessage').text("Citazioni non trovate.");
             $('#alertDoc').modal('show');
-        }//,
-//        timeout: 3000
+        }
     });
 }
