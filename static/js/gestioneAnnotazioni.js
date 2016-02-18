@@ -167,8 +167,10 @@ function eliminaAnnotazione(id){
                     annotazioniSessione[i].annotazioni.splice(j,1);
                     $('[data-id="' + id + '"]').remove();
                     $('#modalConfermaEliminazione').modal('hide');
+                    break;
                 }
             }
+            break;
         }
     }
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
@@ -396,28 +398,33 @@ function costruisciAnnotazione(source, tipo, testo, idFrammento, start, end, sel
 
     /* Verifica che non ci sia gia l'entry per il documento */
     var annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
+    var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
     if(annotazioniSessione.length == 0){
         //l'oggetto e' vuoto -> inserisco l'annotazione
         var annotazioniDoc = {};
-        annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
+        annotazioniDoc['doc'] = urlDoc;
         annotazioniDoc['annotazioni'] = [];
         annotazioniDoc['annotazioni'].push(singolaAnnotazione);
         annotazioniSessione.push(annotazioniDoc);
     }else{
-        for(i = 0; i<annotazioniSessione.length; i++){
-            if(annotazioniSessione[i].doc == $("ul.nav.nav-tabs li.active a").attr("id")){
-                //trovato e aggiungi qui
-                annotazioniSessione[i].annotazioni.push(singolaAnnotazione)
-                break;
-            }else{
-                //crea nuovo
-                annotazioniDoc = {};
-                annotazioniDoc['doc'] = $("ul.nav.nav-tabs li.active a").attr("id");
-                annotazioniDoc['annotazioni'] = [];
-                annotazioniDoc['annotazioni'].push(singolaAnnotazione);
-                annotazioniSessione.push(annotazioniDoc);
+        var docTrovato = false
+        var indiceDoc = ''
+        for(i = 0; i < annotazioniSessione.length; i++){
+            if(annotazioniSessione[i].doc == urlDoc){
+                docTrovato = true
+                indiceDoc = i
                 break;
             }
+        }
+        /* Se il documento è stato trovato appende l'annotazione, altrimenti crea un nuovo oggetto */
+        if(!docTrovato){
+            annotazioniDoc = {};
+            annotazioniDoc['doc'] = urlDoc;
+            annotazioniDoc['annotazioni'] = [];
+            annotazioniDoc['annotazioni'].push(singolaAnnotazione);
+            annotazioniSessione.push(annotazioniDoc);
+        }else{
+            annotazioniSessione[indiceDoc].annotazioni.push(singolaAnnotazione)
         }
     }
     sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
@@ -837,31 +844,35 @@ $(document).ready(function(){
         var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
         var listaNuoveAnnotazioni = {"annotazioni":[]};
         annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-        for(i = 0; i<annotazioniSessione.length; i++){
+        for(i = 0; i<annotazioniSessione.length; i++){ //TODO <----------------------------------------
             if(annotazioniSessione[i].doc == urlDoc){
-                for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
-                    numeroAnnot = annotazioniSessione[i].annotazioni.length;
-                    annotazioneSingola = {};
-                    annotazioneSingola["tipo"] = annotazioniSessione[i].annotazioni[j].tipo;
-                    annotazioneSingola["data"] = annotazioniSessione[i].annotazioni[j].data;
-                    annotazioneSingola["valore"] = annotazioniSessione[i].annotazioni[j].oggetto;
-                    annotazioneSingola["url"] = annotazioniSessione[i].annotazioni[j].source;
-                    annotazioneSingola["id"] = annotazioniSessione[i].annotazioni[j].idFrammento;
-                    annotazioneSingola["start"] = annotazioniSessione[i].annotazioni[j].start;
-                    annotazioneSingola["end"] = annotazioniSessione[i].annotazioni[j].end;
-                    annotazioneSingola["provenance"] = annotazioniSessione[i].annotazioni[j].autore;
-                    annotazioneSingola["numCit"] = annotazioniSessione[i].annotazioni[j].numCit;
-                    annotazioneSingola["annotCit"] = annotazioniSessione[i].annotazioni[j].annotCit;
+                if(annotazioniSessione[i].annotazioni.length != 0){
+                    for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
+                        numeroAnnot = annotazioniSessione[i].annotazioni.length;
+                        annotazioneSingola = {};
+                        annotazioneSingola["tipo"] = annotazioniSessione[i].annotazioni[j].tipo;
+                        annotazioneSingola["data"] = annotazioniSessione[i].annotazioni[j].data;
+                        annotazioneSingola["valore"] = annotazioniSessione[i].annotazioni[j].oggetto;
+                        annotazioneSingola["url"] = annotazioniSessione[i].annotazioni[j].source;
+                        annotazioneSingola["id"] = annotazioniSessione[i].annotazioni[j].idFrammento;
+                        annotazioneSingola["start"] = annotazioniSessione[i].annotazioni[j].start;
+                        annotazioneSingola["end"] = annotazioniSessione[i].annotazioni[j].end;
+                        annotazioneSingola["provenance"] = annotazioniSessione[i].annotazioni[j].autore;
+                        annotazioneSingola["numCit"] = annotazioniSessione[i].annotazioni[j].numCit;
+                        annotazioneSingola["annotCit"] = annotazioniSessione[i].annotazioni[j].annotCit;
 
-                    listaNuoveAnnotazioni.annotazioni.push(annotazioneSingola);
+                        listaNuoveAnnotazioni.annotazioni.push(annotazioneSingola);
+                    }
+
                 }
                 annotazioniSessione.splice(i,1); //rimuove l'oggetto in locale contenente le annotazioni del documento
+                break;
             }
         }
         console.log(listaNuoveAnnotazioni)
         sessionStorage.annotazioniSessione = JSON.stringify(annotazioniSessione);
 
-        if(numeroAnnot != 0){
+        if(listaNuoveAnnotazioni.annotazioni.length != 0){
             var query = creaQueryInsertAnnotazioni(listaNuoveAnnotazioni)
             listaQueryDaInviare.push(query);
         }

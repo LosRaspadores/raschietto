@@ -67,7 +67,7 @@ def scrapingAutomatico():
 def scrapingForzato():
     urlD = request.args.get('url')
 
-    # elimitazione delle annotazioni automatiche del documento corrente (automatiche = quelle con la nostra provenance)
+    # eliminazione delle annotazioni automatiche del documento corrente (automatiche = quelle con la nostra provenance)
     query_delete = query_delete_all_doc_nostraprovenance(urlD)
     do_query_post(sparql_endpoint_remoto, query_delete)
 
@@ -259,7 +259,8 @@ def salvaAnnotazioni():
     query = request.args.get('query')
     lista_query = json.loads(query)
     for q in lista_query:
-        do_query_post(sparql_endpoint_remoto, q)
+        # do_query_post(sparql_endpoint_remoto, q)
+        do_query_post('http://localhost:3030/dataset1', q)
     return "ok"
 
 
