@@ -440,11 +440,8 @@ function closeTab(element){
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         if(listaAllAnnotazioni[j].url == tabId){
             listaAllAnnotazioni.splice(j, 1);
+            break;
         }
-    }
-
-    for(j = 0; j < listaAllAnnotazioni.length; j++){
-        console.log(listaAllAnnotazioni[j].url);
     }
 
     var numTabs = $("ul.nav.nav-tabs").children().length;

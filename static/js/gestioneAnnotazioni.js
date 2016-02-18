@@ -845,7 +845,7 @@ $(document).ready(function(){
         var urlDoc = $("ul.nav.nav-tabs li.active a").attr("id");
         var listaNuoveAnnotazioni = {"annotazioni":[]};
         annotazioniSessione = JSON.parse(sessionStorage.annotazioniSessione);
-        for(i = 0; i<annotazioniSessione.length; i++){ //TODO <----------------------------------------
+        for(i = 0; i<annotazioniSessione.length; i++){
             if(annotazioniSessione[i].doc == urlDoc){
                 if(annotazioniSessione[i].annotazioni.length != 0){
                     for(j = 0; j<annotazioniSessione[i].annotazioni.length; j++){
@@ -908,6 +908,7 @@ $(document).ready(function(){
             for(j = 0; j < listaAllAnnotazioni.length; j++){
                 if(listaAllAnnotazioni[j].url == urlDoc){
                     listaAllAnnotazioni.splice(j, 1);
+                    break;
                 }
             }
         }
