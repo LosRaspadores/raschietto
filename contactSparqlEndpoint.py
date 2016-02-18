@@ -556,8 +556,9 @@ def query_annotazione(nome_grafo, annotazione):
 
 
 def rfrbDocToEndpoint(url_doc):
-    query = query_annotazione(nome_grafo_gruppo, queryFRBRdocument(url_doc))
+    query = query_annotazione(nome_grafo_gruppo, tripleFRBRdocument(url_doc))
     do_query_post(sparql_endpoint_remoto, query)
+
 
 def contains_digits(string):
     digits = re.compile('\d')

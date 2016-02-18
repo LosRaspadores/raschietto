@@ -1,19 +1,44 @@
-<h3>Benvenuto in Raschietto</h3>
+<h3>Benvenuto in <span id="brand_text">raschietto</span></h3>
 <h4>Un'applicazione per l'annotazione semantica di documenti</h4>
 
-L'utente può utilizzare l'applicazione come reader o autenticarsi come annotator.
-<p>L'utente in modalità reader può:</p>
+<p>Raschietto è una web application che permette di visualizzare e annotare articoli di carattere accademico.
+Oltre alla lista di documenti presenti, l'utente può decidere di aggiungerne di nuovi inserendo il rispettivo url nella barra di ricerca in alto.</p>
+<p>L'utente può utilizzare l'applicazione in due modalità diverse: modalità "Reader" o modalità "Annotator".</p>
+<p>L'utente in modalità "Reader" può:</p>
 
 <ul>
-<li>scegliere i documenti su cui visualizzare le annotazioni e aggiungerne di nuovi</li>
-<li>filtrare le annotazioni per tipologia e gruppo</li>
+<li>Scegliere i documenti di cui visualizzare le annotazioni e aggiungerne di nuovi</li>
+<li>Filtrare le annotazioni per tipologia e gruppo</li>
 </ul>
 
-<p>In più, l'utente in modalità annotator può:</p>
+<p>L'utente in modalità "Annotator", oltre alle funzionalità precedenti, può:</p>
 
 <ul>
-<li>aggiungere annotazioni sul documento selezionato</li>
-<li>modificare o cancellare annotazioni</li>
-<li>salvarle definitivamente sul dataset</li>
+<li>Aggiungere annotazioni al documento selezionato</li>
+<li>Modificare o cancellare annotazioni</li>
+<li>Salvare definitivamente le annotazioni create e/o modificate</li>
 </ul>
-
+<br>
+<h4>Modalità Reader</h4>
+<p>L'utente in modalità "Reader" può scegliere dal menu a sinistra della pagina uno dei documenti da visualizzare. L'applicativo permette di aprire contemporaneamente più documenti.
+Sempre nel menu a sinistra si ha la possibilità di applicare dei filtri alle annotazioni, scegliendo quali tipologie e di quale gruppo visionare.<br>
+Nel momento in cui viene caricato un documento, l'applicativo controlla la presenza o meno di annotazioni, in caso negativo viene eseguito uno scraping della pagina che ha come risultato quello di visualizzare
+autore/i, anno di pubblicazione, titolo, DOI, citazioni e URL.
+Se si vuole analizzare nel particolare qualsiasi annotazione basta fare doppio click sull'annotazione del documento, ciò comporta l'apertura di una finestra che ne contiene le principali informazioni. Oltre alle annotazioni visibili dal testo, sono presenti
+anche altre annotazioni non associate a un particolare frammento di documento, infatti esse sono visibili nella sezione "Annotazioni" del menu a sinistra.
+<br>Come si può notare aprendo la voce del menu laterale "Filtri annotazione", ogni tipo di annotazione ha associato un colore, che ne permette la sua distinzione all'interno del documento.
+Se nel documento appare un colore non presente tra quest'ultimi ciò sta a rappresentare la presenza di più annotazioni di diverso tipo sullo stesso frammento di testo. Inoltre le annotazioni che presentano
+il bordo superiore e inferiore colorato di nero, sono delle annotazioni che appartengono allo stesso frammento e sono tutte dello stesso tipo.</p>
+<br>
+<h4>Modalità Annotator</h4>
+<p>Per passare a questa modalità è necessaria la registrazione al sito, tramite il pulsante "Modalità Reader" è possibile autenticarsi e passare ad "Annotator".
+A questo punto compaiono sulla seconda barra di navigazione dei pulsanti particolari:
+<ul>
+<li><img class="icon icons8-Flex-Biceps" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAADOklEQVRoQ+2a4XHUMBCFXyqADiAVABUAFQAVABVAKgAqgFQAVACpgKQCoAKgAkIFMJ/HuhGKLe+ubZ3nJvvHP6KV9mlXb5+UO9KB2dGB4dE1oK1ntJah25KeSnrQg/gp6Y0kvpu1MUCvJL2UdLOI/FLSc0mft4qoBASA95IeTwT8TtLJFkHlgADzRdJdY6DfJD2URNY2YzkgMvPMGRln6rXTZ9XhCRBAAOQ1snTP67Tm+ATohyRYzWunPXl4/VYbDyAI4FNwheOt0TiAOAPQtMd+9ZlZi74hqPt9DyxJChI6l/RxiJAAxB9xttqaYCh7NtdKTiQDYtpZDdAfSfQbAPO9I+nM0KOsG1OOA0iEMYmP9tEZgMYI4SKTPdEgrX5fHf1vaM4PvYLpAP2trNri0Ef631DIZOkcQPQSymnIkDeU21qG8EWdLGFd6U2RAsqaLK1lc0utjOt4ChAOqGtqdGmD0Ti/S9qJBRBZQt4sLUKXLLe0KWcA4oy8mNimNSTOGoAuPEphbumVzZuSW7yUAcTN9K2hkCk5qBFWtBgBP+rnjwhfyxpXxgDIk3orKKQLm1Re4UNBOpy+A8jLNlOgLGfSEaNraHeGsJpaGJpxjPmiF0VX1JXBpwmQV3EzJ1eHJ9nklBd9pXWZ5fi6xorBNrzBeQ1A6U4UuVd516uN78T03DeFXBpFr/FLgOKqAxdcJkDcCtFVEaM/QeVR/8iauQ9gYOquneTPWOz2rcDsTMR12NLLAtNXXSgziGj3PJ0Dip4jVuQmSxNtZayXbtP/rZkDmvP60xIIGRkVyuVT8O9WkQXX6W6lNd/ysR4Kblk6Hly8Nk1qwhLQvjt9DaBJ7Q/9OwXGuOHZugZjTdkpaTvFte+OP7Q/uSKp7l+ZIQajxbaUJdf74BAgQFkvfWtX207SWBcaA4R/RIFb17WOm6TpcqIaIEoPWRORQ9aAZ7OaBxBjEa1kqjXrmSh6aDdqGUrjW4LizHB+w69BFkCtMnVFOUfq1gqIuZEdSKOxh/3I+vgAhN5X1WjWyT2A8sZLWUAYBFEGkn5Kk77Jj4dGgsfoc/izQYv+1CYCyLpZexl3DWgv2+5Y9OAy9A8ZLplz97MOrQAAAABJRU5ErkJggg==" width="30" height="30"> permette di forzare lo scraping automatico del documento visualizzato</li>
+<br>
+<li><img class="icon icons8-Edit-File" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAAC20lEQVRoQ+2ajXHUMBBGv1QAVACpAKgAqABSAVABpALoAFIBUEGgAkgFQAVABUAFMO/GunH2JFmSpcxmxpq5iWPrZ5++XUmWfKTDdEfSC0kPJd2LPC+99VPSN0mnkri+knRkWnkj6eWAlqnzbEC9B1XOgb6uVGTJ3veSni9lWvs8AL2d3GxtfUvlh0MBRMz8MJb8mlyPGKj1/5uSMPxxgm4oFEBWHWAYDP4sdXfmOeVx4VQaBgWQjZ0TSR9XwISi/xbqGAIFkG341kp1SoHI1x0qBmSH8laxlhQK9XaF8gDUVSkvQN2gPAF1gfIGBBRrP6aSpuQRCJDjhgl91wEjgZiYbzR1s/RJ0pOWsiOBnk2u0wLFcguVqtNIoFJjeO96LemBKdA0H3oAgiO2QL7WQEDZlcUGNHqUK42h1GJ2U2hTqNaHKvNvg0Ksw7zMQ9uwnXLnTaHKQK/JXjMosPB9Or1i8P6033K7jgoB827WU2yGPgpQXoE+SMJwmyxMeL6H8giUgsF4DL+b8OMdlDegHAwc7Jt/yUCdeQJiwzHmZq+ms6UQ+DmoC09AMU8i+IG8FPgZpU49AwWYg8Cfblildu7qFYg9BlzNppRS3N+5q0eg1NCcU8rlxIrBSzApqL2SnhQqhQnGX0yfHlxySy9AtTB/Jxhixx0Q57Gfp6G4ZDGbhEkNCr2OJEuM6woTgOz6qNeh8RIQu6UcWDOflKSsMqGC2LE+G+X3Ox0c5wzlcxl+xA/72/zs/nYoXwQTFIrtKwNFY99bz2kKupxFJu3M12/8f9uULYYJQPwd/WkML2AAhISb/ZZk3ZvvI+ZfoFTBzIG4zr1rFHR4MgtG2TgJw7QdgOZLnmoYCzRKqdhpHEoQLyhH4jrEEfBNMDEg7hFTxA8NpN4OaxSLHQLjbqnRjQ5AqYNJs6TRph3+koozeTg7PZ89Rw0U40ecrfloarfavuoUjiBRIEB0s+E/thrNBUXbjAIAAAAASUVORK5CYII=" width="30" height="30"> permette di inserire una nuova annotazione</li>
+<br>
+<li><img class="icon icons8-Quote" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAADg0lEQVRoQ+2agXEUMQxFfyqAEkgFJBVAKgAqACoAKoBUAFQAVECoAKgAqIBQAVABzNtZ3fh89lq2d3N7mWjmZjKzlq3vL8uSnCPNL7cl3ZV0Iom/U/JH0ndJPyTx92xyNNNMDyQ9lHRf0p3KOS8lfZF0IelTpe7O8B5AMPBM0pNeIyL995LejgxWT90CCBZejmxUL1ihAGvnI3tutRpAnIfXCzBSMhbGXnjPmhcQ5+PdxCEvGdX7ncDxdDxnk3N5AOFer3otmkkfO3DDrJQAwcrch74XGy4IW0mZArRGMAYiCyoH6M0Yknt3c0l9QvvzeIEUIALAxyUtmXHuR3GgiAFxy3/bYzSrxUr0Ow5DegwIZmDokISUCaYGCQGRAXw+JCSBrWeWUYSAAAOoQxTSJEBtGOLs/GxE8rWgdy/x/a8j+UzpTS3FWbo0hlrDNGBKrLJ7sXEevX+VGzyEcQNEZKMcqBWPYVcFiILxFEC97rYWhiDjGEA90W1NDAHoDEBksGTULbI2QOc3gCIabxgaN8SzEbVhm6m7XY5JCMsmtKG400JJhW3ry9m4D5KocULZG6DQCMrjuFz3GNaqFweygaGesB1PuFOfSPIAOo1SITpMvxvC7hC2ey7WcM1fia6pZ7Na9VJ4h4sVIW2gH90jKXY8d9wm9Q8Wb8kt6ZOf9CanZgNdmPhQ840MfqrXndLD3dDLNfpzm76VnLa6HWUAbgXDsUyxg5tRGdfqTXnQVvnAwFR4Lblg7j4hc6dgzO1yTo8eIO2zWtnM11uCpwzjRQJ2plwm1mMs+eROW8qJLFmCo0vDgbcer5hhGIQeO1wqJ5jb9GASPYDUnhmzkct809iJuz5MygPULS+icXztI5e92rWCMPM4w6y9eQW89o1GQ+65PypIXGSouxVsq3OvPF7ElP5JSWaTryKl55Q1gsqCYZ9KgFqTxH4O0jOksvKtkSVAa3mJIJrhYlwrk1ICtIbmPS7GPeX6B40pQJ7Uv7RhPd+5fIm2YUVcnC8HiLNDN7X2wiwu6BgAI5QPqcS1qJ4DdJUvEWTe9q8xxTNSQpRKfQDT0udmLdtdGIbdHMOkV/xgwXU2SkDsewgII1rAsMPcV/wwcq9igGCEiFZzZshyAdHtJnPuAIC8JS93Acabv8/qKnOBMkDEeatjAGjG4uPhb651F5undLEutvBSE187QP8BT5DM9Zci3skAAAAASUVORK5CYII=" width="30" height="30"> permette di inserire una citazione</li>
+<br>
+<li><img class="icon icons8-List" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAA0CAYAAADFeBvrAAACuklEQVRoQ+2ZjVHWQBCGXypAKxAqUCtAKkAqQDvQCpQKlAqACqADKQEqUCsQK9B5Mklm2e+S3CVD7pLJzXzDMLlL9tm/29vb08rG3sp4tAGVblEs9EHSN0kvnLCPkj5LuiodwsoH0J8ATDMHqJdLA/o3ILCPs0+SvvQoYW7+X5LOG09C2BSgA0k/55Y44ntAHTJvLUC/JaHsZCDW4HIkkVIGMMh02wAR+Psd0v0tKFaiFNik7e8BKGAgX1zajiJfyqSt9CndUqu00FbLlex2qZVCs7FutdwzW3Wr5ayCt1rumd3tyeu3Wm5ObY/51iorhTGKKHZNaRailfZa0ptaY/eSOJGyz0SNUvpyAFB9vO+Q+q7u7PC3d5TQl/tawwzJynNOzx/7Js5Zy13XXVorDwKexZCYOVjpuGtNKtCUvhx9MxsLuNdNQDBipnEtXJGY8uOi7nfsPJgL6MEEOkIQ/DQsbT+dpgyQPk7eSaKJ48G8giq4VCDWcCC8THQTr1H/DmAQnKwWGoDz7JV5GLQSQDn6cjQFT4aEc2ReCe2Rwc7LVcuhbetCBPlgSg704Xf20Vwbq78giJXDr+OqBw9rR+yLEkNmcDruYuPhbU/82JcNKiIXEO51ZCTlppBM1jd8mg/23XMB+VMvFsNKT9zH0fm4C23UVdrO0Zdjg0ZAe+vB/6eBQpSUzTbh67ygm+as5bpqOMohLIa1AEfh/kI7aJ2xG+vYO1buQYGww8fSYDapJ3TGXGqlMKWWQxZfrqB5LGI32T4o6rwmO7I5sx64tsKYG4gP4/t+4FZYz6ZyOwcQngPvKwZck425gkoFYs2YWs4K13emoZ7jh+b5EUu4pa0ieP7DaaSFylXLxcZKaF4oQzKvgspVy00BYi3nJKzmL7sfc22sU4E6oZYMFIRaOtAO1BqAGqjq+P4f4r6ukeY0C8IAAAAASUVORK5CYII=" width="30" height="30"> permette di visualizzare le annotazioni appena inserite e quelle già presenti, per entrambe c'è la possibilità di modificarle o eliminarle</li>
+</ul>

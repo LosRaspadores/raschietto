@@ -9,13 +9,15 @@ __author__ = 'Los Raspadores'
 """
     pip install beautifulsoup4
     pip install pyquery
-    La libreria PyQuery aggiunge a Python la comodit√† di jQuery e permette la selezione degli elementi nella pagina web
+    La libreria PyQuery aggiunge a Python la comodita† di jQuery e permette la selezione degli elementi nella pagina web
     tramite selettori CSS
 """
 
+
 # moduli importati
+from urlparse import urlparse
 import json
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 import mechanize
 
 # Browser mechanize
@@ -33,14 +35,12 @@ def scraping_gruppi():
     soup = BeautifulSoup(html)
     table = soup.find("table", cellpadding="5")
     for r in table.findAll('tr')[1:]:
-        list = r.findAll("font")
+        list =  r.findAll("font")
         data = {}
         data['id'] = list[0].text
         data['nome'] = list[1].text
         lista.append(data)
     return json.dumps(lista)
 
-
 if __name__ == "__main__":
     main()
-

@@ -16,6 +16,7 @@ function getGruppi(){
             gruppiSPARQL = data.results.bindings;
 
             $.ajax({
+                //url: '/wsgi/scrapingGruppi',
                 url: '/scrapingGruppi',
                 type: 'GET',
                 success: function(result) {
@@ -69,29 +70,17 @@ function getDocFromSparql(){
 
 function getDocFromScraping(){
     return $.ajax({
-        url: '/scrapingDocumenti',
+        url: '/wsgi/scrapingDocumenti',
         type: 'GET'
     });
 }
 
 //function getDocumenti(docAnnotati, docScraping){
 function getDocumenti(){
-//    docTemp = [];
-//
-//    for(i = 0; i < docScraping.length; i++){
-//        docTemp.push(docScraping[i].url);
-//    }
-//
-//    for(i = 0; i < docAnnotati.length; i++){
-//        if(!($.inArray(docAnnotati[i].doc.value, docTemp))){
-//            docTemp.push(docAnnotati[i].doc.value);
-//        }
-//    }
-//
-//    urlDoc = JSON.stringify(docTemp);
     $.ajax({
+        //url: '/wsgi/getDocumenti',
         url: '/getDocumenti',
-        type: 'GET',
+        type: 'POST',
         success: function(result){
             res = JSON.parse(result);
             $('#numDoc').html(res.length);

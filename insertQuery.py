@@ -113,13 +113,15 @@ def tripleFRBRdocument(url_doc):
         url_nohtml = url_doc[:-len(".html")]
     else:
         url_nohtml = url_doc
-    tripleRFBR = "<" + url_doc + "> a fabio:item."\
-        "<" + url_nohtml + "_ver1> a fabio:Expression;"\
-        "fabio:hasRepresentation <" + url_doc + ">."\
-        "<" + url_nohtml + "> a fabio:Work;"\
-        "fabio:hasPortrayal <" + url_doc + ">;"\
-        "frbr:realization <" + url_nohtml + "_ver1>. "
+    tripleRFBR = "<" + url_doc + "> a fabio:Item . "\
+        "<" + url_nohtml + "_ver1> a fabio:Expression ; "\
+        "fabio:hasRepresentation <" + url_doc + "> . "\
+        "<" + url_nohtml + "> a fabio:Work ; "\
+        "fabio:hasPortrayal <" + url_doc + "> ; "\
+        "frbr:realization <" + url_nohtml + "_ver1> . "
     return tripleRFBR
+
+
 
 
 def costruisciAnnotazione(urldoc, path, start, end, tipo, valore, numcit):

@@ -62,16 +62,6 @@ function setIRIautore(nome_autore){
     return uri;
 }
 
-/*
-console.log(setIRIautore(" M�rio  "));
-console.log(setIRIautore("Mar�o   Rossi"));
-console.log(setIRIautore("Ma&rio D� R�ssi  "));
-console.log(setIRIautore("M. D� Rossi"));
-console.log(setIRIautore("M{ar}io De Rossi B*ian;chi"));
-console.log(setIRIautore("M[a]ri� De Rossi Bianc.;h:i V�rdi Gialli"));
-*/
-
-
 /* ottenere data e ora nel formato specificato YYYY-MM-DDTHH:mm */
 function getDateTime(){
     console.log("date time")
@@ -124,6 +114,7 @@ function salvaAnnotazioniJSON(url, listaAnnotazioni){
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         if(listaAllAnnotazioni[j].url == url){
             listaAllAnnotazioni.splice(j, 1);
+            //break;
         }
     }
 
@@ -178,21 +169,30 @@ function annotDaGestire(url, gruppo){
 }
 
 function filtriGruppo(gruppo, urlDoc){
-    ann_filtri = annotDaGestire(urlDoc, gruppo);
-
+    var ann_filtri = annotDaGestire(urlDoc, gruppo);
+    $("#ann_sul_doc").html("<p></p>");
+    var numAnn = 0;
     if(ann_filtri.length == 0){
         $('#alertMessage').text("Non ci sono annotazioni di questo gruppo per il documento selezionato.");
         $('#alertDoc').modal('show');
     } else {
-        $('span[class*="highlight"]').contents().unwrap();
-        for(l = 0; l < ann_filtri.length; l++){
-            fragmentPath = ann_filtri[l]["fs_value"]["value"];
+        var urlid = urlDoc.replace(/([/|_.|_:|_-])/g, '');
+        $('div[id="'+ urlid +'"] span[class*="highlight"]').contents().unwrap();
+        for(var l = 0; l < ann_filtri.length; l++){
+            var fragmentPath = ann_filtri[l]["fs_value"]["value"];
             if(fragmentPath == "" || fragmentPath == "document" || fragmentPath == "Document" || fragmentPath == "html/body/" || fragmentPath == "html/body"){
-                console.log("ANNOTAZIONE SUL DOCUMENTO SENZA FRAGMENT PATH");
+                var out = displayAnnSuDoc(ann_filtri[l]);
+                if (out != ""){
+                    $("#ann_sul_doc").append(out);
+                    numAnn = numAnn + 1;
+                }
             } else {
                 highligthFragment(fragmentPath, ann_filtri[l], urlDoc);
             }
         }
+    }
+    if(numAnn == 0){
+        $("#ann_sul_doc").html("<p>Non ci sono annotazioni sull' intero documento</p>");
     }
     stileAnnotazioniMultiple();
 }

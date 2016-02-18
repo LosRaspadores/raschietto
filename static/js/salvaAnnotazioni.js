@@ -1,5 +1,6 @@
 function inviaQuery(listaQuery){
     $.ajax({
+        //url: "/wsgi/salvaAnnotazioni",
         url: "/salvaAnnotazioni",
         data: {"query": listaQuery},
         success: function(result) {
@@ -317,10 +318,8 @@ function creaQueryDelete(annotazione){
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:date';
     } else if(annotazione.type.value == "hasURL"){
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:anyURL';
-    } else if(annotazione.type.value == "cites" || annotazione.type.value == "denotesRhetoric"){
+    } else if(annotazione.type.value == "cites" || annotazione.type.value == "denotesRhetoric" || annotazione.type.value == "hasAuthor"){
         oggetto = '<'+annotazione.body_o.value+'>';
-    } else if(annotazione.type.value == "hasAuthor"){
-        oggetto = annotazione.body_o.value;
     } else {
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:string';
     }
