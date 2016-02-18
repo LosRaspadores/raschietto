@@ -82,8 +82,7 @@ function get_annotazioni(query, urlDoc){
             $('#alertDoc').modal('show');
             $('body').removeClass("loading");
         },
-        beforeSend: function() { $('body').addClass("loading"); },
-        complete: function() { $('body').removeClass("loading"); }
+        beforeSend: function() { $('body').addClass("loading"); }
     });
 };
 
@@ -91,9 +90,10 @@ function get_annotazioni(query, urlDoc){
 function gestioneAnnotazioni(lista_annotazioni, urlDoc){
     var sudocumento = false;
     var suframmento = false;
+    var evidenziata = false;
     var annotazioni_da_salvare = [];
     var urlid = urlDoc.replace(/([/|_.|_:|_-])/g, '');
-    $('div[id="'+ urlid +'"] span[class^="highlight"]').contents().unwrap();
+    $('div[id="'+ urlid +'"] span[class*="highlight"]').contents().unwrap();
     for (i = 0; i < lista_annotazioni.length; i++) {
         var ann = lista_annotazioni[i];
         var fragmentPath = ann["fs_value"]["value"];
@@ -103,17 +103,19 @@ function gestioneAnnotazioni(lista_annotazioni, urlDoc){
             annotazioni_da_salvare.push(ann);
         } else {
             //l'annotazione viene evidenziata
-            var evidenziata = highligthFragment(fragmentPath, ann, urlDoc);
+             
+            evidenziata = highligthFragment(fragmentPath, ann, urlDoc);
             if(evidenziata){
                 suframmento = true;
                 annotazioni_da_salvare.push(ann);
             }
         };
     };
-
+    
     salvaAnnotazioniJSON(urlDoc, annotazioni_da_salvare);
+
     if(annotazioni_da_salvare.length == 0){
-        $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.");
+        $('#alertMessage').text("Non ci sono annotazioni per il documento selezionato.\nRicerca automatica di annotazioni in corso..");
         $('#alertDoc').modal('show');
         scrapingAutomatico(urlDoc);
     } else {
@@ -132,15 +134,16 @@ function gestioneAnnotazioni(lista_annotazioni, urlDoc){
                 scrapingAutomatico(urlDoc);
             }
         }
-        stileAnnotazioniMultiple();
     }
+    stileAnnotazioniMultiple();
+    $('body').removeClass("loading")
 };
 
 
 function scrapingAutomatico(urlDoc){
     $('body').addClass("loading");
     $.ajax({
-        url: '/scrapingAutomatico',
+        url: '/wsgi/scrapingAutomatico',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
@@ -166,7 +169,7 @@ function scrapingAutomatico(urlDoc){
 function scrapingForzato(urlDoc){
     $('body').addClass("loading");
     $.ajax({
-        url: '/scrapingForzato',
+        url: '/wsgi/scrapingForzato',
         type: 'GET',
         data: {url: urlDoc},
         success: function(result){
@@ -243,6 +246,7 @@ function displaySingolaAnnotazione(str, ann){
 function highligthFragment(fragmentPath, ann, urlDoc) {
     var start = ann["start"]["value"];
     var end = ann["end"]["value"];
+    var evidenziata = false;
     if(typeof(ann["type"]) != "undefined"){
         var classCSS = getClassNameType(ann["type"]["value"]);
     }else {
@@ -274,7 +278,7 @@ function highligthFragment(fragmentPath, ann, urlDoc) {
         //if rivista statistica or if antropologia e teatro
         path = path.replace("div[1]/div[2]/div[2]/div[2]/", ".//*[@id='" + id +"']/div/div/");
 
-        console.log("path: " + path + " - start " + start + " - end " + end)
+        //console.log("path: " + path + " - start " + start + " - end " + end)
 
         //evaluate: metodo API DOM JAVASCRIPT, restituisce il nodo rappresentato dal XPath passato come parametro
         var evidenziata = false;
@@ -351,24 +355,31 @@ function gestioneRetoriche(retorica){
     var out = ""
     switch(retorica){
         case "http://salt.semanticauthoring.org/ontologies/sro#Abstract":
+        case "sro:Abstract":
             out = "Abstract";
             break;
         case "http://purl.org/spar/deo/Introduction":
+        case "deo:Introduction":
             out = "Introduction";
             break;
         case "http://purl.org/spar/deo/Materials":
+        case "deo:Materials":
             out = "Materials";
             break;
         case "http://purl.org/spar/deo/Methods":
+        case "deo:Methods":
             out = "Methods";
             break;
         case "http://purl.org/spar/deo/Results":
+        case "deo:Results":
             out = "Results";
             break;
         case "http://salt.semanticauthoring.org/ontologies/sro#Discussion":
+        case "sro:Discussion":
             out = "Discussion";
             break;
         case "http://salt.semanticauthoring.org/ontologies/sro#Conclusion":
+        case "sro:Conclusion":
             out = "Conclusion";
             break;
     }
@@ -441,29 +452,50 @@ function getTextNodesIn(node) {
 }
 
 
+//prende cone parametro il nodo evaluated: cioe' il nodo corrispondente al xpath dell'annotazione
 function setRange(nodo, start, end, classCSS, ann) {
     var evidenziata = false;
-    var rangeObject = document.createRange();  // creating a Range object.. we wull need to define its start and end points
-    var textNodes = getTextNodesIn(nodo);
-    if (start < 0) { start = 0; };
-    var caratteriTot = end - start;
+    var rangeObject = document.createRange();  // creating a Range object.. we will need to define its start and end points
+    var textNodes = getTextNodesIn(nodo);  // tutti i discendenti di tipo testo (figli e nipoti etc) del nodo corrente
+    if (start < 0) { start = 0; };  // controllo aggiuntivo (se start=-1 in qualche annotazione)
+    var caratteriTot = end - start;  // totale caratteri del frammento
     var trovatoNodoStart = false;
     var charParsed = 0;
 
-    //scorro i nodi discendenti di tipo testo del nodo evaluated
+    //scorro i nodi discendenti di tipo testo del nodo corrispondente frammento
     for (var i = 0; i<textNodes.length; i++) {
         var nodoCorrente = textNodes[i];
         var lunghezzaNodoCorrente = nodoCorrente.length;
 
         // allora lo start e l'end sono compresi nel nodo corrente => start end offset del range trovati!
-        if((start<lunghezzaNodoCorrente && end <= lunghezzaNodoCorrente) || (trovatoNodoStart && end <= lunghezzaNodoCorrente)){
-            if(!trovatoNodoStart){
-                rangeObject.setStart(nodoCorrente, start);
-            }
+        if(start<lunghezzaNodoCorrente && end <= lunghezzaNodoCorrente){
+            trovatoNodoStart = true;
+            //charParsed = charParsed + (lunghezzaNodoCorrente - start);
+            charParsed = charParsed + (end - start);  
+	    rangeObject.setStart(nodoCorrente, start);
+            rangeObject.setEnd(nodoCorrente, end);
+            
+            // dopo aver trovato start e end
+            var spanHighligth = document.createElement('span');
+            var subject = ann["body_s"]["value"];
+            spanHighligth.className = classCSS;  // classe dell' evidenziazione
+            spanHighligth.ondblclick = function () {
+                $("#modalAnnotazioneSingola").modal({backdrop: 'static', keyboard: false});  // before modal show line!
+                $("#modalAnnotazioneSingola").modal('show');
+                if(subject.indexOf("cited") != -1) {
+                    var out_ann = displaySingolaAnnotazione("citazione", ann);
+                } else {
+                    var out_ann  = displaySingolaAnnotazione("semplice", ann);
+                }
+                $('#infoAnnotazione').append(out_ann);
+            };
+            evidenziata = true;
+            rangeObject.surroundContents(spanHighligth);
+            break;
+        } else if (trovatoNodoStart && end <= lunghezzaNodoCorrente){
             charParsed = charParsed + (lunghezzaNodoCorrente - start);
             rangeObject.setEnd(nodoCorrente, end);
-
-            rangeObject.setStart(nodoCorrente, start);
+            
             // dopo aver trovato start e end
             var spanHighligth = document.createElement('span');
             var subject = ann["body_s"]["value"];
@@ -488,17 +520,20 @@ function setRange(nodo, start, end, classCSS, ann) {
                     end = end -lunghezzaNodoCorrente;
                     // si passa al  al nodo successivo
                 }
-            } else {  // cioè if(start < lunghezzaNodoCorrente)
-                // lo start offset è nel nodo corrente
-                if(!trovatoNodoStart){
+            } else {  // cio� if(start < lunghezzaNodoCorrente)
+     		if(!trovatoNodoStart){
                     rangeObject.setStart(nodoCorrente, start);
-                };
-                trovatoNodoStart = true;
+                    trovatoNodoStart = true;
+                    start = 0;
+                } else {
+                  trovatoNodoStart = true; 
+                  rangeObject.setStart(nodoCorrente, 0);
+                }
+                
                 charParsed = charParsed + (lunghezzaNodoCorrente - start);
-                end = caratteriTot - charParsed; // caratteri mancanti
-
-                rangeObject.setStart(nodoCorrente, 0);
-                rangeObject.setEnd(nodoCorrente, lunghezzaNodoCorrente);
+                //end = caratteriTot - charParsed; // caratteri mancanti
+                end = end - lunghezzaNodoCorrente;
+                rangeObject.setEnd(nodoCorrente, lunghezzaNodoCorrente);                
                 var spanHighligth = document.createElement('span');
                 var subject = ann["body_s"]["value"];
                 spanHighligth.className = classCSS;  // classe dell' evidenziazione
@@ -518,6 +553,7 @@ function setRange(nodo, start, end, classCSS, ann) {
         }
     }
     var rangeContent = rangeObject.toString();
+    console.log(rangeContent);
     return evidenziata;
 }
 

@@ -7,7 +7,6 @@ __author__ = 'Los Raspadores'
 
 """
     pip install Flask
-
     spazio web nostro gruppo url: http://ltw1537.web.cs.unibo.it/
 """
 
@@ -86,7 +85,6 @@ def scraping(urlD):
 
     listaAnnotazioni = []
 
-    """
     try:
         anno = scraping_anno(urlD)
         annAnno = costruisciAnnotazione(urlD, anno["xpath"], anno["start"], anno["end"], "hasPublicationYear", anno["anno"], 0)
@@ -145,12 +143,12 @@ def scraping(urlD):
     except Exception:
         print "exc doi"
         traceback.print_exc()
-        pass"""
+        pass
 
     try:
         listaCitazioni = scraping_citazioni(urlD)
         print "tot citazioni"
-        print len(listaAnnotazioni)
+        print len(listaCitazioni)
         i = 1
         for citazione in listaCitazioni:
             annCitazione = costruisciAnnotazione(urlD, citazione["path"], citazione["start"], citazione["end"], "cites", citazione["citazione"].decode("utf-8"), i)
@@ -164,7 +162,9 @@ def scraping(urlD):
         traceback.print_exc()
         pass
 
-    print "scraping"
+    print "tot annotazioni"
+    print len(listaAnnotazioni)
+    print "scraping completo"
 
     return listaAnnotazioni
 
@@ -173,7 +173,6 @@ def return_citazioni():
     urlD = request.args.get('url')
     data = scraping_citazioni(urlD)
     return json.dumps(data)
-
 
 
 @app.route('/getDocumenti', methods=['GET', 'POST'])  # prende il titolo dei documenti quando vengono caricati
@@ -209,6 +208,7 @@ def return_titolo():
 @app.route('/scrapingSingoloDocumento')
 def return_singolo_documento():
     url = request.args.get('url')
+    print url
     data = scraping_singolo_documento(url)
     return data
 

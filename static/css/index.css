@@ -22,7 +22,7 @@ body {
 }
 
 /* logo applicazione */
-.navbar .navbar-brand {
+.navbar .navbar-brand, #brand_text {
     color: white;
     font-weight: bold;
     font-size: 40px;
@@ -33,6 +33,9 @@ body {
     color: white;
 }
 
+#brand_text{
+    color: #0C3C26;
+}
 
 /* descrizione applicazione */
 .navbar .navbar-text{
@@ -341,11 +344,11 @@ button.button-lg:active {
 
 .highlightMultipleTipoDiverso{
     background-color: #dae0e6;
+    border: 1px solid #57595c;
 }
 
 .highlightMultipleTipoUguale{
-    border-top: 1px solid #57595c;
-    border-bottom: 1px solid #57595c;
+    border: 1px solid #57595c;
 }
 
 .panel-default>.panel-heading .badge {
@@ -578,7 +581,7 @@ thead{
     float: left;
 }
 
-.glyphicon-plus:hover, .glyphicon-trash:hover, .glyphicon-edit:hover {
+.glyphicon-plus:hover, .glyphicon-trash:hover, .glyphicon-pencil:hover {
     cursor: pointer;
     color: #44B78B;
 }

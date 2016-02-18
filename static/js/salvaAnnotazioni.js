@@ -1,5 +1,6 @@
 function inviaQuery(listaQuery){
     $.ajax({
+        //url: "/wsgi/salvaAnnotazioni",
         url: "/salvaAnnotazioni",
         data: {"query": listaQuery},
         success: function(result) {
@@ -59,10 +60,9 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
     }
     var subjectBody = '_ver1';
     if(annotCit.length > 0){ //-> annot su cit. (il soggetto del body è url_ver1_cited[n])
-        subjectBody += '_cited['+numCit+']';
-        urlSubject += '_cited['+numCit+']';
+        subjectBody += '_cited' + numCit;
+        urlSubject += '_cited' + numCit;
     }
-
 
     var target = 'oa:hasTarget [ a oa:SpecificResource ;' +
                  'oa:hasSelector [ a oa:FragmentSelector ;' +
@@ -170,7 +170,7 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
                     'rdf:subject <' + url_nohtml + '_ver1> ;' +
                     'rdf:predicate cito:cites ;' +
                     'rdf:object <' + url_nohtml + '_ver1_cited['+numCit+']>.'+
-                '<' + url_nohtml + '_ver1_cited['+numCit+']> rdfs:label "' + valore + '"^^xsd:string.';
+                '<' + url_nohtml + '_ver1_cited'+numCit+'> rdfs:label "' + valore + '"^^xsd:string.';
     }
     var documentFRBR = queryFRBRdocument(url);
     annotazione += documentFRBR;
@@ -179,9 +179,11 @@ function annotazione(url, tipo, datetime, path, start, end, valore, mailautore, 
 
 function creaQueryInsertAnnotazioni(lista){
     var triple = "";
-    for (var i=0; i<lista.annotazioni.length; i++){
-        var item = lista.annotazioni[i];
-        triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance, item.numCit, item.annotCit);
+    if(lista != ""){
+        for (var i=0; i<lista.annotazioni.length; i++){
+            var item = lista.annotazioni[i];
+            triple += annotazione(item.url, item.tipo, item.data, item.id, item.start, item.end, item.valore, item.provenance, item.numCit, item.annotCit);
+        }
     }
     triple += setProvenanceUtente();
     var query = prefissi + "INSERT DATA {GRAPH <http://vitali.web.cs.unibo.it/raschietto/graph/ltw1537> {" + triple + "}}";
@@ -316,10 +318,8 @@ function creaQueryDelete(annotazione){
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:date';
     } else if(annotazione.type.value == "hasURL"){
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:anyURL';
-    } else if(annotazione.type.value == "cites" || annotazione.type.value == "denotesRhetoric"){
+    } else if(annotazione.type.value == "cites" || annotazione.type.value == "denotesRhetoric" || annotazione.type.value == "hasAuthor"){
         oggetto = '<'+annotazione.body_o.value+'>';
-    } else if(annotazione.type.value == "hasAuthor"){
-        oggetto = annotazione.body_o.value;
     } else {
         oggetto = '"'+annotazione.body_o.value+'"^^xsd:string';
     }

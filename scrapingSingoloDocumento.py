@@ -11,15 +11,16 @@ __author__ = 'Los Raspadores'
     Beautiful Soup automatically converts incoming documents to Unicode and outgoing documents to UTF-8
 """
 
-from bs4 import BeautifulSoup
+from BeautifulSoup import BeautifulSoup
 from urlparse import urlparse, urljoin
 import mechanize
+
 
 # Browser mechanize
 br = mechanize.Browser()
 br.set_handle_robots(False)
 br.set_handle_refresh(False)
-br.addheaders = [('user-agent', '   Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
+br.addheaders = [('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3')]
 
 
 def main():
@@ -27,10 +28,9 @@ def main():
 
 
 def scraping_singolo_documento(url):
-    print(url)
     parsed_uri = urlparse(url)
     doc_html = br.open(url).read()
-    soup = BeautifulSoup(doc_html, 'html.parser')
+    soup = BeautifulSoup(doc_html)
     html = domain_manager(parsed_uri[1], parsed_uri[2], soup)
 
     for a in soup.findAll('a', href=True):

@@ -89,7 +89,7 @@ $(document).ready(function() {
 
     /* Gestione dei bottoni modalita' annotator */
     $('ul#bottoniAnnotator button').click(function(e){
-        /* I bottoni della nav bar NON sono funzionali se non c'è un documento aperto, o se si sta modificando il frammento di un'annotazione */
+        /* I bottoni della nav bar NON sono funzionali se non c'? un documento aperto, o se si sta modificando il frammento di un'annotazione */
         if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab' || $("#bottoniModificaSelezione").css("display") == "block"){
             var mess = '';
             if($("ul.nav.nav-tabs li.active a").attr("id") == 'homeTab'){
@@ -273,9 +273,9 @@ $(document).ready(function() {
                     col = '<span class="glyphicon glyphicon-tint label' + classe + '"></span>';
                     tr = '<tr id="'+ i +'"><td>'+col+' '+ tipo +'</td><td>'+ data +'</td><td>'+ oggetto +'</td>';
                     if(tipo == "Citazione"){
-                        tr += '<td><span class="glyphicon glyphicon-edit" onclick="modificaCitazioneGrafo(this)"></span><span class="glyphicon glyphicon-trash" onclick="confermaCancellazione(this)"></span><span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Annota citazione" onclick="annotaCitazioneGrafo(this)"></td></tr>';
+                        tr += '<td><span class="glyphicon glyphicon-pencil" onclick="modificaCitazioneGrafo(this)"></span><span class="glyphicon glyphicon-trash" onclick="confermaCancellazione(this)"></span><span class="glyphicon glyphicon-plus" data-toggle="tooltip" title="Annota citazione" onclick="annotaCitazioneGrafo(this)"></td></tr>';
                     } else {
-                        tr += '<td><span class="glyphicon glyphicon-edit" onclick="modificaAnnot(this)"></span><span class="glyphicon glyphicon-trash" onclick="confermaCancellazione(this)"></span></td></tr>';
+                        tr += '<td><span class="glyphicon glyphicon-pencil" onclick="modificaAnnot(this)"></span><span class="glyphicon glyphicon-trash" onclick="confermaCancellazione(this)"></span></td></tr>';
                     }
                     $('#modalGestAnnotazioni div#annotazioniPresenti table.tableAnnot tbody').append(tr);
                 } else { // se l'annotazione e' stata cancellata localmente non viene mostrata
@@ -303,7 +303,7 @@ $(document).ready(function() {
                             oggetto = oggetto.substring(0, (oggetto.length)-1)
                         }
                         col = '<span class="glyphicon glyphicon-tint label' + classCSS.substring(9, classCSS.length)+ '"></span>';
-                        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ tipo+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-edit" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica '+alert+'"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina '+alert+'"></span>'+span+'</td></tr>';
+                        tr = '<tr data-id="'+idAnn+'"><td>'+col+' '+ tipo+'</td><td>'+data+'</td><td>'+oggetto+'</td><td><span class="glyphicon glyphicon-pencil" onclick="modificaAnnotazioneLocale('+idAnn+')" data-toggle="tooltip" title="Modifica '+alert+'"></span><span onclick="eliminaAnnotazioneLocale('+idAnn+')" class="glyphicon glyphicon-trash" data-toggle="tooltip" title="Elimina '+alert+'"></span>'+span+'</td></tr>';
 
                         $('#modalGestAnnotazioni div#annotazioniInserite table.tableAnnot tbody').append(tr);
                     }
@@ -327,6 +327,7 @@ $(document).ready(function() {
                 var title = $(this).text()
                 $(this).addClass("active").siblings().removeClass("active");
                 $.ajax({
+                    //url: '/wsgi/scrapingSingoloDocumento',
                     url: '/scrapingSingoloDocumento',
                     type: 'GET',
                     data: {url: urlDoc},
@@ -334,7 +335,7 @@ $(document).ready(function() {
                         addTab(result, urlDoc, title);
                         query = query_all_annotazioni(urlDoc);
                         get_annotazioni(query, urlDoc);
-                        annotazioniSuDoc(urlDoc);
+                        stileAnnotazioniMultiple();
                         filtriAttivi();
                     },
                     error: function(error) {
@@ -358,25 +359,9 @@ $(document).ready(function() {
             if(isOpen(urlNuovoDoc)){
                 $("ul.nav.nav-tabs a[id='" + urlNuovoDoc + "']").tab("show");
             }else{
-                var numTabs = $("ul.nav.nav-tabs").children().length;
-                if(numTabs <= 4){
-                    $.ajax({
-                        url: '/scrapingSingoloDocumento',
-                        type: 'GET',
-                        data: {url: urlNuovoDoc},
-                        success: function(result) {
-                            addTab(result, urlNuovoDoc, urlNuovoDoc);
-                            query = query_all_annotazioni(urlNuovoDoc);
-                            get_annotazioni(query, urlNuovoDoc);
-                            annotazioniSuDoc(urlNuovoDoc);
-                            filtriAttivi();
-                        },
-                        error: function(error) {
-                            $('#alertMessage').text("Impossibile aprire il documento cercato.");
-                            $('#alertDoc').modal('show');
-                        }
-                    });
-                    $.ajax({
+		var titolo = urlNuovoDoc;
+		$.ajax({
+                        //url: '/wsgi/checkDocumentoInCache',
                         url: '/checkDocumentoInCache',
                         type: 'GET',
                         data: {url: urlNuovoDoc},
@@ -386,12 +371,34 @@ $(document).ready(function() {
                             if(obj[0].url != "no"){
                                 $('#numDoc').html(parseInt($('#numDoc').html()) + 1);
                                 $('div#lista_doc').append('<a class="list-group-item" value="' + obj[0].url + '">' + obj[0].titolo + '</a><br>');
-                            }
+                                titolo = obj[0].titolo;
+                                
+                            } 
                         },
                         error: function(error) {
 
                         }
                     });
+                console.log("titolo" + titolo);
+                var numTabs = $("ul.nav.nav-tabs").children().length;
+                if(numTabs <= 4){
+                    $.ajax({
+                        //url: '/wsgi/scrapingSingoloDocumento',
+                        url: '/scrapingSingoloDocumento',
+                        type: 'GET',
+                        data: {url: urlNuovoDoc},
+                        success: function(result) {
+                            addTab(result, urlNuovoDoc, titolo);
+                            query = query_all_annotazioni(urlNuovoDoc);
+                            get_annotazioni(query, urlNuovoDoc);
+                            
+                        },
+                        error: function(error) {
+                            $('#alertMessage').text("Impossibile aprire il documento cercato.");
+                            $('#alertDoc').modal('show');
+                        }
+                    });
+                    
                 }else{
                     $('#alertMessage').text("Puoi aprire 4 documenti contemporaneamente.");
                     $('#alertDoc').modal('show');
@@ -439,7 +446,7 @@ function closeTab(element){
     for(j = 0; j < listaAllAnnotazioni.length; j++){
         console.log(listaAllAnnotazioni[j].url);
     }
-    
+
     var numTabs = $("ul.nav.nav-tabs").children().length;
     if(numTabs == 1){
         $('#homeTab').trigger("click");
@@ -458,6 +465,7 @@ function getCitazioni(urlDoc){
     listaCitazioni = []
     $("#selectCit").empty();
     $.ajax({
+        //url: '/wsgi/scrapingCitazioni',
         url: '/scrapingCitazioni',
         type: 'GET',
         data: {url: urlDoc},
@@ -472,7 +480,7 @@ function getCitazioni(urlDoc){
                     var end = listaCitazioni[i].end;
                     var testo = listaCitazioni[i].citazione;
                     if(listaCitazioni[i].citazione.length > 60){
-                        cit = listaCitazioni[i].citazione.substring(0, 60)+'...';
+                        cit = listaCitazioni[i].citazione.substring(0, 60) + '...';
                         } else {
                         cit = listaCitazioni[i].citazione;
                         }

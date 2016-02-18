@@ -51,14 +51,17 @@ def scraping_titolo(urlDoc):
         soup = BeautifulSoup(raw_html)
 
         if parsed_uri[1] == 'www.dlib.org' or parsed_uri[1] == 'dlib.org':
-            result = soup.select("h3.blue-space")  # prendo gli h3 classe blue.space
+            result = soup.findAll('h3', {"class": "blue-space"})
             for res in result:
-                if res.text != 'D-Lib Magazine':  # se è dlib
-                    data = {}
-                    data['url'] = doc
-                    data['titolo'] = res.text
-                    lista.append(data)
-        elif parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
+                try:
+		    if res.text != 'D-Lib Magazine':
+                        data = {}
+                        data['url'] = doc
+                        data['titolo'] = res.text
+                        lista.append(data)
+		except: 
+                    pass
+	elif parsed_uri[1] == 'antropologiaeteatro.unibo.it' or parsed_uri[1] == 'almatourism.unibo.it' or parsed_uri[
             1] == 'rivista-statistica.unibo.it' or parsed_uri[1].find('unibo.it') != -1:
             if parsed_uri[2].find("article") != -1:  # len(parsed_uri[2]) > 2 and
                 result = soup.find('div', {"id": "articleTitle"})  # prendo i div con ID=articleTitle
@@ -276,6 +279,7 @@ def scraping_citazioni(url):
 
     raw_html = resp.read()
     tree = etree.HTML(raw_html)  # albero nodi
+    
     parsed_uri = urlparse(url)
 
     listaCitazioni = []
@@ -300,26 +304,9 @@ def scraping_citazioni(url):
         soup = BeautifulSoup(raw_html)
         primaCitTrovata = False
 
-        listah3 = soup.findAll("h3")
-
         for nodoh3 in soup.findAll("h3"):  # prendo tutti gli h3 della pagina
             testoh3 = nodoh3.contents[0].strip()   # contents => tag’s children
-            if testoh3.find("Notes") != -1:
-                reference_list = []
-                nodo = nodoh3
-                check = nodo.findNext("p") != -1
-                while check:
-                    if nodo.findNext("p") is not None:
-                        if nodo.findNext("p").getText()[0].isdigit():
-                            nodo = nodo.findNext("p")
-                            reference_list.append(nodo.getText().encode("utf-8"))
-                        else:
-                            nodo = nodo.findNext("p")
-                    else:
-                        check = False
-
-
-            elif testoh3.find("Reference") != -1 or testoh3.find("Bibliography") != -1:
+            if testoh3.find("Reference") != -1 or testoh3.find("Bibliography") != -1:
                 reference_list = []
                 altracit = True
                 while altracit:
@@ -332,7 +319,7 @@ def scraping_citazioni(url):
                         altracit = True
                     else:  # se non ci sono altre reference esco dal ciclo
                         altracit = False
-
+                break
 
         xpathfisso = "/html/body/form[1]/table[3]/tbody[1]/tr[1]/td[1]/table[5]/tbody[1]/tr[1]/td[1]/table[1]/tbody[1]/tr[1]/td[2]/"
 
@@ -359,9 +346,9 @@ def scraping_citazioni(url):
         for refer in reference_list:
             citazione = {}
             citazione["start"] = str(0)
-            citazione["end"] = len(str(refer))
+            citazione["end"] = len(str(refer.encode("utf-8")))
             refer = refer.replace('"', "'")
-            citazione["citazione"] = str(refer)
+            citazione["citazione"] = str(refer.encode("utf-8"))
             indice = indexprimacit + int(i)
             path = trascodifica_path(xpathfisso + 'p[' + str(indice) + ']')
             citazione["path"] = str(path)
